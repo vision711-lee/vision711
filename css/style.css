@@ -1020,22 +1020,33 @@ html, body {
         z-index: 1;
     }
 
-    /* 菜单头部 - Logo 右对齐 */
-    .hamburger-header {
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        padding-bottom: 16px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-        margin-bottom: 16px;
-        flex-shrink: 0;
-    }
+    /* 菜单头部 - Logo 在左，Slogan 在右 */
+.hamburger-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    margin-bottom: 16px;
+    flex-shrink: 0;
+}
 
-    .hamburger-header .logo-metal {
-        font-size: 1.3rem;
-        letter-spacing: 2px;
-        text-decoration: none;
-    }
+.hamburger-header .logo-metal {
+    font-size: 1.3rem;
+    letter-spacing: 2px;
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+/* Slogan 样式 */
+.hamburger-slogan {
+    font-size: 0.65rem;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.25);
+    letter-spacing: 1.5px;
+    white-space: nowrap;
+    text-transform: uppercase;
+}
 
     /* 用户信息 - 半透明玻璃 */
     .hamburger-user {

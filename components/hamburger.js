@@ -31,13 +31,14 @@
 
     <!-- 抽屉菜单 -->
     <div class="hamburger-menu" id="hamburgerMenu">
-        <!-- 菜单头部 - Logo 在右侧 -->
+        <!-- 菜单头部 - Logo 在左侧，Slogan 在右侧 -->
         <div class="hamburger-header">
             <a href="/" class="logo-metal">
                 <img src="https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/hero-background/logo.png" 
                      alt="VISION711" 
                      style="height:36px; width:auto; display:block;">
             </a>
+            <span class="hamburger-slogan">Play Safe, Win Safe</span>
         </div>
 
         <!-- 用户信息 -->
