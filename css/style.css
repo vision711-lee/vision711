@@ -790,6 +790,7 @@ html, body {
         padding: 12px 12px 80px !important;
         min-height: 100vh;
         width: 100%;
+        background: transparent !important;
     }
 
     /* 手机版主内容 - 直接作为块级元素 */
@@ -799,6 +800,16 @@ html, body {
         max-width: 100% !important;
         min-height: auto !important;
         flex: none !important;
+    }
+
+    /* 手机版全局背景 */
+    body {
+        background-image: url('https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/hero-background/mobile-hero-background.png');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        background-color: #06060f;
     }
 
     /* ===== 手机顶部导航 (Hamburger左 + Logo右) ===== */
@@ -1257,6 +1268,7 @@ html, body {
     }
 }
 
+
 /* ============================================================
    第17块: ⭐ 电脑布局 (>= 768px)
    ============================================================ */
@@ -1279,6 +1291,16 @@ html, body {
         min-height: 100vh;
     }
 
+    /* 电脑版全局背景 */
+    body {
+        background-image: url('https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/hero-background/desktop-hero-background.png');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        background-color: #06060f;
+    }
+
     .app-container {
         display: flex !important;
         min-height: 100vh;
@@ -1286,7 +1308,7 @@ html, body {
         margin: 0 !important;
         width: 100%;
         max-width: 100% !important;
-        background: #06060f;
+        background: transparent !important;
     }
 
     /* ----- Sidebar (电脑显示) ----- */
@@ -1295,10 +1317,10 @@ html, body {
         width: 220px;
         min-height: 100vh;
         flex-shrink: 0;
-        background: 
-            repeating-linear-gradient(90deg, transparent 0px, transparent 3px, rgba(255, 255, 255, 0.015) 3px, rgba(255, 255, 255, 0.015) 4px),
-            linear-gradient(180deg, #0a0a20 0%, #0d0d2a 50%, #0a0a20 100%);
-        border-right: 1px solid rgba(0, 180, 255, 0.08);
+        background: rgba(10, 10, 32, 0.75);
+        backdrop-filter: blur(16px) saturate(1.4);
+        -webkit-backdrop-filter: blur(16px) saturate(1.4);
+        border-right: 1px solid rgba(255, 255, 255, 0.06);
         padding: 24px 16px 30px;
         flex-direction: column;
         position: sticky;
@@ -1306,6 +1328,24 @@ html, body {
         height: 100vh;
         overflow-y: auto;
         box-shadow: 4px 0 30px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Sidebar 玻璃光泽 */
+    .sidebar::before {
+        content: '';
+        position: absolute;
+        top: -30%;
+        right: -30%;
+        width: 80%;
+        height: 80%;
+        background: radial-gradient(ellipse, rgba(0, 180, 255, 0.05), transparent 70%);
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .sidebar > * {
+        position: relative;
+        z-index: 1;
     }
 
     .sidebar .logo-metal {
@@ -1352,7 +1392,7 @@ html, body {
     }
 
     .sidebar-nav .nav-item:hover {
-        background: rgba(0, 180, 255, 0.05);
+        background: rgba(255, 255, 255, 0.04);
         color: rgba(255, 255, 255, 0.6);
     }
     .sidebar-nav .nav-item:hover i {
@@ -1360,10 +1400,8 @@ html, body {
     }
 
     .sidebar-nav .nav-item.active {
-        background: 
-            repeating-linear-gradient(90deg, transparent 0px, transparent 2px, rgba(255, 255, 255, 0.02) 2px, rgba(255, 255, 255, 0.02) 3px),
-            linear-gradient(135deg, rgba(0, 180, 255, 0.08), rgba(255, 215, 0, 0.04));
-        border: 1px solid rgba(0, 180, 255, 0.12);
+        background: rgba(0, 180, 255, 0.08);
+        border: 1px solid rgba(0, 180, 255, 0.08);
         color: #fff;
     }
 
@@ -1474,7 +1512,6 @@ html, body {
         display: none !important;
     }
 }
-
 
 /* ============================================================
    第18块: 大屏 (>= 1200px)
