@@ -27,15 +27,13 @@
 
     <!-- 抽屉菜单 -->
     <div class="hamburger-menu" id="hamburgerMenu">
-        <!-- 菜单头部 - Logo 在上，Slogan 在下 -->
-<div class="hamburger-header">
-    <a href="/" class="logo-metal">
-    <canvas id="hamburgerLogoCanvas" width="400" height="200"></canvas>
-</a>
-    <span class="hamburger-slogan">Play Safe, Win Safe</span>
-</div>
+        <div class="hamburger-header">
+            <a href="/" class="logo-metal">
+                <canvas id="hamburgerLogoCanvas" width="400" height="200"></canvas>
+            </a>
+            <span class="hamburger-slogan">Play Safe, Win Safe</span>
+        </div>
 
-        <!-- 用户信息 -->
         <div class="hamburger-user">
             <div class="avatar"><i class="fas fa-user"></i></div>
             <div class="info">
@@ -45,7 +43,6 @@
             <span class="vip-badge"><i class="fas fa-gem"></i> VIP 2</span>
         </div>
 
-        <!-- 导航链接 -->
         <nav class="hamburger-nav">
             <a href="/" class="nav-item" data-page="index">
                 <i class="fas fa-home"></i> <span data-i18n="nav.home">Home</span>
@@ -64,13 +61,11 @@
             </a>
         </nav>
 
-        <!-- 语言切换 -->
         <div class="hamburger-lang">
             <button class="lang-btn active" data-lang="en">EN</button>
             <button class="lang-btn" data-lang="zh">中文</button>
         </div>
 
-        <!-- 底部 -->
         <div class="hamburger-footer">
             <a href="../admin/login.html">
                 <i class="fas fa-shield-alt"></i> <span data-i18n="home.adminLogin">Admin Login</span>
@@ -89,11 +84,18 @@
             newHeader.className = 'mobile-header';
             newHeader.innerHTML = `
                 <div id="hamburgerPlaceholder"></div>
-                <a href="/" class="logo-metal">
-                    <img src="https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/hero-background/logo.png" 
-                         alt="VISION711" 
-                         style="height:72px; width:auto; display:block;">
-                </a>
+                <div class="mobile-header-right" id="mobileHeaderRight">
+                    <div class="header-auth-buttons" id="headerAuthButtons">
+                        <div class="register-wrapper" id="registerWrapper">
+                            <a href="/register" class="register-btn">Register</a>
+                        </div>
+                        <a href="/login" class="login-btn">Login</a>
+                    </div>
+                    <span class="mobile-header-slogan" id="headerSlogan" style="display:none;">Play Safe, Win Safe</span>
+                    <a href="/" class="logo-metal">
+                        <canvas id="headerLogoCanvas" width="400" height="200"></canvas>
+                    </a>
+                </div>
             `;
             mainContent.insertBefore(newHeader, mainContent.firstChild);
             
@@ -109,12 +111,29 @@
             const oldBadges = header.querySelectorAll('.badge-vip, .lang-switcher, .user-avatar-metal');
             oldBadges.forEach(el => el.remove());
             
-            header.insertAdjacentHTML('afterbegin', template);
-            
-            const logo = header.querySelector('.logo-metal');
-            if (logo) {
-                logo.style.order = '2';
+            let rightContainer = header.querySelector('.mobile-header-right');
+            if (!rightContainer) {
+                rightContainer = document.createElement('div');
+                rightContainer.className = 'mobile-header-right';
+                rightContainer.id = 'mobileHeaderRight';
+                
+                rightContainer.innerHTML = `
+                    <div class="header-auth-buttons" id="headerAuthButtons">
+                        <div class="register-wrapper" id="registerWrapper">
+                            <a href="/register" class="register-btn">Register</a>
+                        </div>
+                        <a href="/login" class="login-btn">Login</a>
+                    </div>
+                    <span class="mobile-header-slogan" id="headerSlogan" style="display:none;">Play Safe, Win Safe</span>
+                    <a href="/" class="logo-metal">
+                        <canvas id="headerLogoCanvas" width="400" height="200"></canvas>
+                    </a>
+                `;
+                
+                header.appendChild(rightContainer);
             }
+            
+            header.insertAdjacentHTML('afterbegin', template);
         }
     }
 
@@ -128,18 +147,18 @@
     }
 
     function openMenu() {
-    menu.classList.add('open');
-    overlay.classList.add('open');
-    toggleBtn.classList.add('menu-open');
-    document.body.style.overflow = 'hidden';
-}
+        menu.classList.add('open');
+        overlay.classList.add('open');
+        toggleBtn.classList.add('menu-open');
+        document.body.style.overflow = 'hidden';
+    }
 
     function closeMenu() {
-    menu.classList.remove('open');
-    overlay.classList.remove('open');
-    toggleBtn.classList.remove('menu-open');
-    document.body.style.overflow = '';
-}
+        menu.classList.remove('open');
+        overlay.classList.remove('open');
+        toggleBtn.classList.remove('menu-open');
+        document.body.style.overflow = '';
+    }
 
     function toggleMenu() {
         if (menu.classList.contains('open')) {
@@ -154,7 +173,6 @@
         toggleMenu();
     });
 
-    // 点击遮罩关闭（唯一关闭方式）
     overlay.addEventListener('click', closeMenu);
 
     document.addEventListener('keydown', function(e) {
@@ -288,5 +306,185 @@
 
         ctx.putImageData(imageData, 0, 0);
         requestAnimationFrame(drawFrame);
+    }
+})();
+
+// ===== 统一 Logo 流光效果（所有页面右上角） =====
+(function initHeaderLogoFlow() {
+    const canvas = document.getElementById('headerLogoCanvas');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.src = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/hero-background/logo.png';
+
+    let logoData = null;
+    let logoWidth = 0;
+    let logoHeight = 0;
+    let startTime = performance.now();
+
+    img.onload = function() {
+        logoWidth = img.width;
+        logoHeight = img.height;
+        canvas.width = logoWidth;
+        canvas.height = logoHeight;
+
+        ctx.drawImage(img, 0, 0);
+        logoData = ctx.getImageData(0, 0, logoWidth, logoHeight);
+        ctx.clearRect(0, 0, logoWidth, logoHeight);
+
+        requestAnimationFrame(drawHeaderFrame);
+    };
+
+    function drawHeaderFrame(timestamp) {
+        if (!logoData) return;
+
+        const elapsed = (timestamp - startTime) / 1000;
+        const waitTime = 1.0;
+        const scanDuration = 1.2;
+        const totalTime = waitTime + scanDuration;
+
+        let timeInCycle = elapsed % totalTime;
+        let progress;
+
+        if (timeInCycle < waitTime) {
+            progress = -1;
+        } else {
+            let scanProgress = (timeInCycle - waitTime) / scanDuration;
+            progress = 1 - scanProgress;
+        }
+
+        ctx.clearRect(0, 0, logoWidth, logoHeight);
+
+        ctx.globalAlpha = 0.9;
+        ctx.drawImage(img, 0, 0);
+        ctx.globalAlpha = 1.0;
+
+        const imageData = ctx.getImageData(0, 0, logoWidth, logoHeight);
+        const data = imageData.data;
+
+        const barWidth = Math.max(20, logoWidth * 0.25);
+        const centerX = progress * (logoWidth + barWidth) - barWidth / 2;
+
+        for (let y = 0; y < logoHeight; y++) {
+            for (let x = 0; x < logoWidth; x++) {
+                const idx = (y * logoWidth + x) * 4;
+                const originalAlpha = logoData.data[idx + 3];
+                if (originalAlpha < 128) continue;
+
+                const dist = Math.abs(x - centerX);
+                if (dist > barWidth / 2) continue;
+
+                const strength = 1 - (dist / (barWidth / 2));
+                const alpha = strength * 0.55;
+
+                data[idx]     = Math.min(255, data[idx]     + 180 * alpha);
+                data[idx + 1] = Math.min(255, data[idx + 1] + 180 * alpha);
+                data[idx + 2] = Math.min(255, data[idx + 2] + 150 * alpha);
+            }
+        }
+
+        ctx.putImageData(imageData, 0, 0);
+        requestAnimationFrame(drawHeaderFrame);
+    }
+})();
+
+// ===== 电脑版 Sidebar Logo 流光效果 =====
+(function initSidebarLogoFlow() {
+    const canvas = document.getElementById('sidebarLogoCanvas');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.src = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/hero-background/logo.png';
+
+    let logoData = null;
+    let logoWidth = 0;
+    let logoHeight = 0;
+    let startTime = performance.now();
+
+    img.onload = function() {
+        logoWidth = img.width;
+        logoHeight = img.height;
+        canvas.width = logoWidth;
+        canvas.height = logoHeight;
+
+        ctx.drawImage(img, 0, 0);
+        logoData = ctx.getImageData(0, 0, logoWidth, logoHeight);
+        ctx.clearRect(0, 0, logoWidth, logoHeight);
+
+        requestAnimationFrame(drawSidebarFrame);
+    };
+
+    function drawSidebarFrame(timestamp) {
+        if (!logoData) return;
+
+        const elapsed = (timestamp - startTime) / 1000;
+        const waitTime = 1.0;
+        const scanDuration = 1.2;
+        const totalTime = waitTime + scanDuration;
+
+        let timeInCycle = elapsed % totalTime;
+        let progress;
+
+        if (timeInCycle < waitTime) {
+            progress = -1;
+        } else {
+            let scanProgress = (timeInCycle - waitTime) / scanDuration;
+            progress = 1 - scanProgress;
+        }
+
+        ctx.clearRect(0, 0, logoWidth, logoHeight);
+
+        ctx.globalAlpha = 0.9;
+        ctx.drawImage(img, 0, 0);
+        ctx.globalAlpha = 1.0;
+
+        const imageData = ctx.getImageData(0, 0, logoWidth, logoHeight);
+        const data = imageData.data;
+
+        const barWidth = Math.max(20, logoWidth * 0.25);
+        const centerX = progress * (logoWidth + barWidth) - barWidth / 2;
+
+        for (let y = 0; y < logoHeight; y++) {
+            for (let x = 0; x < logoWidth; x++) {
+                const idx = (y * logoWidth + x) * 4;
+                const originalAlpha = logoData.data[idx + 3];
+                if (originalAlpha < 128) continue;
+
+                const dist = Math.abs(x - centerX);
+                if (dist > barWidth / 2) continue;
+
+                const strength = 1 - (dist / (barWidth / 2));
+                const alpha = strength * 0.55;
+
+                data[idx]     = Math.min(255, data[idx]     + 180 * alpha);
+                data[idx + 1] = Math.min(255, data[idx + 1] + 180 * alpha);
+                data[idx + 2] = Math.min(255, data[idx + 2] + 150 * alpha);
+            }
+        }
+
+        ctx.putImageData(imageData, 0, 0);
+        requestAnimationFrame(drawSidebarFrame);
+    }
+})();
+
+// ===== 手机顶部登录状态控制 =====
+(function initHeaderAuth() {
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true' || false;
+
+    const slogan = document.getElementById('headerSlogan');
+    const authButtons = document.getElementById('headerAuthButtons');
+
+    if (slogan && authButtons) {
+        if (isLoggedIn) {
+            slogan.style.display = 'inline-block';
+            authButtons.style.display = 'none';
+        } else {
+            slogan.style.display = 'none';
+            authButtons.style.display = 'flex';
+        }
     }
 })();

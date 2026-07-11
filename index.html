@@ -14,11 +14,12 @@
 
     <!-- ===== SIDEBAR (电脑显示，手机隐藏) ===== -->
     <div class="sidebar">
-        <a href="/" class="logo-metal">
-            <img src="https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/hero-background/logo.png" 
-                 alt="VISION711" 
-                 style="height:40px; width:auto; display:block;">
-        </a>
+        <div class="sidebar-logo-wrapper">
+            <a href="/" class="logo-metal">
+                <canvas id="sidebarLogoCanvas" width="400" height="200"></canvas>
+            </a>
+            <span class="sidebar-slogan">Play Safe, Win Safe</span>
+        </div>
 
         <div class="lang-switcher">
             <button class="lang-btn active" data-lang="en">EN</button>
@@ -55,16 +56,8 @@
     <!-- ===== MAIN CONTENT ===== -->
     <div class="main-content">
 
-        <!-- 手机顶部导航 -->
-        <div class="mobile-header">
-            <!-- Hamburger 会通过 JS 自动注入到这里 -->
-            <!-- Logo 在右边 -->
-            <a href="/" class="logo-metal">
-                <img src="https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/hero-background/logo.png" 
-                     alt="VISION711" 
-                     style="height:32px; width:auto; display:block;">
-            </a>
-        </div>
+        <!-- 手机顶部导航 - JS 自动注入 -->
+        <div class="mobile-header"></div>
 
         <!-- ===== 轮播图 ===== -->
         <div class="carousel-container">

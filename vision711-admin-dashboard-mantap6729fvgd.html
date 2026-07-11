@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Admin Dashboard · VISION711</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .admin-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px 16px 100px;
+            min-height: 100vh;
+            background: #06060f;
+        }
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            margin-bottom: 20px;
+        }
+        .admin-header .logo {
+            font-size: 1.2rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            color: #fff;
+        }
+        .admin-header .logo span {
+            color: #00b4ff;
+        }
+        .admin-header .admin-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .admin-header .admin-user .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #0d0d30, #1a1a4a);
+            border: 1px solid rgba(0, 180, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #00b4ff;
+        }
+        .admin-header .admin-user .name {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.8rem;
+        }
+        .admin-header .admin-user .badge {
+            background: rgba(0, 180, 255, 0.08);
+            border: 1px solid rgba(0, 180, 255, 0.08);
+            color: #00d4ff;
+            font-size: 0.55rem;
+            padding: 2px 10px;
+            border-radius: 30px;
+        }
+        .card-welcome {
+            background: linear-gradient(145deg, #0a0a25, #11162e);
+            border: 1px solid rgba(0, 180, 255, 0.06);
+            border-radius: 16px;
+            padding: 20px 18px;
+            margin-bottom: 16px;
+        }
+        .card-welcome .greeting {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.8rem;
+        }
+        .card-welcome .greeting strong {
+            color: #fff;
+            font-size: 1rem;
+        }
+        .card-welcome .online-badge {
+            background: rgba(76, 217, 160, 0.08);
+            color: #4cd9a0;
+            padding: 2px 14px;
+            border-radius: 30px;
+            font-size: 0.6rem;
+            border: 1px solid rgba(76, 217, 160, 0.08);
+        }
+        .card-welcome .last-login {
+            color: rgba(255, 255, 255, 0.15);
+            font-size: 0.7rem;
+            margin-top: 4px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .stat-card {
+            background: rgba(10, 10, 32, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 14px 12px;
+            text-align: center;
+        }
+        .stat-card .num {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fff;
+        }
+        .stat-card .label {
+            font-size: 0.6rem;
+            color: rgba(255, 255, 255, 0.25);
+            margin-top: 2px;
+        }
+        .stat-card .change {
+            font-size: 0.55rem;
+            color: #4cd9a0;
+            margin-top: 4px;
+        }
+        .stat-card .change.down {
+            color: #f5b342;
+        }
+
+        .admin-table {
+            background: rgba(10, 10, 32, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+        .admin-table .title {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+        .admin-table .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+            font-size: 0.8rem;
+        }
+        .admin-table .row:last-child {
+            border-bottom: none;
+        }
+        .admin-table .row .user {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        .admin-table .row .amount {
+            font-weight: 700;
+        }
+        .admin-table .row .amount.green { color: #4cd9a0; }
+        .admin-table .row .amount.gold { color: #ffd700; }
+        .admin-table .row .status {
+            font-size: 0.55rem;
+            padding: 2px 12px;
+            border-radius: 30px;
+        }
+        .admin-table .row .status.success {
+            background: rgba(76, 217, 160, 0.08);
+            color: #4cd9a0;
+        }
+        .admin-table .row .status.pending {
+            background: rgba(255, 215, 0, 0.08);
+            color: #ffd700;
+        }
+        .admin-table .row .status.failed {
+            background: rgba(227, 53, 69, 0.08);
+            color: #e33545;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+        .quick-actions .btn {
+            flex: 1;
+            min-width: 100px;
+            padding: 10px 16px;
+            border-radius: 30px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        .quick-actions .btn-primary {
+            background: linear-gradient(145deg, #00b4ff, #0088d4);
+            color: #fff;
+        }
+        .quick-actions .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 180, 255, 0.2);
+        }
+        .quick-actions .btn-outline {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: rgba(255, 255, 255, 0.4);
+        }
+        .quick-actions .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .quick-actions .btn-danger {
+            background: rgba(227, 53, 69, 0.1);
+            border: 1px solid rgba(227, 53, 69, 0.1);
+            color: #e33545;
+        }
+        .quick-actions .btn-danger:hover {
+            background: rgba(227, 53, 69, 0.2);
+        }
+
+        .back-home {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: rgba(255, 255, 255, 0.08);
+            font-size: 0.65rem;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .back-home:hover {
+            color: rgba(0, 180, 255, 0.2);
+        }
+
+        @media (max-width: 600px) {
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .quick-actions {
+                flex-direction: column;
+            }
+            .quick-actions .btn {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Header -->
+        <div class="admin-header">
+            <div class="logo"><i class="fas fa-shield-alt"></i> ADMIN<span>Panel</span></div>
+            <div class="admin-user">
+                <span class="badge"><i class="fas fa-circle" style="font-size:6px;color:#4cd9a0;"></i> Online</span>
+                <span class="name">admin</span>
+                <div class="avatar"><i class="fas fa-user-shield"></i></div>
+            </div>
+        </div>
+
+        <!-- Welcome -->
+        <div class="card-welcome">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+                <div>
+                    <span class="greeting">Welcome back, <strong>Administrator</strong></span>
+                </div>
+                <span class="online-badge"><i class="fas fa-circle" style="font-size:6px;"></i> Online</span>
+            </div>
+            <div class="last-login"><i class="far fa-calendar-alt"></i> Last Login: 2026-07-10 14:30</div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="num">28</div>
+                <div class="label">Total Users</div>
+                <div class="change"><i class="fas fa-arrow-up"></i> +3 This Week</div>
+            </div>
+            <div class="stat-card">
+                <div class="num">RM 1.2k</div>
+                <div class="label">Today's Deposit</div>
+                <div class="change"><i class="fas fa-arrow-up"></i> +15%</div>
+            </div>
+            <div class="stat-card">
+                <div class="num">RM 890</div>
+                <div class="label">Today's Withdraw</div>
+                <div class="change down"><i class="fas fa-arrow-down"></i> -5%</div>
+            </div>
+            <div class="stat-card">
+                <div class="num">15</div>
+                <div class="label">Active Bets</div>
+                <div class="change"><i class="fas fa-arrow-up"></i> +2</div>
+            </div>
+        </div>
+
+        <!-- Transactions -->
+        <div class="admin-table">
+            <div class="title"><i class="fas fa-clock"></i> Latest Transactions</div>
+            <div class="row">
+                <span class="user"><i class="fas fa-user-circle"></i> 60****484</span>
+                <span class="amount green">+ RM 35.00</span>
+                <span class="status success">Success</span>
+            </div>
+            <div class="row">
+                <span class="user"><i class="fas fa-user-circle"></i> 60****713</span>
+                <span class="amount gold">- RM 130.00</span>
+                <span class="status success">Success</span>
+            </div>
+            <div class="row">
+                <span class="user"><i class="fas fa-user-circle"></i> 60****350</span>
+                <span class="amount green">+ RM 50.00</span>
+                <span class="status pending">Pending</span>
+            </div>
+            <div class="row">
+                <span class="user"><i class="fas fa-user-circle"></i> 60****441</span>
+                <span class="amount gold">- RM 78.00</span>
+                <span class="status failed">Failed</span>
+            </div>
+        </div>
+
+        <!-- System Status -->
+        <div class="admin-table">
+            <div class="title"><i class="fas fa-server"></i> System Status</div>
+            <div class="row">
+                <span><i class="fas fa-check-circle" style="color:#ffd700;"></i> Server</span>
+                <span style="color:#4cd9a0;">Normal</span>
+                <span style="color:rgba(255,255,255,0.15);font-size:0.65rem;">Latency 12ms</span>
+            </div>
+            <div class="row">
+                <span><i class="fas fa-database" style="color:#ffd700;"></i> Database</span>
+                <span style="color:#4cd9a0;">Connected</span>
+                <span style="color:rgba(255,255,255,0.15);font-size:0.65rem;">2 Connections</span>
+            </div>
+            <div class="row">
+                <span><i class="fas fa-users" style="color:#ffd700;"></i> Online Users</span>
+                <span style="color:#f5b342;">8</span>
+                <span style="color:rgba(255,255,255,0.15);font-size:0.65rem;">Peak 23</span>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <button class="btn btn-primary"><i class="fas fa-user-plus"></i> Add User</button>
+            <button class="btn btn-outline"><i class="fas fa-file-invoice"></i> Transaction Review</button>
+            <button class="btn btn-danger" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+
+        <a href="../index.html" class="back-home">
+            <i class="fas fa-arrow-left"></i> Back to Home
+        </a>
+    </div>
+
+    <script>
+        // 登出
+        document.getElementById('logout-btn').addEventListener('click', function() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.setItem('isLoggedIn', 'false');
+                window.location.href = '../index.html';
+            }
+        });
+
+        // 檢查登錄狀態，如果未登錄則跳轉
+        if (localStorage.getItem('isLoggedIn') !== 'true') {
+            window.location.href = 'vision711-admin-login-mantap7541bbgn.html';
+        }
+    </script>
+</body>
+</html>
