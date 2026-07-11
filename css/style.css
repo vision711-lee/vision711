@@ -1109,7 +1109,6 @@ html, body {
         display: inline-block;
         position: relative;
         flex-shrink: 0;
-        order: 1;
     }
 
     .hamburger-header .logo-metal canvas {
@@ -1129,7 +1128,6 @@ html, body {
         flex-shrink: 0;
         display: inline-block;
         text-align: center;
-        order: 2;
         background: linear-gradient(120deg, #a0e9ff 0%, #4db8ff 20%, #ffffff 45%, #6fcbff 70%, #a0e9ff 100%);
         background-size: 300% auto;
         -webkit-background-clip: text;
