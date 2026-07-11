@@ -31,12 +31,14 @@
 
     <!-- 抽屉菜单 -->
     <div class="hamburger-menu" id="hamburgerMenu">
-        <!-- 菜单头部 -->
+        <!-- 菜单头部 - Logo 在右侧 -->
         <div class="hamburger-header">
-    <a href="index.html" class="logo-metal">
-        <span class="vision">VISION</span><span class="seven">7</span><span class="one">1</span><span class="seven">1</span>
-    </a>
-</div>
+            <a href="/" class="logo-metal">
+                <img src="https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/hero-background/logo.png" 
+                     alt="VISION711" 
+                     style="height:36px; width:auto; display:block;">
+            </a>
+        </div>
 
         <!-- 用户信息 -->
         <div class="hamburger-user">
@@ -50,19 +52,19 @@
 
         <!-- 导航链接 -->
         <nav class="hamburger-nav">
-            <a href="index.html" class="nav-item" data-page="index">
+            <a href="/" class="nav-item" data-page="index">
                 <i class="fas fa-home"></i> <span data-i18n="nav.home">Home</span>
             </a>
-            <a href="dashboard.html" class="nav-item" data-page="dashboard">
+            <a href="/dashboard" class="nav-item" data-page="dashboard">
                 <i class="fas fa-tachometer-alt"></i> <span data-i18n="nav.dashboard">Dashboard</span>
             </a>
-            <a href="deposit.html" class="nav-item" data-page="deposit">
+            <a href="/deposit" class="nav-item" data-page="deposit">
                 <i class="fas fa-wallet"></i> <span data-i18n="nav.deposit">Deposit</span>
             </a>
-            <a href="withdraw.html" class="nav-item" data-page="withdraw">
+            <a href="/withdraw" class="nav-item" data-page="withdraw">
                 <i class="fas fa-arrow-up"></i> <span data-i18n="nav.withdraw">Withdraw</span>
             </a>
-            <a href="profile.html" class="nav-item" data-page="profile">
+            <a href="/profile" class="nav-item" data-page="profile">
                 <i class="fas fa-user-cog"></i> <span data-i18n="nav.profile">Profile</span>
             </a>
         </nav>
@@ -97,8 +99,10 @@
             // 插入 Logo
             newHeader.innerHTML = `
                 <div id="hamburgerPlaceholder"></div>
-                <a href="index.html" class="logo-metal">
-                    <span class="vision">VISION</span><span class="seven">7</span><span class="one">1</span><span class="seven">1</span>
+                <a href="/" class="logo-metal">
+                    <img src="https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/hero-background/logo.png" 
+                         alt="VISION711" 
+                         style="height:32px; width:auto; display:block;">
                 </a>
             `;
             mainContent.insertBefore(newHeader, mainContent.firstChild);
@@ -132,7 +136,6 @@
 
     // ===== 初始化菜单逻辑 =====
     const toggleBtn = document.getElementById('hamburgerToggle');
-    const closeBtn = document.getElementById('hamburgerClose');
     const menu = document.getElementById('hamburgerMenu');
     const overlay = document.getElementById('hamburgerOverlay');
 
