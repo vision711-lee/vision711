@@ -180,14 +180,11 @@
 
     <script>
         // ============================================================
-        // 登录处理 - 使用 ilike 忽略大小写查询
+        // 登录处理 - 使用输入框的值
         // ============================================================
         (function() {
             'use strict';
 
-            // ============================================================
-            // DOM 引用
-            // ============================================================
             var usernameInput = document.getElementById('adminUsername');
             var passwordInput = document.getElementById('adminPassword');
             var gaInput = document.getElementById('gaCode');
@@ -195,16 +192,10 @@
             var loginBtn = document.getElementById('loginBtn');
             var statusText = document.getElementById('statusText');
 
-            // ============================================================
-            // Supabase 配置
-            // ============================================================
             var SUPABASE_URL = 'https://qgmbzdfnwsdosdqphlxk.supabase.co';
             var SUPABASE_KEY = 'sb_publishable_zsJFjfNUO7NKp8ZH5KrXFQ_WZ8Q2Kym';
             var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-            // ============================================================
-            // Base32 解码
-            // ============================================================
             function base32Decode(encoded) {
                 var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
                 var bytes = [];
@@ -223,9 +214,6 @@
                 return new Uint8Array(bytes);
             }
 
-            // ============================================================
-            // 生成 TOTP
-            // ============================================================
             function generateTOTP(secret, offsetSeconds) {
                 offsetSeconds = offsetSeconds || 0;
                 try {
@@ -264,9 +252,6 @@
                 }
             }
 
-            // ============================================================
-            // GA 验证
-            // ============================================================
             function verifyGA(secret, code) {
                 try {
                     var offsets = [-30, 0, 30];
@@ -286,44 +271,13 @@
                 }
             }
 
-            // ============================================================
-            // 查询管理员 - 使用 ilike 忽略大小写，并打印所有数据
-            // ============================================================
-            function queryAdmin(username, callback) {
-                console.log('🔍 查询管理员 (忽略大小写):', username);
-                
-                // 先查所有数据看看
-                sb.from('admin_users')
-                    .select('*')
-                    .then(function(allRes) {
-                        console.log('📊 表中所有数据:', allRes);
-                        
-                        // 再用 ilike 查
-                        sb.from('admin_users')
-                            .select('*')
-                            .ilike('username', username)
-                            .then(function(res) {
-                                console.log('📊 ilike 查询结果:', res);
-                                callback(null, res);
-                            })
-                            .catch(function(err) {
-                                console.error('❌ 查询失败:', err);
-                                callback(err, null);
-                            });
-                    })
-                    .catch(function(err) {
-                        console.error('❌ 查询所有数据失败:', err);
-                        callback(err, null);
-                    });
-            }
-
-            // ============================================================
-            // 登录处理
-            // ============================================================
             function handleLogin() {
+                // 🔥 使用输入框的值
                 var username = usernameInput.value.trim();
                 var password = passwordInput.value;
                 var gaCode = gaInput.value.trim();
+
+                console.log('🔍 查询用户名:', username);
 
                 messageBox.textContent = '';
                 messageBox.className = '';
@@ -351,80 +305,85 @@
                 loginBtn.disabled = true;
                 loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
 
-                queryAdmin(username, function(err, res) {
-                    if (err) {
-                        messageBox.textContent = '❌ Database error: ' + err.message;
+                sb.from('admin_users')
+                    .select('*')
+                    .eq('username', username)
+                    .eq('is_active', true)
+                    .then(function(res) {
+                        console.log('📊 查询结果:', res);
+
+                        var data = res.data;
+                        var error = res.error;
+
+                        if (error) {
+                            messageBox.textContent = '❌ Database error: ' + error.message;
+                            messageBox.className = 'error-message';
+                            statusText.textContent = '❌ Error';
+                            loginBtn.disabled = false;
+                            loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+                            return;
+                        }
+
+                        if (!data || data.length === 0) {
+                            messageBox.textContent = '❌ Admin user not found. Username: ' + username;
+                            messageBox.className = 'error-message';
+                            statusText.textContent = '❌ User not found';
+                            loginBtn.disabled = false;
+                            loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+                            return;
+                        }
+
+                        var admin = data[0];
+                        console.log('✅ 找到管理员:', admin);
+                        console.log('✅ ga_secret:', admin.ga_secret);
+                        statusText.textContent = '✅ Found: ' + admin.username;
+
+                        if (admin.password_hash !== password) {
+                            messageBox.textContent = '❌ Invalid password';
+                            messageBox.className = 'error-message';
+                            statusText.textContent = '❌ Wrong password';
+                            loginBtn.disabled = false;
+                            loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+                            return;
+                        }
+
+                        statusText.textContent = '✅ Password OK, verifying GA...';
+
+                        var expectedCode = generateTOTP(admin.ga_secret, 0);
+                        console.log('🔑 预期的 GA 码:', expectedCode);
+                        console.log('📱 您输入的 GA 码:', gaCode);
+
+                        if (!verifyGA(admin.ga_secret, gaCode)) {
+                            messageBox.textContent = '❌ Invalid GA code. Expected: ' + expectedCode;
+                            messageBox.className = 'error-message';
+                            statusText.textContent = '❌ GA code invalid';
+                            loginBtn.disabled = false;
+                            loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+                            return;
+                        }
+
+                        messageBox.textContent = '✅ Login successful! Redirecting...';
+                        messageBox.className = 'success-message';
+                        statusText.textContent = '✅ Success! Redirecting...';
+
+                        localStorage.setItem('admin_logged_in', 'true');
+                        localStorage.setItem('admin_username', username);
+                        localStorage.setItem('admin_login_time', Date.now().toString());
+
+                        setTimeout(function() {
+                            window.location.href = 'vision711-admin-dashboard-GB75L.html';
+                        }, 800);
+                    })
+                    .catch(function(err) {
+                        console.error('❌ 查询失败:', err);
+                        messageBox.textContent = '❌ Error: ' + err.message;
                         messageBox.className = 'error-message';
                         statusText.textContent = '❌ Error';
                         loginBtn.disabled = false;
                         loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
-                        return;
-                    }
-
-                    var data = res.data;
-                    var error = res.error;
-
-                    if (error) {
-                        messageBox.textContent = '❌ Database error: ' + error.message;
-                        messageBox.className = 'error-message';
-                        statusText.textContent = '❌ Error';
-                        loginBtn.disabled = false;
-                        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
-                        return;
-                    }
-
-                    if (!data || data.length === 0) {
-                        messageBox.textContent = '❌ Admin user not found. Username: ' + username;
-                        messageBox.className = 'error-message';
-                        statusText.textContent = '❌ User not found';
-                        loginBtn.disabled = false;
-                        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
-                        return;
-                    }
-
-                    var admin = data[0];
-                    console.log('✅ 找到管理员:', admin);
-                    console.log('✅ username:', admin.username);
-                    console.log('✅ ga_secret:', admin.ga_secret);
-                    statusText.textContent = '✅ Found: ' + admin.username;
-
-                    if (admin.password_hash !== password) {
-                        messageBox.textContent = '❌ Invalid password';
-                        messageBox.className = 'error-message';
-                        statusText.textContent = '❌ Wrong password';
-                        loginBtn.disabled = false;
-                        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
-                        return;
-                    }
-
-                    statusText.textContent = '✅ Password OK, verifying GA...';
-
-                    if (!verifyGA(admin.ga_secret, gaCode)) {
-                        messageBox.textContent = '❌ Invalid Google Authenticator code. Expected: ' + generateTOTP(admin.ga_secret, 0);
-                        messageBox.className = 'error-message';
-                        statusText.textContent = '❌ GA code invalid';
-                        loginBtn.disabled = false;
-                        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
-                        return;
-                    }
-
-                    messageBox.textContent = '✅ Login successful! Redirecting...';
-                    messageBox.className = 'success-message';
-                    statusText.textContent = '✅ Success! Redirecting...';
-
-                    localStorage.setItem('admin_logged_in', 'true');
-                    localStorage.setItem('admin_username', username);
-                    localStorage.setItem('admin_login_time', Date.now().toString());
-
-                    setTimeout(function() {
-                        window.location.href = 'vision711-admin-dashboard-GB75L.html';
-                    }, 800);
-                });
+                    });
             }
 
-            // ============================================================
-            // 绑定事件
-            // ============================================================
             loginBtn.addEventListener('click', handleLogin);
 
             document.addEventListener('keypress', function(e) {
@@ -433,9 +392,6 @@
                 }
             });
 
-            // ============================================================
-            // 检查登录状态
-            // ============================================================
             if (localStorage.getItem('admin_logged_in') === 'true') {
                 var loginTime = parseInt(localStorage.getItem('admin_login_time') || '0');
                 if (Date.now() - loginTime < 24 * 60 * 60 * 1000) {
@@ -446,28 +402,20 @@
                 }
             }
 
-            // ============================================================
-            // 页面加载完成后检查连接
-            // ============================================================
             statusText.textContent = '⏳ Testing connection...';
-
-            sb.from('admin_users')
-                .select('*')
-                .then(function(res) {
-                    console.log('🔗 连接测试 - 所有数据:', res);
-                    if (res.error) {
-                        statusText.textContent = '⚠️ DB connection error';
-                        console.error('连接错误:', res.error);
-                    } else if (res.data && res.data.length > 0) {
-                        statusText.textContent = '✅ Database ready - ' + res.data.length + ' users found';
-                    } else {
-                        statusText.textContent = '⚠️ Database empty';
-                    }
-                })
-                .catch(function(err) {
-                    statusText.textContent = '⚠️ Connection failed';
-                    console.error('连接失败:', err);
-                });
+            sb.from('admin_users').select('*').limit(1).then(function(res) {
+                console.log('🔗 连接测试:', res);
+                if (res.error) {
+                    statusText.textContent = '⚠️ DB error';
+                } else if (res.data && res.data.length > 0) {
+                    statusText.textContent = '✅ Database ready - ' + res.data.length + ' user(s) found';
+                } else {
+                    statusText.textContent = '⚠️ No data found';
+                }
+            }).catch(function(err) {
+                statusText.textContent = '⚠️ Connection failed';
+                console.error('连接失败:', err);
+            });
 
             console.log('🔐 GA 验证 - 检查 -30s, 0s, +30s');
             console.log('📡 Supabase URL:', SUPABASE_URL);
