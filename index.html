@@ -1,0 +1,194 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VISION711 · Home</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app-container">
+
+    <!-- ===== SIDEBAR (电脑显示，手机隐藏) ===== -->
+    <div class="sidebar">
+        <a href="index.html" class="logo-metal">
+            <span class="vision">VISION</span><span class="seven">7</span><span class="one">1</span><span class="seven">1</span>
+        </a>
+
+        <div class="lang-switcher">
+            <button class="lang-btn active" data-lang="en">EN</button>
+            <button class="lang-btn" data-lang="zh">中文</button>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-item active">
+                <i class="fas fa-home"></i> <span data-i18n="nav.home">Home</span>
+            </a>
+            <a href="dashboard.html" class="nav-item">
+                <i class="fas fa-tachometer-alt"></i> <span data-i18n="nav.dashboard">Dashboard</span>
+            </a>
+            <a href="deposit.html" class="nav-item">
+                <i class="fas fa-wallet"></i> <span data-i18n="nav.deposit">Deposit</span>
+            </a>
+            <a href="withdraw.html" class="nav-item">
+                <i class="fas fa-arrow-up"></i> <span data-i18n="nav.withdraw">Withdraw</span>
+            </a>
+            <a href="profile.html" class="nav-item">
+                <i class="fas fa-user-cog"></i> <span data-i18n="nav.profile">Profile</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-avatar-metal"><i class="fas fa-user"></i></div>
+            <div class="user-info">
+                <div class="name">Player</div>
+                <div class="role">VIP 2</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="main-content">
+
+        <!-- 手机顶部导航 -->
+<div class="mobile-header">
+    <!-- Hamburger 会通过 JS 自动注入到这里 -->
+    <!-- Logo 在右边 -->
+    <a href="index.html" class="logo-metal">
+        <span class="vision">VISION</span><span class="seven">7</span><span class="one">1</span><span class="seven">1</span>
+    </a>
+</div>
+
+        <!-- ===== 轮播图 ===== -->
+        <div class="carousel-container">
+            <div class="carousel-track" id="carouselTrack">
+                <div class="carousel-slide">
+                    <div class="carousel-content">
+                        <div class="carousel-badge">🔥 热门</div>
+                        <div class="carousel-title">RM888 存款奖励</div>
+                        <div class="carousel-desc">首次存款可获得 100% 额外红利</div>
+                        <span class="carousel-cta">立即领取 →</span>
+                    </div>
+                    <div class="carousel-image">
+                        <i class="fas fa-gift"></i>
+                    </div>
+                </div>
+                <div class="carousel-slide">
+                    <div class="carousel-content">
+                        <div class="carousel-badge">🎰 活动</div>
+                        <div class="carousel-title">幸运抽奖进行中</div>
+                        <div class="carousel-desc">存款 RM20 获得幸运号码，赢取大奖</div>
+                        <span class="carousel-cta">参与抽奖 →</span>
+                    </div>
+                    <div class="carousel-image">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                </div>
+                <div class="carousel-slide">
+                    <div class="carousel-content">
+                        <div class="carousel-badge">🆕 新游戏</div>
+                        <div class="carousel-title">MEGA888 全新上线</div>
+                        <div class="carousel-desc">体验最新老虎机游戏，赢取丰厚奖金</div>
+                        <span class="carousel-cta">立即游玩 →</span>
+                    </div>
+                    <div class="carousel-image">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-btn carousel-btn-left" id="carouselPrev"><i class="fas fa-chevron-left"></i></button>
+            <button class="carousel-btn carousel-btn-right" id="carouselNext"><i class="fas fa-chevron-right"></i></button>
+            <div class="carousel-dots" id="carouselDots">
+                <span class="dot active" data-index="0"></span>
+                <span class="dot" data-index="1"></span>
+                <span class="dot" data-index="2"></span>
+            </div>
+        </div>
+
+        <!-- ===== 页面内容 ===== -->
+        <div class="card-welcome">
+            <div class="flex-row">
+                <span class="greeting"><i class="fas fa-hand-peace"></i> <span data-i18n="home.welcome">Welcome back</span>, <span data-i18n="home.player">Player</span></span>
+                <span class="badge-metal"><i class="fas fa-star"></i> VIP 2</span>
+            </div>
+            <div class="balance-metal">
+                RM 0.00 <small data-i18n="label.balance">Balance</small>
+            </div>
+            <div class="action-buttons">
+                <a href="deposit.html" class="btn-metal-primary w-full"><i class="fas fa-plus-circle"></i> <span data-i18n="btn.deposit">Deposit</span></a>
+                <a href="withdraw.html" class="btn-metal-outline w-full"><i class="fas fa-arrow-up"></i> <span data-i18n="btn.withdraw">Withdraw</span></a>
+            </div>
+        </div>
+
+        <div class="live-transaction">
+            <div class="flex-row" style="margin-bottom:10px;">
+                <span style="color:rgba(255,255,255,0.35);font-size:0.75rem;font-weight:600;">
+                    <i class="fas fa-sync-alt" style="color:#00b4ff;"></i> <span data-i18n="home.liveTransaction">LIVE TRANSACTION</span>
+                </span>
+                <span class="live-badge"><i class="fas fa-circle" style="font-size:6px;"></i> <span data-i18n="home.live">LIVE</span></span>
+            </div>
+            <div class="transaction-item">
+                <span class="user"><i class="fas fa-user-circle"></i> 60****484</span>
+                <span class="amount deposit">+ RM35.00</span>
+                <span class="game-tag">MEGA888</span>
+            </div>
+            <div class="transaction-item">
+                <span class="user"><i class="fas fa-user-circle"></i> 60****713</span>
+                <span class="amount withdraw">- RM130.00</span>
+                <span class="game-tag">PRAGMATIC</span>
+            </div>
+            <div class="transaction-item">
+                <span class="user"><i class="fas fa-user-circle"></i> 60****350</span>
+                <span class="amount deposit">+ RM50.00</span>
+                <span class="game-tag">EVO888H5</span>
+            </div>
+            <div class="transaction-item">
+                <span class="user"><i class="fas fa-user-circle"></i> 60****441</span>
+                <span class="amount withdraw">- RM78.00</span>
+                <span class="game-tag">PRAGMATIC</span>
+            </div>
+            <div class="transaction-item">
+                <span class="user"><i class="fas fa-user-circle"></i> 60****119</span>
+                <span class="amount deposit">+ RM35.00</span>
+                <span class="game-tag">MEGA888</span>
+            </div>
+            <div class="text-muted text-center" style="font-size:0.7rem;margin-top:6px;cursor:pointer;">
+                <i class="fas fa-chevron-down"></i> <span data-i18n="btn.viewMore">View More</span>
+            </div>
+        </div>
+
+        <div class="lucky-draw">
+            <div class="flex-row">
+                <span class="draw-title"><i class="fas fa-gift"></i> <span data-i18n="home.luckyDraw">Deposit Lucky Draw</span></span>
+                <span class="badge-gold">RM888</span>
+            </div>
+            <div class="draw-desc" data-i18n="home.luckyDesc">Every RM20 deposit gets 1 lucky number.</div>
+            <div class="flex-row">
+                <span class="lucky-number-box" id="lucky-number">7 2 9 4</span>
+                <button class="btn-draw" id="lucky-draw-btn"><i class="fas fa-dice"></i> <span data-i18n="btn.draw">Draw</span></button>
+            </div>
+            <div class="lucky-info">
+                <span class="text-muted"><i class="far fa-calendar-alt"></i> <span data-i18n="home.drawInfo">Daily Draw</span></span>
+                <span class="text-muted" style="cursor:pointer;" data-i18n="home.moreInfo">More Info →</span>
+            </div>
+        </div>
+
+        <!-- 手机底部导航 -->
+        <div class="bottom-nav">
+            <a href="index.html" class="nav-item active"><i class="fas fa-home"></i><span data-i18n="nav.home">Home</span></a>
+            <a href="dashboard.html" class="nav-item"><i class="fas fa-tachometer-alt"></i><span data-i18n="nav.dashboard">Dashboard</span></a>
+            <a href="deposit.html" class="nav-item"><i class="fas fa-wallet"></i><span data-i18n="nav.deposit">Deposit</span></a>
+            <a href="withdraw.html" class="nav-item"><i class="fas fa-arrow-up"></i><span data-i18n="nav.withdraw">Withdraw</span></a>
+            <a href="profile.html" class="nav-item"><i class="fas fa-user-cog"></i><span data-i18n="nav.profile">Profile</span></a>
+        </div>
+
+    </div><!-- /main-content -->
+</div><!-- /app-container -->
+
+<script src="js/main.js"></script>
+<script src="components/hamburger.js"></script>
+</body>
+</html>

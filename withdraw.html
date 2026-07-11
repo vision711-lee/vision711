@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VISION711 · Withdraw</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app-container">
+
+    <!-- ===== SIDEBAR ===== -->
+    <div class="sidebar">
+        <a href="index.html" class="logo-metal">
+            <span class="vision">VISION</span><span class="seven">7</span><span class="one">1</span><span class="seven">1</span>
+        </a>
+
+        <div class="lang-switcher">
+            <button class="lang-btn active" data-lang="en">EN</button>
+            <button class="lang-btn" data-lang="zh">中文</button>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-item">
+                <i class="fas fa-home"></i> <span data-i18n="nav.home">Home</span>
+            </a>
+            <a href="dashboard.html" class="nav-item">
+                <i class="fas fa-tachometer-alt"></i> <span data-i18n="nav.dashboard">Dashboard</span>
+            </a>
+            <a href="deposit.html" class="nav-item">
+                <i class="fas fa-wallet"></i> <span data-i18n="nav.deposit">Deposit</span>
+            </a>
+            <a href="withdraw.html" class="nav-item active">
+                <i class="fas fa-arrow-up"></i> <span data-i18n="nav.withdraw">Withdraw</span>
+            </a>
+            <a href="profile.html" class="nav-item">
+                <i class="fas fa-user-cog"></i> <span data-i18n="nav.profile">Profile</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-avatar-metal"><i class="fas fa-user"></i></div>
+            <div class="user-info">
+                <div class="name">Player</div>
+                <div class="role">VIP 2</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="main-content">
+
+        <!-- 手机顶部导航 -->
+<div class="mobile-header">
+    <!-- Hamburger 会通过 JS 自动注入到这里 -->
+    <!-- Logo 在右边 -->
+    <a href="index.html" class="logo-metal">
+        <span class="vision">VISION</span><span class="seven">7</span><span class="one">1</span><span class="seven">1</span>
+    </a>
+</div>
+
+        <!-- 页面标题 -->
+        <h3 style="color:#00b4ff;font-size:1.1rem;margin-bottom:16px;">
+            <i class="fas fa-arrow-up"></i> <span data-i18n="withdraw.title">Withdraw</span>
+        </h3>
+
+        <!-- 余额 -->
+        <div class="card-welcome" style="margin-bottom:16px;">
+            <div class="flex-row">
+                <span style="color:rgba(255,255,255,0.4);font-size:0.85rem;" data-i18n="withdraw.availableBalance">Available Balance</span>
+                <span style="font-size:1.8rem;font-weight:700;color:#4cd9a0;">RM 0.00</span>
+            </div>
+        </div>
+
+        <!-- 提现表单 -->
+        <div class="card-metal">
+            <div class="flex-row" style="margin-bottom:12px;">
+                <span style="color:rgba(255,255,255,0.4);font-size:0.85rem;"><i class="fas fa-university" style="color:#ffd700;"></i> <span data-i18n="withdraw.method">Withdraw Method</span></span>
+                <span class="badge-gold" data-i18n="withdraw.bankTransfer">Bank Transfer</span>
+            </div>
+
+            <div class="input-group-metal">
+                <i class="fas fa-user"></i>
+                <input type="text" data-i18n-placeholder="withdraw.accountName" placeholder="Account Name" value="John Doe">
+            </div>
+            <div class="input-group-metal">
+                <i class="fas fa-university"></i>
+                <input type="text" data-i18n-placeholder="withdraw.bankName" placeholder="Bank Name" value="Maybank">
+            </div>
+            <div class="input-group-metal">
+                <i class="fas fa-hashtag"></i>
+                <input type="text" data-i18n-placeholder="withdraw.accountNumber" placeholder="Account Number" value="1234 5678 9012 3456">
+            </div>
+
+            <div class="input-group-metal">
+                <i class="fas fa-dollar-sign"></i>
+                <input type="number" id="withdraw-amount" data-i18n-placeholder="withdraw.enterAmount" placeholder="Enter withdraw amount" min="20" max="888" step="1">
+            </div>
+
+            <button class="btn-metal-primary w-full" id="withdraw-btn" style="justify-content:center;">
+                <i class="fas fa-paper-plane"></i> <span data-i18n="withdraw.submit">Submit Withdraw</span>
+            </button>
+            <div class="text-muted text-center" style="font-size:0.7rem;margin-top:8px;" data-i18n="withdraw.minWithdraw">
+                Minimum RM20 · Daily Limit RM888
+            </div>
+        </div>
+
+        <!-- 提现记录 -->
+        <div class="card-metal" style="margin-top:12px;">
+            <div class="section-title" style="margin-bottom:8px;"><i class="fas fa-clock"></i> <span data-i18n="withdraw.history">Withdraw History</span></div>
+            <div class="row-metal">
+                <span class="label" data-i18n="label.today">Today</span>
+                <span class="value-gold">- RM 0.00</span>
+                <span style="font-size:0.6rem;color:rgba(255,255,255,0.2);" data-i18n="deposit.noRecords">No Records</span>
+            </div>
+            <div class="row-metal">
+                <span class="label" data-i18n="label.thisWeek">This Week</span>
+                <span class="value-gold">- RM 0.00</span>
+                <span style="font-size:0.6rem;color:rgba(255,255,255,0.2);">0 <span data-i18n="deposit.noRecords">No Records</span></span>
+            </div>
+            <div class="row-metal">
+                <span class="label"><i class="fas fa-clock" style="color:#ffd700;"></i> <span data-i18n="withdraw.estimatedTime">Estimated Time</span></span>
+                <span style="color:#4cd9a0;font-weight:600;" data-i18n="label.estimated">5-10 minutes</span>
+                <span style="font-size:0.6rem;color:rgba(255,255,255,0.2);" data-i18n="withdraw.businessDay">Business Day</span>
+            </div>
+        </div>
+
+        <!-- 手机底部导航 -->
+        <div class="bottom-nav">
+            <a href="index.html" class="nav-item"><i class="fas fa-home"></i><span data-i18n="nav.home">Home</span></a>
+            <a href="dashboard.html" class="nav-item"><i class="fas fa-tachometer-alt"></i><span data-i18n="nav.dashboard">Dashboard</span></a>
+            <a href="deposit.html" class="nav-item"><i class="fas fa-wallet"></i><span data-i18n="nav.deposit">Deposit</span></a>
+            <a href="withdraw.html" class="nav-item active"><i class="fas fa-arrow-up"></i><span data-i18n="nav.withdraw">Withdraw</span></a>
+            <a href="profile.html" class="nav-item"><i class="fas fa-user-cog"></i><span data-i18n="nav.profile">Profile</span></a>
+        </div>
+
+    </div><!-- /main-content -->
+</div><!-- /app-container -->
+
+<script src="js/main.js"></script>
+<script src="components/hamburger.js"></script>
+</body>
+</html>

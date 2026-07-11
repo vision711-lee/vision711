@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VISION711 · Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app-container">
+
+    <!-- ===== SIDEBAR ===== -->
+    <div class="sidebar">
+        <a href="index.html" class="logo-metal">
+            <span class="vision">VISION</span><span class="seven">7</span><span class="one">1</span><span class="seven">1</span>
+        </a>
+
+        <div class="lang-switcher">
+            <button class="lang-btn active" data-lang="en">EN</button>
+            <button class="lang-btn" data-lang="zh">中文</button>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-item">
+                <i class="fas fa-home"></i> <span data-i18n="nav.home">Home</span>
+            </a>
+            <a href="dashboard.html" class="nav-item">
+                <i class="fas fa-tachometer-alt"></i> <span data-i18n="nav.dashboard">Dashboard</span>
+            </a>
+            <a href="deposit.html" class="nav-item">
+                <i class="fas fa-wallet"></i> <span data-i18n="nav.deposit">Deposit</span>
+            </a>
+            <a href="withdraw.html" class="nav-item">
+                <i class="fas fa-arrow-up"></i> <span data-i18n="nav.withdraw">Withdraw</span>
+            </a>
+            <a href="profile.html" class="nav-item active">
+                <i class="fas fa-user-cog"></i> <span data-i18n="nav.profile">Profile</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-avatar-metal"><i class="fas fa-user"></i></div>
+            <div class="user-info">
+                <div class="name">Player</div>
+                <div class="role">VIP 2</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="main-content">
+
+        <!-- 手机顶部导航 -->
+<div class="mobile-header">
+    <!-- Hamburger 会通过 JS 自动注入到这里 -->
+    <!-- Logo 在右边 -->
+    <a href="index.html" class="logo-metal">
+        <span class="vision">VISION</span><span class="seven">7</span><span class="one">1</span><span class="seven">1</span>
+    </a>
+</div>
+
+        <!-- 头像 -->
+        <div style="text-align:center;margin-bottom:20px;">
+            <div style="width:80px;height:80px;border-radius:50%;margin:0 auto 12px;background:repeating-linear-gradient(90deg,transparent 0px,transparent 2px,rgba(255,255,255,0.03) 2px,rgba(255,255,255,0.03) 3px),linear-gradient(145deg,#0d0d30,#1a1a4a);border:2px solid rgba(0,180,255,0.3);display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:#00b4ff;box-shadow:0 0 40px rgba(0,180,255,0.05);">
+                <i class="fas fa-user"></i>
+            </div>
+            <h3 style="color:#fff;font-size:1.1rem;" data-i18n="home.player">Player</h3>
+            <span class="badge-gold" style="display:inline-block;margin-top:4px;">VIP 2</span>
+            <span class="text-muted" style="display:block;font-size:0.75rem;margin-top:4px;">ID: #PL-2026-001</span>
+        </div>
+
+        <!-- 个人信息 -->
+        <div class="card-metal">
+            <div class="section-title" style="margin-bottom:4px;"><i class="fas fa-user-circle"></i> <span data-i18n="profile.personalInfo">Personal Information</span></div>
+            <div class="row-metal">
+                <span class="label"><i class="fas fa-envelope" style="color:#ffd700;"></i> <span data-i18n="label.email">Email</span></span>
+                <span style="color:rgba(255,255,255,0.7);">player@email.com</span>
+            </div>
+            <div class="row-metal">
+                <span class="label"><i class="fas fa-phone" style="color:#ffd700;"></i> <span data-i18n="label.phone">Phone</span></span>
+                <span style="color:rgba(255,255,255,0.7);">+60 12-345 6789</span>
+            </div>
+            <div class="row-metal">
+                <span class="label"><i class="fas fa-calendar" style="color:#ffd700;"></i> <span data-i18n="label.registered">Registered</span></span>
+                <span style="color:rgba(255,255,255,0.7);">2026-01-15</span>
+            </div>
+            <div class="row-metal">
+                <span class="label"><i class="fas fa-gamepad" style="color:#ffd700;"></i> <span data-i18n="label.totalGames">Total Games</span></span>
+                <span style="color:rgba(255,255,255,0.7);">0</span>
+            </div>
+        </div>
+
+        <!-- 设置 -->
+        <div class="card-metal" style="margin-top:12px;">
+            <div class="section-title" style="margin-bottom:4px;"><i class="fas fa-cog"></i> <span data-i18n="profile.settings">Settings</span></div>
+            <div class="row-metal">
+                <span class="label"><i class="fas fa-bell"></i> <span data-i18n="profile.notifications">Notifications</span></span>
+                <span style="color:#4cd9a0;font-weight:600;" data-i18n="profile.enabled">Enabled</span>
+            </div>
+            <div class="row-metal">
+                <span class="label"><i class="fas fa-language"></i> <span data-i18n="profile.language">Language</span></span>
+                <span id="current-lang-display" style="color:rgba(255,255,255,0.7);">English</span>
+            </div>
+            <div class="row-metal">
+                <span class="label"><i class="fas fa-shield-alt"></i> <span data-i18n="profile.security">Security</span></span>
+                <span style="color:#4cd9a0;font-weight:600;" data-i18n="profile.verified">Verified</span>
+            </div>
+        </div>
+
+        <!-- 手机底部导航 -->
+        <div class="bottom-nav">
+            <a href="index.html" class="nav-item"><i class="fas fa-home"></i><span data-i18n="nav.home">Home</span></a>
+            <a href="dashboard.html" class="nav-item"><i class="fas fa-tachometer-alt"></i><span data-i18n="nav.dashboard">Dashboard</span></a>
+            <a href="deposit.html" class="nav-item"><i class="fas fa-wallet"></i><span data-i18n="nav.deposit">Deposit</span></a>
+            <a href="withdraw.html" class="nav-item"><i class="fas fa-arrow-up"></i><span data-i18n="nav.withdraw">Withdraw</span></a>
+            <a href="profile.html" class="nav-item active"><i class="fas fa-user-cog"></i><span data-i18n="nav.profile">Profile</span></a>
+        </div>
+
+    </div><!-- /main-content -->
+</div><!-- /app-container -->
+
+<script src="js/main.js"></script>
+<script src="components/hamburger.js"></script>
+</body>
+</html>

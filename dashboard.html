@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VISION711 · Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app-container">
+
+    <!-- ===== SIDEBAR ===== -->
+    <div class="sidebar">
+        <a href="index.html" class="logo-metal">
+            <span class="vision">VISION</span><span class="seven">7</span><span class="one">1</span><span class="seven">1</span>
+        </a>
+
+        <div class="lang-switcher">
+            <button class="lang-btn active" data-lang="en">EN</button>
+            <button class="lang-btn" data-lang="zh">中文</button>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-item">
+                <i class="fas fa-home"></i> <span data-i18n="nav.home">Home</span>
+            </a>
+            <a href="dashboard.html" class="nav-item active">
+                <i class="fas fa-tachometer-alt"></i> <span data-i18n="nav.dashboard">Dashboard</span>
+            </a>
+            <a href="deposit.html" class="nav-item">
+                <i class="fas fa-wallet"></i> <span data-i18n="nav.deposit">Deposit</span>
+            </a>
+            <a href="withdraw.html" class="nav-item">
+                <i class="fas fa-arrow-up"></i> <span data-i18n="nav.withdraw">Withdraw</span>
+            </a>
+            <a href="profile.html" class="nav-item">
+                <i class="fas fa-user-cog"></i> <span data-i18n="nav.profile">Profile</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-avatar-metal"><i class="fas fa-user"></i></div>
+            <div class="user-info">
+                <div class="name">Player</div>
+                <div class="role">VIP 2</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="main-content">
+
+        <!-- 手机顶部导航 -->
+<div class="mobile-header">
+    <!-- Hamburger 会通过 JS 自动注入到这里 -->
+    <!-- Logo 在右边 -->
+    <a href="index.html" class="logo-metal">
+        <span class="vision">VISION</span><span class="seven">7</span><span class="one">1</span><span class="seven">1</span>
+    </a>
+</div>
+
+        <!-- 页面标题 -->
+        <div class="flex-row" style="margin-bottom:12px;">
+            <h3 style="color:#00b4ff;font-size:1.1rem;"><i class="fas fa-tachometer-alt"></i> <span data-i18n="dashboard.title">My Dashboard</span></h3>
+            <span class="badge-metal"><i class="fas fa-user"></i> <span data-i18n="home.player">Player</span></span>
+        </div>
+
+        <!-- 统计卡片 -->
+        <div class="stats-grid">
+            <div class="stat-card-metal">
+                <div class="num">RM0</div>
+                <div class="label" data-i18n="dashboard.totalDeposit">Total Deposit</div>
+            </div>
+            <div class="stat-card-metal">
+                <div class="num">0</div>
+                <div class="label" data-i18n="dashboard.totalBet">Total Bet</div>
+            </div>
+            <div class="stat-card-metal">
+                <div class="num">RM0</div>
+                <div class="label" data-i18n="dashboard.totalWithdraw">Total Withdraw</div>
+            </div>
+        </div>
+
+        <!-- 详细数据 -->
+        <div class="card-metal">
+            <div class="row-metal">
+                <span class="label"><i class="fas fa-coins" style="color:#ffd700;"></i> <span data-i18n="dashboard.todayTurnover">Today's Turnover</span></span>
+                <span class="value-gold">RM 0.00</span>
+            </div>
+            <div class="row-metal">
+                <span class="label"><i class="fas fa-percent" style="color:#ffd700;"></i> <span data-i18n="dashboard.weeklyCommission">Weekly Commission</span></span>
+                <span class="value-blue">RM 0.00</span>
+            </div>
+            <div class="row-metal">
+                <span class="label"><i class="fas fa-hand-holding-usd" style="color:#ffd700;"></i> <span data-i18n="dashboard.availableBalance">Available Balance</span></span>
+                <span class="value-green">RM 0.00</span>
+            </div>
+            <div class="row-metal">
+                <span class="label"><i class="fas fa-trophy" style="color:#ffd700;"></i> <span data-i18n="dashboard.todayLucky">Today's Lucky Number</span></span>
+                <span id="dash-lucky" style="color:#00d4ff;font-weight:700;font-size:1.1rem;letter-spacing:2px;">7 2 9 4</span>
+            </div>
+        </div>
+
+        <!-- 最近游戏 -->
+        <div class="card-metal" style="margin-top:12px;">
+            <div class="section-title" style="margin-bottom:8px;"><i class="fas fa-history"></i> <span data-i18n="dashboard.recentGames">Recent Games</span></div>
+            <div class="row-metal">
+                <span style="color:rgba(255,255,255,0.6);">MEGA888</span>
+                <span class="value-green">+ RM15.00</span>
+                <span style="font-size:0.6rem;color:rgba(255,255,255,0.2);">Today 14:30</span>
+            </div>
+            <div class="row-metal">
+                <span style="color:rgba(255,255,255,0.6);">PRAGMATIC SLOT</span>
+                <span style="color:#e33545;font-weight:700;">- RM5.00</span>
+                <span style="font-size:0.6rem;color:rgba(255,255,255,0.2);">Today 13:15</span>
+            </div>
+            <div class="row-metal">
+                <span style="color:rgba(255,255,255,0.6);">EVO888H5</span>
+                <span class="value-green">+ RM35.00</span>
+                <span style="font-size:0.6rem;color:rgba(255,255,255,0.2);">Yesterday 22:10</span>
+            </div>
+        </div>
+
+        <!-- 手机底部导航 -->
+        <div class="bottom-nav">
+            <a href="index.html" class="nav-item"><i class="fas fa-home"></i><span data-i18n="nav.home">Home</span></a>
+            <a href="dashboard.html" class="nav-item active"><i class="fas fa-tachometer-alt"></i><span data-i18n="nav.dashboard">Dashboard</span></a>
+            <a href="deposit.html" class="nav-item"><i class="fas fa-wallet"></i><span data-i18n="nav.deposit">Deposit</span></a>
+            <a href="withdraw.html" class="nav-item"><i class="fas fa-arrow-up"></i><span data-i18n="nav.withdraw">Withdraw</span></a>
+            <a href="profile.html" class="nav-item"><i class="fas fa-user-cog"></i><span data-i18n="nav.profile">Profile</span></a>
+        </div>
+
+    </div><!-- /main-content -->
+</div><!-- /app-container -->
+
+<script src="js/main.js"></script>
+<script src="components/hamburger.js"></script>
+</body>
+</html>
