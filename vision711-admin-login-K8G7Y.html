@@ -175,237 +175,236 @@
 
     <script>
         // ============================================================
-        // 使用 IIFE 避免变量重复声明
+        // Supabase 配置
         // ============================================================
-        (function() {
-            'use strict';
+        var SUPABASE_URL = 'https://qgmbzdfnwsdosdqphlxk.supabase.co';
+        var SUPABASE_KEY = 'sb_publishable_zsJFjfNUO7NKp8ZH5KrXFQ_WZ8Q2Kym';
+        var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-            // ============================================================
-            // Supabase 配置
-            // ============================================================
-            var SUPABASE_URL = 'https://qgmbzdfnwsdosdqphlxk.supabase.co';
-            var SUPABASE_KEY = 'sb_publishable_zsJFjfNUO7NKp8ZH5KrXFQ_WZ8Q2Kym';
-            var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // ============================================================
+        // DOM 引用
+        // ============================================================
+        var usernameInput = document.getElementById('adminUsername');
+        var passwordInput = document.getElementById('adminPassword');
+        var gaInput = document.getElementById('gaCode');
+        var messageBox = document.getElementById('messageBox');
+        var loginBtn = document.getElementById('loginBtn');
 
-            // ============================================================
-            // DOM 引用
-            // ============================================================
-            var usernameInput = document.getElementById('adminUsername');
-            var passwordInput = document.getElementById('adminPassword');
-            var gaInput = document.getElementById('gaCode');
-            var messageBox = document.getElementById('messageBox');
-            var loginBtn = document.getElementById('loginBtn');
-
-            // ============================================================
-            // Base32 解码
-            // ============================================================
-            function base32Decode(encoded) {
-                var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
-                var bytes = [];
-                var bits = 0;
-                var value = 0;
-                for (var i = 0; i < encoded.length; i++) {
-                    var index = alphabet.indexOf(encoded[i].toUpperCase());
-                    if (index === -1) continue;
-                    value = (value << 5) | index;
-                    bits += 5;
-                    if (bits >= 8) {
-                        bytes.push((value >> (bits - 8)) & 0xff);
-                        bits -= 8;
-                    }
-                }
-                return new Uint8Array(bytes);
-            }
-
-            // ============================================================
-            // 生成 TOTP
-            // ============================================================
-            function generateTOTP(secret, offsetSeconds) {
-                offsetSeconds = offsetSeconds || 0;
-                try {
-                    var key = base32Decode(secret);
-                    var epoch = Math.floor((Date.now() / 1000 + offsetSeconds) / 30);
-                    var timeBytes = new Uint8Array(8);
-                    var e = epoch;
-                    for (var i = 7; i >= 0; i--) {
-                        timeBytes[i] = e & 0xff;
-                        e >>= 8;
-                    }
-                    
-                    var hmac = CryptoJS.HmacSHA1(
-                        CryptoJS.lib.WordArray.create(timeBytes),
-                        CryptoJS.lib.WordArray.create(key)
-                    );
-                    
-                    var hmacBytes = new Uint8Array(hmac.words.length * 4);
-                    for (var j = 0; j < hmac.words.length; j++) {
-                        hmacBytes[j * 4] = (hmac.words[j] >> 24) & 0xff;
-                        hmacBytes[j * 4 + 1] = (hmac.words[j] >> 16) & 0xff;
-                        hmacBytes[j * 4 + 2] = (hmac.words[j] >> 8) & 0xff;
-                        hmacBytes[j * 4 + 3] = hmac.words[j] & 0xff;
-                    }
-                    
-                    var offsetByte = hmacBytes[19] & 0xf;
-                    var binary = ((hmacBytes[offsetByte] & 0x7f) << 24) |
-                                  ((hmacBytes[offsetByte + 1] & 0xff) << 16) |
-                                  ((hmacBytes[offsetByte + 2] & 0xff) << 8) |
-                                  (hmacBytes[offsetByte + 3] & 0xff);
-                    var otp = binary % 1000000;
-                    return String(otp).padStart(6, '0');
-                } catch (e) {
-                    console.error('生成 TOTP 失败:', e);
-                    return null;
+        // ============================================================
+        // Base32 解码
+        // ============================================================
+        function base32Decode(encoded) {
+            var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+            var bytes = [];
+            var bits = 0;
+            var value = 0;
+            for (var i = 0; i < encoded.length; i++) {
+                var index = alphabet.indexOf(encoded[i].toUpperCase());
+                if (index === -1) continue;
+                value = (value << 5) | index;
+                bits += 5;
+                if (bits >= 8) {
+                    bytes.push((value >> (bits - 8)) & 0xff);
+                    bits -= 8;
                 }
             }
+            return new Uint8Array(bytes);
+        }
 
-            // ============================================================
-            // GA 验证
-            // ============================================================
-            function verifyGA(secret, code) {
-                try {
-                    var offsets = [-30, 0, 30];
-                    for (var i = 0; i < offsets.length; i++) {
-                        var generated = generateTOTP(secret, offsets[i]);
-                        console.log('偏移 ' + offsets[i] + '秒:', generated);
-                        if (generated === code) {
-                            console.log('✅ 匹配成功！偏移量:', offsets[i]);
-                            return true;
-                        }
-                    }
-                    console.log('❌ 所有偏移量都不匹配');
-                    return false;
-                } catch (e) {
-                    console.error('GA 验证失败:', e);
-                    return false;
+        // ============================================================
+        // 生成 TOTP
+        // ============================================================
+        function generateTOTP(secret, offsetSeconds) {
+            offsetSeconds = offsetSeconds || 0;
+            try {
+                var key = base32Decode(secret);
+                var epoch = Math.floor((Date.now() / 1000 + offsetSeconds) / 30);
+                var timeBytes = new Uint8Array(8);
+                var e = epoch;
+                for (var i = 7; i >= 0; i--) {
+                    timeBytes[i] = e & 0xff;
+                    e >>= 8;
                 }
+                
+                var hmac = CryptoJS.HmacSHA1(
+                    CryptoJS.lib.WordArray.create(timeBytes),
+                    CryptoJS.lib.WordArray.create(key)
+                );
+                
+                var hmacBytes = new Uint8Array(hmac.words.length * 4);
+                for (var j = 0; j < hmac.words.length; j++) {
+                    hmacBytes[j * 4] = (hmac.words[j] >> 24) & 0xff;
+                    hmacBytes[j * 4 + 1] = (hmac.words[j] >> 16) & 0xff;
+                    hmacBytes[j * 4 + 2] = (hmac.words[j] >> 8) & 0xff;
+                    hmacBytes[j * 4 + 3] = hmac.words[j] & 0xff;
+                }
+                
+                var offsetByte = hmacBytes[19] & 0xf;
+                var binary = ((hmacBytes[offsetByte] & 0x7f) << 24) |
+                              ((hmacBytes[offsetByte + 1] & 0xff) << 16) |
+                              ((hmacBytes[offsetByte + 2] & 0xff) << 8) |
+                              (hmacBytes[offsetByte + 3] & 0xff);
+                var otp = binary % 1000000;
+                return String(otp).padStart(6, '0');
+            } catch (e) {
+                console.error('生成 TOTP 失败:', e);
+                return null;
+            }
+        }
+
+        // ============================================================
+        // GA 验证
+        // ============================================================
+        function verifyGA(secret, code) {
+            try {
+                var offsets = [-30, 0, 30];
+                for (var i = 0; i < offsets.length; i++) {
+                    var generated = generateTOTP(secret, offsets[i]);
+                    console.log('偏移 ' + offsets[i] + '秒:', generated);
+                    if (generated === code) {
+                        console.log('✅ 匹配成功！偏移量:', offsets[i]);
+                        return true;
+                    }
+                }
+                console.log('❌ 所有偏移量都不匹配');
+                return false;
+            } catch (e) {
+                console.error('GA 验证失败:', e);
+                return false;
+            }
+        }
+
+        // ============================================================
+        // 登录处理
+        // ============================================================
+        function handleLogin() {
+            var username = usernameInput.value.trim();
+            var password = passwordInput.value;
+            var gaCode = gaInput.value.trim();
+
+            messageBox.textContent = '';
+            messageBox.className = '';
+
+            if (!username) {
+                messageBox.textContent = '⚠️ Please enter admin username';
+                messageBox.className = 'error-message';
+                return;
+            }
+            if (!password) {
+                messageBox.textContent = '⚠️ Please enter password';
+                messageBox.className = 'error-message';
+                return;
+            }
+            if (!gaCode || gaCode.length !== 6 || !/^\d{6}$/.test(gaCode)) {
+                messageBox.textContent = '⚠️ Please enter a valid 6-digit code';
+                messageBox.className = 'error-message';
+                return;
             }
 
-            // ============================================================
-            // 登录处理
-            // ============================================================
-            function handleLogin() {
-                var username = usernameInput.value.trim();
-                var password = passwordInput.value;
-                var gaCode = gaInput.value.trim();
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
 
-                messageBox.textContent = '';
-                messageBox.className = '';
+            // 查询管理员
+            sb.from('admin_users')
+                .select('*')
+                .eq('username', username)
+                .eq('is_active', true)
+                .then(function(result) {
+                    // 打印完整结果到控制台
+                    console.log('完整结果:', result);
 
-                if (!username) {
-                    messageBox.textContent = '⚠️ Please enter admin username';
-                    messageBox.className = 'error-message';
-                    return;
-                }
-                if (!password) {
-                    messageBox.textContent = '⚠️ Please enter password';
-                    messageBox.className = 'error-message';
-                    return;
-                }
-                if (!gaCode || gaCode.length !== 6 || !/^\d{6}$/.test(gaCode)) {
-                    messageBox.textContent = '⚠️ Please enter a valid 6-digit code';
-                    messageBox.className = 'error-message';
-                    return;
-                }
+                    // 获取数据和错误
+                    var data = result.data;
+                    var error = result.error;
 
-                loginBtn.disabled = true;
-                loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
-
-                // 查询管理员
-                sb.from('admin_users')
-                    .select('*')
-                    .eq('username', username)
-                    .eq('is_active', true)
-                    .maybeSingle()
-                    .then(function(result) {
-                        var data = result.data;
-                        var error = result.error;
-
-                        console.log('查询结果:', result);
-
-                        if (error) {
-                            console.error('查询错误:', error);
-                            messageBox.textContent = '❌ Database error: ' + error.message;
-                            messageBox.className = 'error-message';
-                            loginBtn.disabled = false;
-                            loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
-                            return;
-                        }
-
-                        if (!data) {
-                            messageBox.textContent = '❌ Admin user not found';
-                            messageBox.className = 'error-message';
-                            loginBtn.disabled = false;
-                            loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
-                            return;
-                        }
-
-                        console.log('找到管理员:', data.username);
-
-                        if (data.password_hash !== password) {
-                            messageBox.textContent = '❌ Invalid password';
-                            messageBox.className = 'error-message';
-                            loginBtn.disabled = false;
-                            loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
-                            return;
-                        }
-
-                        var isValidGA = verifyGA(data.ga_secret, gaCode);
-                        if (!isValidGA) {
-                            messageBox.textContent = '❌ Invalid Google Authenticator code';
-                            messageBox.className = 'error-message';
-                            loginBtn.disabled = false;
-                            loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
-                            return;
-                        }
-
-                        // 登录成功
-                        messageBox.textContent = '✅ Login successful! Redirecting...';
-                        messageBox.className = 'success-message';
-
-                        localStorage.setItem('admin_logged_in', 'true');
-                        localStorage.setItem('admin_username', username);
-                        localStorage.setItem('admin_login_time', Date.now().toString());
-
-                        setTimeout(function() {
-                            window.location.href = 'vision711-admin-dashboard-GB75L.html';
-                        }, 800);
-                    })
-                    .catch(function(err) {
-                        console.error('Login error:', err);
-                        messageBox.textContent = '❌ Login error: ' + err.message;
+                    if (error) {
+                        console.error('查询错误:', error);
+                        messageBox.textContent = '❌ Database error: ' + error.message;
                         messageBox.className = 'error-message';
                         loginBtn.disabled = false;
                         loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
-                    });
+                        return;
+                    }
+
+                    // 检查 data 是否为空
+                    if (!data || data.length === 0) {
+                        messageBox.textContent = '❌ Admin user not found. Please check username.';
+                        messageBox.className = 'error-message';
+                        loginBtn.disabled = false;
+                        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+                        return;
+                    }
+
+                    // 取第一条记录
+                    var admin = data[0];
+                    console.log('找到管理员:', admin.username);
+                    console.log('密码验证:', admin.password_hash === password ? '✅ 匹配' : '❌ 不匹配');
+
+                    // 验证密码
+                    if (admin.password_hash !== password) {
+                        messageBox.textContent = '❌ Invalid password';
+                        messageBox.className = 'error-message';
+                        loginBtn.disabled = false;
+                        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+                        return;
+                    }
+
+                    // 验证 GA
+                    var isValidGA = verifyGA(admin.ga_secret, gaCode);
+                    if (!isValidGA) {
+                        messageBox.textContent = '❌ Invalid Google Authenticator code';
+                        messageBox.className = 'error-message';
+                        loginBtn.disabled = false;
+                        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+                        return;
+                    }
+
+                    // 登录成功
+                    messageBox.textContent = '✅ Login successful! Redirecting...';
+                    messageBox.className = 'success-message';
+
+                    localStorage.setItem('admin_logged_in', 'true');
+                    localStorage.setItem('admin_username', username);
+                    localStorage.setItem('admin_login_time', Date.now().toString());
+
+                    setTimeout(function() {
+                        window.location.href = 'vision711-admin-dashboard-GB75L.html';
+                    }, 800);
+                })
+                .catch(function(err) {
+                    console.error('Login error:', err);
+                    messageBox.textContent = '❌ Login error: ' + err.message;
+                    messageBox.className = 'error-message';
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+                });
+        }
+
+        // ============================================================
+        // 绑定事件
+        // ============================================================
+        loginBtn.addEventListener('click', handleLogin);
+
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                handleLogin();
             }
+        });
 
-            // ============================================================
-            // 绑定事件
-            // ============================================================
-            loginBtn.addEventListener('click', handleLogin);
-
-            document.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    handleLogin();
-                }
-            });
-
-            // ============================================================
-            // 检查登录状态
-            // ============================================================
-            if (localStorage.getItem('admin_logged_in') === 'true') {
-                var loginTime = parseInt(localStorage.getItem('admin_login_time') || '0');
-                if (Date.now() - loginTime < 24 * 60 * 60 * 1000) {
-                    window.location.href = 'vision711-admin-dashboard-GB75L.html';
-                } else {
-                    localStorage.removeItem('admin_logged_in');
-                }
+        // ============================================================
+        // 检查登录状态
+        // ============================================================
+        if (localStorage.getItem('admin_logged_in') === 'true') {
+            var loginTime = parseInt(localStorage.getItem('admin_login_time') || '0');
+            if (Date.now() - loginTime < 24 * 60 * 60 * 1000) {
+                window.location.href = 'vision711-admin-dashboard-GB75L.html';
+            } else {
+                localStorage.removeItem('admin_logged_in');
             }
+        }
 
-            console.log('🔐 GA 验证 - 检查 -30s, 0s, +30s');
-            console.log('📡 连接 Supabase:', SUPABASE_URL);
-
-        })(); // IIFE 结束
+        console.log('🔐 GA 验证 - 检查 -30s, 0s, +30s');
+        console.log('📡 连接 Supabase:', SUPABASE_URL);
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </body>
