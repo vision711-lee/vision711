@@ -1,21 +1,17 @@
 // ============================================================
 // components/hamburger.js - 手机版 Hamburger 菜单组件
-// 使用方式: 在页面底部引入 <script src="components/hamburger.js"></script>
 // ============================================================
 
 (function injectHamburger() {
     'use strict';
 
-    // ===== 防止重复注入 =====
     if (document.querySelector('.hamburger-wrapper')) {
         console.log('Hamburger already injected');
         return;
     }
 
-    // ===== 获取当前页面名称 =====
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
 
-    // ===== Hamburger HTML 模板 =====
     const template = `
     <!-- Hamburger 按钮 -->
     <div class="hamburger-wrapper">
@@ -31,15 +27,13 @@
 
     <!-- 抽屉菜单 -->
     <div class="hamburger-menu" id="hamburgerMenu">
-        <!-- 菜单头部 - Logo 在左侧，Slogan 在右侧 -->
-        <div class="hamburger-header">
-            <a href="/" class="logo-metal">
-                <img src="https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/hero-background/logo.png" 
-                     alt="VISION711" 
-                     style="height:36px; width:auto; display:block;">
-            </a>
-            <span class="hamburger-slogan">Play Safe, Win Safe</span>
-        </div>
+        <!-- 菜单头部 - Logo 在上，Slogan 在下 -->
+<div class="hamburger-header">
+    <a href="/" class="logo-metal">
+    <canvas id="hamburgerLogoCanvas" width="400" height="200"></canvas>
+</a>
+    <span class="hamburger-slogan">Play Safe, Win Safe</span>
+</div>
 
         <!-- 用户信息 -->
         <div class="hamburger-user">
@@ -85,30 +79,24 @@
     </div>
     `;
 
-    // ===== 注入 HTML 到页面 =====
-
-    // 查找 mobile-header
     const header = document.querySelector('.mobile-header');
     
     if (!header) {
         console.warn('Hamburger: .mobile-header not found, creating one...');
-        // 如果不存在 mobile-header，创建一个
         const mainContent = document.querySelector('.main-content');
         if (mainContent) {
             const newHeader = document.createElement('div');
             newHeader.className = 'mobile-header';
-            // 插入 Logo
             newHeader.innerHTML = `
                 <div id="hamburgerPlaceholder"></div>
                 <a href="/" class="logo-metal">
                     <img src="https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/hero-background/logo.png" 
                          alt="VISION711" 
-                         style="height:32px; width:auto; display:block;">
+                         style="height:72px; width:auto; display:block;">
                 </a>
             `;
             mainContent.insertBefore(newHeader, mainContent.firstChild);
             
-            // 重新获取 header
             const updatedHeader = document.querySelector('.mobile-header');
             const placeholder = updatedHeader.querySelector('#hamburgerPlaceholder');
             if (placeholder) {
@@ -116,18 +104,13 @@
             }
         }
     } else {
-        // 在 header 开头插入 Hamburger
-        // 先检查是否有 Hamburger 占位，没有则直接插入
         const existingWrapper = header.querySelector('.hamburger-wrapper');
         if (!existingWrapper) {
-            // 移除旧的右上角元素（如果存在）
             const oldBadges = header.querySelectorAll('.badge-vip, .lang-switcher, .user-avatar-metal');
             oldBadges.forEach(el => el.remove());
             
-            // 插入 Hamburger 模板
             header.insertAdjacentHTML('afterbegin', template);
             
-            // 确保 Logo 在右边 (order: 2)
             const logo = header.querySelector('.logo-metal');
             if (logo) {
                 logo.style.order = '2';
@@ -135,7 +118,6 @@
         }
     }
 
-    // ===== 初始化菜单逻辑 =====
     const toggleBtn = document.getElementById('hamburgerToggle');
     const menu = document.getElementById('hamburgerMenu');
     const overlay = document.getElementById('hamburgerOverlay');
@@ -145,20 +127,19 @@
         return;
     }
 
-    // ===== 菜单控制函数 =====
     function openMenu() {
-        menu.classList.add('open');
-        overlay.classList.add('open');
-        toggleBtn.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
+    menu.classList.add('open');
+    overlay.classList.add('open');
+    toggleBtn.classList.add('menu-open');
+    document.body.style.overflow = 'hidden';
+}
 
     function closeMenu() {
-        menu.classList.remove('open');
-        overlay.classList.remove('open');
-        toggleBtn.classList.remove('active');
-        document.body.style.overflow = '';
-    }
+    menu.classList.remove('open');
+    overlay.classList.remove('open');
+    toggleBtn.classList.remove('menu-open');
+    document.body.style.overflow = '';
+}
 
     function toggleMenu() {
         if (menu.classList.contains('open')) {
@@ -168,40 +149,31 @@
         }
     }
 
-    // ===== 绑定事件 =====
-
-    // 点击汉堡按钮
     toggleBtn.addEventListener('click', function(e) {
         e.stopPropagation();
         toggleMenu();
     });
 
-    // 点击遮罩关闭
+    // 点击遮罩关闭（唯一关闭方式）
     overlay.addEventListener('click', closeMenu);
 
-    // 按 ESC 关闭
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && menu.classList.contains('open')) {
             closeMenu();
         }
     });
 
-    // 点击菜单内链接自动关闭
     document.querySelectorAll('.hamburger-nav a').forEach(link => {
         link.addEventListener('click', function() {
-            // 高亮当前页面
             document.querySelectorAll('.hamburger-nav a').forEach(l => l.classList.remove('active'));
             this.classList.add('active');
-            // 延迟关闭，让点击事件先完成
             setTimeout(closeMenu, 200);
         });
     });
 
-    // ===== 高亮当前页面 =====
     document.querySelectorAll('.hamburger-nav a').forEach(link => {
         const href = link.getAttribute('href');
         if (href) {
-            // 提取文件名进行比较
             const linkPage = href.split('/').pop();
             if (currentPage === linkPage || (currentPage === '' && linkPage === 'index.html')) {
                 link.classList.add('active');
@@ -209,30 +181,24 @@
         }
     });
 
-    // ===== 语言切换事件绑定 (与 main.js 的 i18n 联动) =====
     document.querySelectorAll('.hamburger-lang .lang-btn').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.preventDefault();
             const lang = this.dataset.lang;
             
-            // 调用全局 setLanguage 函数 (来自 main.js)
             if (typeof setLanguage === 'function') {
                 setLanguage(lang);
             } else {
-                console.warn('setLanguage function not found, reloading page...');
-                // 简单 fallback: 保存语言并刷新
                 localStorage.setItem('preferred_language', lang);
                 location.reload();
             }
             
-            // 更新按钮状态
             document.querySelectorAll('.hamburger-lang .lang-btn').forEach(b => {
                 b.classList.toggle('active', b.dataset.lang === lang);
             });
         });
     });
 
-    // ===== 同步语言按钮状态 =====
     function syncLangButtons() {
         const savedLang = localStorage.getItem('preferred_language') || 'en';
         document.querySelectorAll('.hamburger-lang .lang-btn').forEach(btn => {
@@ -242,4 +208,85 @@
     syncLangButtons();
 
     console.log('✅ Hamburger Menu injected successfully');
+})();
+
+// ===== 初始化 Hamburger Logo 流光 =====
+(function initLogoFlow() {
+    const canvas = document.getElementById('hamburgerLogoCanvas');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.src = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/hero-background/logo.png';
+
+    let logoData = null;
+    let logoWidth = 0;
+    let logoHeight = 0;
+    let startTime = performance.now();
+
+    img.onload = function() {
+        logoWidth = img.width;
+        logoHeight = img.height;
+        canvas.width = logoWidth;
+        canvas.height = logoHeight;
+
+        ctx.drawImage(img, 0, 0);
+        logoData = ctx.getImageData(0, 0, logoWidth, logoHeight);
+        ctx.clearRect(0, 0, logoWidth, logoHeight);
+
+        requestAnimationFrame(drawFrame);
+    };
+
+    function drawFrame(timestamp) {
+        if (!logoData) return;
+
+        const elapsed = (timestamp - startTime) / 1000;
+        const waitTime = 1.0;
+        const scanDuration = 1.2;
+        const totalTime = waitTime + scanDuration;
+
+        let timeInCycle = elapsed % totalTime;
+        let progress;
+
+        if (timeInCycle < waitTime) {
+            progress = -1;
+        } else {
+            let scanProgress = (timeInCycle - waitTime) / scanDuration;
+            progress = 1 - scanProgress;
+        }
+
+        ctx.clearRect(0, 0, logoWidth, logoHeight);
+
+        ctx.globalAlpha = 0.9;
+        ctx.drawImage(img, 0, 0);
+        ctx.globalAlpha = 1.0;
+
+        const imageData = ctx.getImageData(0, 0, logoWidth, logoHeight);
+        const data = imageData.data;
+
+        const barWidth = Math.max(20, logoWidth * 0.25);
+        const centerX = progress * (logoWidth + barWidth) - barWidth / 2;
+
+        for (let y = 0; y < logoHeight; y++) {
+            for (let x = 0; x < logoWidth; x++) {
+                const idx = (y * logoWidth + x) * 4;
+                const originalAlpha = logoData.data[idx + 3];
+                if (originalAlpha < 128) continue;
+
+                const dist = Math.abs(x - centerX);
+                if (dist > barWidth / 2) continue;
+
+                const strength = 1 - (dist / (barWidth / 2));
+                const alpha = strength * 0.55;
+
+                data[idx]     = Math.min(255, data[idx]     + 180 * alpha);
+                data[idx + 1] = Math.min(255, data[idx + 1] + 180 * alpha);
+                data[idx + 2] = Math.min(255, data[idx + 2] + 150 * alpha);
+            }
+        }
+
+        ctx.putImageData(imageData, 0, 0);
+        requestAnimationFrame(drawFrame);
+    }
 })();

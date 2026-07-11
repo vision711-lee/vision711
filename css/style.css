@@ -905,41 +905,47 @@ html, body {
     }
 
     /* ===== Hamburger 按钮样式 ===== */
-    .hamburger-btn {
-        display: flex !important;
-        flex-direction: column;
-        gap: 4px;
-        background: transparent;
-        border: none;
-        cursor: pointer;
-        padding: 4px;
-        z-index: 1001;
-        position: relative;
-        transition: 0.3s;
-    }
+.hamburger-btn {
+    display: flex !important;
+    flex-direction: column;
+    gap: 4px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    z-index: 1001;
+    position: relative;
+    transition: 0.3s;
+}
 
-    .hamburger-btn span {
-        display: block;
-        width: 24px;
-        height: 2px;
-        background: rgba(255, 255, 255, 0.6);
-        border-radius: 2px;
-        transition: 0.3s;
-        transform-origin: center;
-    }
+.hamburger-btn span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 2px;
+    transition: all 0.3s ease;  /* ← 改这里，添加 all */
+    transform-origin: center;
+}
 
-    .hamburger-btn.active span:nth-child(1) {
-        transform: rotate(45deg) translate(4px, 4px);
-        background: #00b4ff;
-    }
-    .hamburger-btn.active span:nth-child(2) {
-        opacity: 0;
-        transform: scaleX(0);
-    }
-    .hamburger-btn.active span:nth-child(3) {
-        transform: rotate(-45deg) translate(4px, -4px);
-        background: #00b4ff;
-    }
+/* 菜单打开时，三横线淡出消失 */
+.hamburger-btn.menu-open span {
+    opacity: 0 !important;
+    transform: scale(0.5) !important;
+}
+
+.hamburger-btn.active span:nth-child(1) {
+    transform: rotate(45deg) translate(4px, 4px);
+    background: #00b4ff;
+}
+.hamburger-btn.active span:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+}
+.hamburger-btn.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(4px, -4px);
+    background: #00b4ff;
+}
 
     /* ===== Hamburger 遮罩层 - 毛玻璃背景 ===== */
     .hamburger-overlay {
@@ -1020,32 +1026,70 @@ html, body {
         z-index: 1;
     }
 
-    /* 菜单头部 - Logo 在左，Slogan 在右 */
+/* 菜单头部 - Logo 在上，Slogan 在下，居中 */
 .hamburger-header {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    padding-bottom: 16px;
+    justify-content: center;
+    padding-bottom: 20px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-    margin-bottom: 16px;
+    margin-bottom: 20px;
     flex-shrink: 0;
+    gap: 8px;
 }
 
+/* ===== Hamburger 菜单内 Logo 容器 ===== */
 .hamburger-header .logo-metal {
-    font-size: 1.3rem;
-    letter-spacing: 2px;
-    text-decoration: none;
+    display: inline-block;
+    position: relative;
     flex-shrink: 0;
+    order: 1;
 }
 
-/* Slogan 样式 */
+/* ===== Hamburger 菜单内 Logo 容器 - 改用 Canvas 真实流光 ===== */
+.hamburger-header .logo-metal {
+    display: inline-block;
+    position: relative;
+    flex-shrink: 0;
+    order: 1;
+}
+
+.hamburger-header .logo-metal canvas {
+    display: block;
+    width: auto;
+    height: 100px;
+    border-radius: 12px;
+}
+
+/* Slogan - 在 Logo 下方 */
 .hamburger-slogan {
-    font-size: 0.65rem;
-    font-weight: 300;
-    color: rgba(255, 255, 255, 0.25);
-    letter-spacing: 1.5px;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-style: italic;
+    font-size: 1.0rem;
+    letter-spacing: 3px;
     white-space: nowrap;
-    text-transform: uppercase;
+    flex-shrink: 0;
+    display: inline-block;
+    text-align: center;
+    order: 2;
+    background: linear-gradient(120deg, #ffd700 0%, #ffed4a 25%, #ffffff 50%, #ffed4a 75%, #ffd700 100%);
+    background-size: 300% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmerGold 4s linear infinite;
+    text-shadow: none;
+}
+
+@keyframes shimmerGold {
+    0% {
+        background-position: 0% center;
+    }
+    100% {
+        background-position: 300% center;
+    }
 }
 
     /* 用户信息 - 半透明玻璃 */
@@ -1245,9 +1289,9 @@ html, body {
 
     /* Hamburger 菜单内 Logo 图片 - 变大 */
     .hamburger-header .logo-metal img {
-        height: 60px !important;
+        height: 90px !important;
         width: auto !important;
-        max-height: 60px !important;
+        max-height: 90px !important;
         display: block !important;
     }
 
