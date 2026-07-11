@@ -1,471 +1,670 @@
-// ============================================================
-// admin-user.js - Users Management Module
-// 独立加载，与 dashboard 分离
-// ============================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Admin Dashboard · VISION711</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================================
+           全局重置
+           ============================================================ */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: #06080f;
+            color: #e5e9f0;
+            min-height: 100vh;
+            background-image: url('https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/hero-background/desktop-hero-background.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
 
-(function() {
-    'use strict';
+        /* ============================================================
+           侧边栏
+           ============================================================ */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 240px;
+            height: 100vh;
+            background: rgba(10, 14, 26, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255,255,255,0.05);
+            padding: 24px 16px 30px;
+            overflow-y: auto;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            scrollbar-width: none;
+        }
+        .sidebar::-webkit-scrollbar { display: none; }
 
-    // ============================================================
-    //  数据
-    // ============================================================
-    let users = [];
-    let currentPage = 1;
-    const pageSize = 10;
+        .sidebar .logo {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            margin-bottom: 20px;
+            flex-shrink: 0;
+        }
+        .sidebar .logo h2 {
+            font-size: 22px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: 1px;
+        }
+        .sidebar .logo h2 span {
+            background: linear-gradient(135deg, #00b4ff, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .sidebar .logo .version {
+            font-size: 10px;
+            color: #3a4a6a;
+            display: block;
+            margin-top: 2px;
+            -webkit-text-fill-color: #3a4a6a;
+            letter-spacing: 1px;
+        }
 
-    // ============================================================
-    //  生成ID
-    // ============================================================
-    function generateId() {
-        return 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
-    }
+        .sidebar .nav-list {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .sidebar .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            color: #5a6388;
+            text-decoration: none;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 13px;
+            font-weight: 500;
+            position: relative;
+        }
+        .sidebar .nav-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 15px;
+            color: #3a4a6a;
+            transition: 0.3s;
+        }
+        .sidebar .nav-item:hover {
+            background: rgba(255,255,255,0.04);
+            color: #8a9abb;
+        }
+        .sidebar .nav-item:hover i { color: #4a7cff; }
+        .sidebar .nav-item.active {
+            background: rgba(74,124,255,0.1);
+            color: #fff;
+            border: 1px solid rgba(74,124,255,0.15);
+        }
+        .sidebar .nav-item.active i { color: #4a7cff; }
+        .sidebar .nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: -1px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 24px;
+            background: linear-gradient(180deg, #4a7cff, #ffd700);
+            border-radius: 0 3px 3px 0;
+            box-shadow: 0 0 20px rgba(74,124,255,0.3);
+        }
 
-    // ============================================================
-    //  加载/保存数据
-    // ============================================================
-    function loadUsers() {
-        try {
-            const data = localStorage.getItem('admin_users');
-            if (data) {
-                users = JSON.parse(data);
-            } else {
-                users = [
-                    {
-                        id: generateId(),
-                        username: 'player1',
-                        email: 'player1@email.com',
-                        phone: '+60 12-345 6789',
-                        balance: 1250.00,
-                        status: 'active',
-                        joined: '2026-01-15',
-                        color: '#2f3e7a',
-                        color2: '#4a7cff'
-                    },
-                    {
-                        id: generateId(),
-                        username: 'player2',
-                        email: 'player2@email.com',
-                        phone: '+60 12-345 6790',
-                        balance: 350.50,
-                        status: 'active',
-                        joined: '2026-02-20',
-                        color: '#7a3e2f',
-                        color2: '#ff6b4a'
-                    },
-                    {
-                        id: generateId(),
-                        username: 'player3',
-                        email: 'player3@email.com',
-                        phone: '+60 12-345 6791',
-                        balance: 0.00,
-                        status: 'inactive',
-                        joined: '2026-03-10',
-                        color: '#3e2f7a',
-                        color2: '#8a6bff'
-                    },
-                    {
-                        id: generateId(),
-                        username: 'player4',
-                        email: 'player4@email.com',
-                        phone: '+60 12-345 6792',
-                        balance: 7800.00,
-                        status: 'active',
-                        joined: '2026-04-05',
-                        color: '#2f7a3e',
-                        color2: '#4aff8a'
-                    },
-                    {
-                        id: generateId(),
-                        username: 'player5',
-                        email: 'player5@email.com',
-                        phone: '+60 12-345 6793',
-                        balance: 120.00,
-                        status: 'active',
-                        joined: '2026-05-12',
-                        color: '#7a2f6a',
-                        color2: '#ff4ac0'
-                    }
-                ];
-                saveUsers();
+        .sidebar .footer-section {
+            margin-top: auto;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255,255,255,0.04);
+            flex-shrink: 0;
+        }
+        .sidebar .footer-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            color: #3a4a6a;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 13px;
+            background: transparent;
+            border: none;
+            width: 100%;
+        }
+        .sidebar .footer-item:hover {
+            background: rgba(255,255,255,0.04);
+            color: #ff6b6b;
+        }
+        .sidebar .footer-item i { width: 20px; text-align: center; }
+        .sidebar .footer-item .version {
+            margin-left: auto;
+            font-size: 10px;
+            color: #2a3560;
+        }
+
+        /* ============================================================
+           主内容区
+           ============================================================ */
+        .main-content {
+            margin-left: 240px;
+            padding: 24px 32px 40px;
+            min-height: 100vh;
+        }
+
+        /* ============================================================
+           Header
+           ============================================================ */
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            background: rgba(10, 14, 26, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.04);
+            margin-bottom: 20px;
+        }
+        .admin-header .left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .admin-header .left h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+        }
+        .admin-header .left h3 i { color: #4a7cff; margin-right: 8px; }
+        .admin-header .left .date {
+            font-size: 12px;
+            color: #4a5a7a;
+        }
+        .admin-header .right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .admin-header .right .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255,255,255,0.04);
+            padding: 8px 16px 8px 12px;
+            border-radius: 40px;
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+        .admin-header .right .user-badge .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2f3e7a, #4a7cff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #fff;
+        }
+        .admin-header .right .user-badge .name {
+            font-size: 13px;
+            font-weight: 500;
+            color: #8a9abb;
+        }
+        .admin-header .right .user-badge .role {
+            font-size: 10px;
+            color: #4a5a7a;
+            background: rgba(74,124,255,0.1);
+            padding: 2px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(74,124,255,0.1);
+        }
+
+        /* ============================================================
+           页面容器
+           ============================================================ */
+        .page {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .page.active { display: block; }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ============================================================
+           手机菜单
+           ============================================================ */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 101;
+            background: rgba(10, 14, 26, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: 10px 14px;
+            color: #8a9abb;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 99;
+        }
+        .overlay.show { display: block; }
+
+        /* ============================================================
+           Modal
+           ============================================================ */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal-card {
+            background: rgba(20, 30, 55, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 32px 36px;
+            width: 440px;
+            max-width: 95%;
+            border: 1px solid rgba(255,255,255,0.06);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        .modal-card h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+        .modal-card h3 i { color: #4a7cff; margin-right: 10px; }
+        .modal-card .sub {
+            font-size: 13px;
+            color: #5a6388;
+            margin-bottom: 20px;
+        }
+        .modal-card .form-group {
+            margin-bottom: 14px;
+        }
+        .modal-card .form-group label {
+            display: block;
+            font-size: 12px;
+            color: #5a6388;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+        .modal-card .form-group input,
+        .modal-card .form-group select {
+            width: 100%;
+            background: rgba(10, 14, 26, 0.8);
+            border: 1px solid #2a3560;
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: 0.3s;
+            box-sizing: border-box;
+        }
+        .modal-card .form-group input:focus,
+        .modal-card .form-group select:focus {
+            border-color: #4a7cff;
+            box-shadow: 0 0 20px rgba(74,124,255,0.05);
+        }
+        .modal-card .form-group select option { background: #0a0f2a; }
+        .modal-card .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .modal-card .modal-actions button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 40px;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .modal-card .modal-actions .btn-save {
+            background: linear-gradient(135deg, #4a7cff, #2f3e7a);
+            color: #fff;
+        }
+        .modal-card .modal-actions .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(74,124,255,0.3);
+        }
+        .modal-card .modal-actions .btn-cancel {
+            background: rgba(255,255,255,0.04);
+            color: #5a6388;
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+        .modal-card .modal-actions .btn-cancel:hover {
+            background: rgba(255,255,255,0.08);
+            color: #8a9abb;
+        }
+
+        /* ============================================================
+           响应式
+           ============================================================ */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 260px;
+                transition: 0.3s;
             }
-        } catch (e) {
-            console.error('Load users error:', e);
-            users = [];
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0; padding: 16px; padding-top: 72px; }
+
+            .admin-header { flex-direction: column; gap: 12px; align-items: stretch; }
+            .admin-header .right { justify-content: space-between; flex-wrap: wrap; }
+
+            .menu-toggle { display: flex !important; }
+            .overlay.show { display: block; }
+            .modal-card { padding: 24px 20px; }
         }
-        renderUsers();
-    }
 
-    function saveUsers() {
-        try {
-            localStorage.setItem('admin_users', JSON.stringify(users));
-        } catch (e) {
-            console.error('Save users error:', e);
+        @media (max-width: 480px) {
+            .admin-header .right .user-badge .role { display: none; }
         }
-    }
 
-    // ============================================================
-    //  渲染用户表格
-    // ============================================================
-    function renderUsers() {
-        const container = document.getElementById('page_users');
-        if (!container) return;
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #2a3560; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3a4a7a; }
+    </style>
+</head>
+<body>
 
-        const total = users.length;
-        const totalPages = Math.ceil(total / pageSize) || 1;
-        const start = (currentPage - 1) * pageSize;
-        const end = Math.min(start + pageSize, total);
-        const pageUsers = users.slice(start, end);
+    <!-- ===== 手机菜单按钮 ===== -->
+    <div class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
-        let html = `
-            <div style="margin-bottom: 20px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
-                    <div>
-                        <div style="font-size:22px; font-weight:700; color:#fff;">Users Management</div>
-                        <div style="font-size:13px; color:#5a6388;">Total: ${total} users</div>
-                    </div>
-                    <button onclick="window._adminUser.openAddModal()" style="
-                        background: linear-gradient(135deg, #4a7cff, #2f3e7a);
-                        border: none;
-                        padding: 12px 24px;
-                        border-radius: 40px;
-                        color: #fff;
-                        font-weight: 600;
-                        font-size: 14px;
-                        cursor: pointer;
-                        transition: 0.3s;
-                        display: flex;
-                        align-items: center;
-                        gap: 8px;
-                    ">
-                        <i class="fas fa-user-plus"></i> Add User
-                    </button>
+    <!-- ===== 侧边栏 ===== -->
+    <div class="sidebar" id="sidebar">
+        <div class="logo">
+            <h2>VISION<span>711</span></h2>
+            <span class="version">v2.4 · ADMIN</span>
+        </div>
+
+        <div class="nav-list">
+            <div class="nav-item active" data-page="users">
+                <i class="fas fa-users"></i> Users Management
+            </div>
+            <div class="nav-item" data-page="deposits">
+                <i class="fas fa-wallet"></i> Deposits
+            </div>
+            <div class="nav-item" data-page="withdrawals">
+                <i class="fas fa-money-bill-wave"></i> Withdrawals
+            </div>
+            <div class="nav-item" data-page="transactions">
+                <i class="fas fa-exchange-alt"></i> Transactions
+            </div>
+            <div class="nav-item" data-page="settings">
+                <i class="fas fa-cog"></i> Settings
+            </div>
+        </div>
+
+        <div class="footer-section">
+            <button class="footer-item" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i> Log Out
+                <span class="version">v2.4</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ===== 主内容 ===== -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="admin-header">
+            <div class="left">
+                <h3><i class="fas fa-users"></i> <span id="pageTitle">Users Management</span></h3>
+                <span class="date" id="currentDate">Loading...</span>
+            </div>
+            <div class="right">
+                <div class="user-badge">
+                    <div class="avatar"><i class="fas fa-user-shield"></i></div>
+                    <span class="name" id="adminName">admin</span>
+                    <span class="role">Super Admin</span>
                 </div>
             </div>
+        </div>
 
-            <div style="
-                background: rgba(10, 14, 26, 0.6);
-                backdrop-filter: blur(12px);
-                border-radius: 16px;
-                border: 1px solid rgba(255,255,255,0.04);
-                overflow: hidden;
-            ">
-                <div style="overflow-x: auto;">
-                    <table style="width:100%; border-collapse:collapse; font-size:13px;">
-                        <thead>
-                            <tr>
-                                <th style="text-align:left; padding:14px 16px; color:#5a6388; font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid rgba(255,255,255,0.04);">User</th>
-                                <th style="text-align:left; padding:14px 16px; color:#5a6388; font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid rgba(255,255,255,0.04);">Phone</th>
-                                <th style="text-align:left; padding:14px 16px; color:#5a6388; font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid rgba(255,255,255,0.04);">Balance</th>
-                                <th style="text-align:left; padding:14px 16px; color:#5a6388; font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid rgba(255,255,255,0.04);">Status</th>
-                                <th style="text-align:left; padding:14px 16px; color:#5a6388; font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid rgba(255,255,255,0.04);">Joined</th>
-                                <th style="text-align:right; padding:14px 16px; color:#5a6388; font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid rgba(255,255,255,0.04);">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-        `;
+        <!-- ===== 页面容器 ===== -->
+        <div id="page_users" class="page active">
+            <!-- Users Management 内容由 admin-user.js 渲染 -->
+            <div style="text-align:center; padding:60px 20px; color:#4a5a7a;">
+                <i class="fas fa-spinner fa-spin" style="font-size:32px; color:#4a7cff;"></i>
+                <div style="margin-top:16px; font-size:14px;">Loading users...</div>
+            </div>
+        </div>
+        <div id="page_deposits" class="page">
+            <div style="text-align:center; padding:60px 20px; color:#4a5a7a;">
+                <i class="fas fa-wallet" style="font-size:48px; color:#2a3560; display:block; margin-bottom:12px;"></i>
+                <div style="font-size:16px; font-weight:600; color:#8a9abb;">Deposits</div>
+                <div style="font-size:13px; margin-top:4px;">Coming soon...</div>
+            </div>
+        </div>
+        <div id="page_withdrawals" class="page">
+            <div style="text-align:center; padding:60px 20px; color:#4a5a7a;">
+                <i class="fas fa-money-bill-wave" style="font-size:48px; color:#2a3560; display:block; margin-bottom:12px;"></i>
+                <div style="font-size:16px; font-weight:600; color:#8a9abb;">Withdrawals</div>
+                <div style="font-size:13px; margin-top:4px;">Coming soon...</div>
+            </div>
+        </div>
+        <div id="page_transactions" class="page">
+            <div style="text-align:center; padding:60px 20px; color:#4a5a7a;">
+                <i class="fas fa-exchange-alt" style="font-size:48px; color:#2a3560; display:block; margin-bottom:12px;"></i>
+                <div style="font-size:16px; font-weight:600; color:#8a9abb;">Transactions</div>
+                <div style="font-size:13px; margin-top:4px;">Coming soon...</div>
+            </div>
+        </div>
+        <div id="page_settings" class="page">
+            <div style="text-align:center; padding:60px 20px; color:#4a5a7a;">
+                <i class="fas fa-cog" style="font-size:48px; color:#2a3560; display:block; margin-bottom:12px;"></i>
+                <div style="font-size:16px; font-weight:600; color:#8a9abb;">Settings</div>
+                <div style="font-size:13px; margin-top:4px;">Coming soon...</div>
+            </div>
+        </div>
+    </div>
 
-        if (pageUsers.length === 0) {
-            html += `
-                <tr>
-                    <td colspan="6" style="padding:40px 16px; text-align:center; color:#4a5a7a; font-size:14px;">
-                        <i class="fas fa-users" style="font-size:32px; display:block; margin-bottom:12px; color:#2a3560;"></i>
-                        No users found. Click "Add User" to create one.
-                    </td>
-                </tr>
-            `;
-        } else {
-            pageUsers.forEach(user => {
-                const statusText = user.status === 'active' ? 'Active' : 'Inactive';
-                const balance = typeof user.balance === 'number' ? user.balance.toFixed(2) : '0.00';
+    <!-- ============================================================
+        Modal (通用)
+       ============================================================ -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-card">
+            <h3 id="modalTitle"><i class="fas fa-user-plus"></i> Add User</h3>
+            <div class="sub" id="modalSub">Create a new user account</div>
+            <div id="modalBody"></div>
+            <div class="modal-actions">
+                <button class="btn-save" id="modalSaveBtn">Save</button>
+                <button class="btn-cancel" id="modalCancelBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
 
-                html += `
-                    <tr>
-                        <td style="padding:12px 16px; border-bottom:1px solid rgba(255,255,255,0.03);">
-                            <div style="display:flex; align-items:center; gap:12px;">
-                                <div style="
-                                    width:36px; height:36px; border-radius:50%;
-                                    background: linear-gradient(135deg, ${user.color || '#2f3e7a'}, ${user.color2 || '#4a7cff'});
-                                    display:flex; align-items:center; justify-content:center;
-                                    color:#fff; font-size:14px; flex-shrink:0;
-                                ">
-                                    <i class="fas fa-user"></i>
-                                </div>
-                                <div>
-                                    <div style="font-weight:600; color:#e5e9f0;">${user.username || 'Unknown'}</div>
-                                    <div style="font-size:11px; color:#4a5a7a;">${user.email || ''}</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td style="padding:12px 16px; border-bottom:1px solid rgba(255,255,255,0.03); color:#8a9abb;">${user.phone || '-'}</td>
-                        <td style="padding:12px 16px; border-bottom:1px solid rgba(255,255,255,0.03); color:#4ade80; font-weight:600;">RM ${balance}</td>
-                        <td style="padding:12px 16px; border-bottom:1px solid rgba(255,255,255,0.03);">
-                            <span style="
-                                font-size:11px; padding:4px 14px; border-radius:30px; font-weight:600;
-                                ${user.status === 'active' 
-                                    ? 'background:rgba(46,209,90,0.1); color:#4ade80; border:1px solid rgba(46,209,90,0.1);' 
-                                    : 'background:rgba(255,107,107,0.1); color:#ff6b6b; border:1px solid rgba(255,107,107,0.1);'}
-                            ">${statusText}</span>
-                        </td>
-                        <td style="padding:12px 16px; border-bottom:1px solid rgba(255,255,255,0.03); color:#5a6388; font-size:12px;">${user.joined || '-'}</td>
-                        <td style="padding:12px 16px; border-bottom:1px solid rgba(255,255,255,0.03); text-align:right;">
-                            <button onclick="window._adminUser.openEditModal('${user.id}')" style="
-                                background:transparent; border:none; padding:6px 10px; border-radius:6px;
-                                color:#4a5a7a; cursor:pointer; transition:0.3s; font-size:13px;
-                            " onmouseover="this.style.color='#4a7cff'; this.style.background='rgba(74,124,255,0.05)'" onmouseout="this.style.color='#4a5a7a'; this.style.background='transparent'">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button onclick="window._adminUser.deleteUser('${user.id}')" style="
-                                background:transparent; border:none; padding:6px 10px; border-radius:6px;
-                                color:#4a5a7a; cursor:pointer; transition:0.3s; font-size:13px;
-                            " onmouseover="this.style.color='#ff6b6b'; this.style.background='rgba(255,107,107,0.05)'" onmouseout="this.style.color='#4a5a7a'; this.style.background='transparent'">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
+    <!-- ============================================================
+        JavaScript
+       ============================================================ -->
+    <script>
+        // ============================================================
+        //  工具函数
+        // ============================================================
+        function toggleSidebar() {
+            var sidebar = document.getElementById('sidebar');
+            var overlay = document.getElementById('overlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('show');
+        }
+
+        function formatDate() {
+            var now = new Date();
+            return now.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
             });
         }
 
-        html += `
-                        </tbody>
-                    </table>
-                </div>
+        // ============================================================
+        //  侧边栏导航
+        // ============================================================
+        var navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(function(item) {
+            item.addEventListener('click', function() {
+                var page = this.getAttribute('data-page');
 
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:16px 16px 12px; border-top:1px solid rgba(255,255,255,0.04);">
-                    <div style="font-size:12px; color:#4a5a7a;">
-                        Showing ${start + 1} - ${end} of ${total} users
-                    </div>
-                    <div style="display:flex; gap:4px;">
-        `;
+                // 更新导航高亮
+                document.querySelectorAll('.nav-item').forEach(function(n) {
+                    n.classList.remove('active');
+                });
+                this.classList.add('active');
 
-        for (let i = 1; i <= totalPages; i++) {
-            html += `
-                <button onclick="window._adminUser.goToPage(${i})" style="
-                    background: ${i === currentPage ? 'rgba(74,124,255,0.15)' : 'transparent'};
-                    border: 1px solid ${i === currentPage ? 'rgba(74,124,255,0.2)' : 'rgba(255,255,255,0.04)'};
-                    color: ${i === currentPage ? '#4a7cff' : '#5a6388'};
-                    padding: 6px 14px; border-radius: 8px; cursor: pointer; transition:0.3s; font-size:12px;
-                " onmouseover="this.style.background='rgba(255,255,255,0.04)'; this.style.color='#8a9abb'" onmouseout="this.style.background='${i === currentPage ? 'rgba(74,124,255,0.15)' : 'transparent'}'; this.style.color='${i === currentPage ? '#4a7cff' : '#5a6388'}'">
-                    ${i}
-                </button>
-            `;
-        }
-
-        html += `
-                    </div>
-                </div>
-            </div>
-        `;
-
-        container.innerHTML = html;
-    }
-
-    // ============================================================
-    //  CRUD 操作
-    // ============================================================
-    function addUser(data) {
-        const newUser = {
-            id: generateId(),
-            username: data.username || 'player',
-            email: data.email || '',
-            phone: data.phone || '',
-            balance: parseFloat(data.balance) || 0,
-            status: data.status || 'active',
-            joined: new Date().toISOString().split('T')[0],
-            color: data.color || '#2f3e7a',
-            color2: data.color2 || '#4a7cff'
-        };
-        users.unshift(newUser);
-        saveUsers();
-        renderUsers();
-        return newUser;
-    }
-
-    function editUser(id, data) {
-        const index = users.findIndex(u => u.id === id);
-        if (index === -1) return null;
-        users[index] = { ...users[index], ...data };
-        saveUsers();
-        renderUsers();
-        return users[index];
-    }
-
-    function deleteUser(id) {
-        if (!confirm('Are you sure you want to delete this user?')) return;
-        users = users.filter(u => u.id !== id);
-        saveUsers();
-        renderUsers();
-    }
-
-    function goToPage(page) {
-        const totalPages = Math.ceil(users.length / pageSize) || 1;
-        if (page < 1 || page > totalPages) return;
-        currentPage = page;
-        renderUsers();
-    }
-
-    function refresh() {
-        loadUsers();
-    }
-
-    // ============================================================
-    //  Modal 表单
-    // ============================================================
-    function openAddModal() {
-        const bodyHTML = `
-            <div class="form-group">
-                <label>Username *</label>
-                <input type="text" id="formUsername" placeholder="Enter username" value="player_${Date.now().toString().slice(-4)}">
-            </div>
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" id="formEmail" placeholder="Enter email" value="user@email.com">
-            </div>
-            <div class="form-group">
-                <label>Phone</label>
-                <input type="text" id="formPhone" placeholder="Enter phone number" value="+60 12-345 6789">
-            </div>
-            <div class="form-group">
-                <label>Balance (RM)</label>
-                <input type="number" id="formBalance" placeholder="0.00" value="0" step="0.01">
-            </div>
-            <div class="form-group">
-                <label>Status</label>
-                <select id="formStatus">
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                </select>
-            </div>
-        `;
-
-        if (typeof window._adminModal !== 'undefined') {
-            window._adminModal.open(
-                '<i class="fas fa-user-plus"></i> Add User',
-                'Create a new user account',
-                bodyHTML,
-                function() {
-                    const username = document.getElementById('formUsername').value.trim();
-                    if (!username) {
-                        alert('Username is required!');
-                        return;
-                    }
-                    if (users.some(u => u.username.toLowerCase() === username.toLowerCase())) {
-                        alert('Username already exists!');
-                        return;
-                    }
-                    const data = {
-                        username: username,
-                        email: document.getElementById('formEmail').value.trim(),
-                        phone: document.getElementById('formPhone').value.trim(),
-                        balance: document.getElementById('formBalance').value || 0,
-                        status: document.getElementById('formStatus').value
-                    };
-                    addUser(data);
-                    window._adminModal.close();
+                // 切换页面
+                document.querySelectorAll('.page').forEach(function(p) {
+                    p.classList.remove('active');
+                });
+                var target = document.getElementById('page_' + page);
+                if (target) {
+                    target.classList.add('active');
                 }
-            );
-        } else {
-            alert('Modal system not available');
-        }
-    }
 
-    function openEditModal(id) {
-        const user = users.find(u => u.id === id);
-        if (!user) return;
+                // 更新标题
+                var titleMap = {
+                    'users': 'Users Management',
+                    'deposits': 'Deposits',
+                    'withdrawals': 'Withdrawals',
+                    'transactions': 'Transactions',
+                    'settings': 'Settings'
+                };
+                document.getElementById('pageTitle').textContent = titleMap[page] || page;
 
-        const bodyHTML = `
-            <div class="form-group">
-                <label>Username *</label>
-                <input type="text" id="formUsername" value="${user.username || ''}">
-            </div>
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" id="formEmail" value="${user.email || ''}">
-            </div>
-            <div class="form-group">
-                <label>Phone</label>
-                <input type="text" id="formPhone" value="${user.phone || ''}">
-            </div>
-            <div class="form-group">
-                <label>Balance (RM)</label>
-                <input type="number" id="formBalance" value="${user.balance || 0}" step="0.01">
-            </div>
-            <div class="form-group">
-                <label>Status</label>
-                <select id="formStatus">
-                    <option value="active" ${user.status === 'active' ? 'selected' : ''}>Active</option>
-                    <option value="inactive" ${user.status === 'inactive' ? 'selected' : ''}>Inactive</option>
-                </select>
-            </div>
-        `;
-
-        if (typeof window._adminModal !== 'undefined') {
-            window._adminModal.open(
-                '<i class="fas fa-edit"></i> Edit User',
-                `Editing: ${user.username}`,
-                bodyHTML,
-                function() {
-                    const username = document.getElementById('formUsername').value.trim();
-                    if (!username) {
-                        alert('Username is required!');
-                        return;
-                    }
-                    const existing = users.find(u => u.id !== id && u.username.toLowerCase() === username.toLowerCase());
-                    if (existing) {
-                        alert('Username already exists!');
-                        return;
-                    }
-                    const data = {
-                        username: username,
-                        email: document.getElementById('formEmail').value.trim(),
-                        phone: document.getElementById('formPhone').value.trim(),
-                        balance: parseFloat(document.getElementById('formBalance').value) || 0,
-                        status: document.getElementById('formStatus').value
-                    };
-                    editUser(id, data);
-                    window._adminModal.close();
+                // 如果切换到 users 页面，刷新数据
+                if (page === 'users' && typeof window._adminUser !== 'undefined') {
+                    window._adminUser.refresh();
                 }
-            );
-        } else {
-            alert('Modal system not available');
-        }
-    }
 
-    // ============================================================
-    //  暴露全局接口
-    // ============================================================
-    window._adminUser = {
-        users: users,
-        render: renderUsers,
-        addUser: addUser,
-        editUser: editUser,
-        deleteUser: deleteUser,
-        goToPage: goToPage,
-        refresh: refresh,
-        openAddModal: openAddModal,
-        openEditModal: openEditModal,
-        load: loadUsers
-    };
-
-    // ============================================================
-    //  自动初始化
-    // ============================================================
-    if (document.getElementById('page_users')) {
-        loadUsers();
-        console.log('✅ admin-user.js loaded - Users:', users.length);
-    } else {
-        console.warn('admin-user.js: #page_users not found, waiting...');
-        // 等待 DOM 加载
-        const observer = new MutationObserver(function() {
-            if (document.getElementById('page_users')) {
-                loadUsers();
-                observer.disconnect();
-                console.log('✅ admin-user.js loaded (delayed) - Users:', users.length);
-            }
+                // 关闭手机菜单
+                if (window.innerWidth <= 768) {
+                    toggleSidebar();
+                }
+            });
         });
-        observer.observe(document.body, { childList: true, subtree: true });
-        // 超时停止观察
-        setTimeout(() => observer.disconnect(), 5000);
-    }
 
-})();
+        // ============================================================
+        //  退出登录
+        // ============================================================
+        var logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to logout?')) {
+                    localStorage.removeItem('admin_logged_in');
+                    localStorage.removeItem('admin_login_time');
+                    localStorage.removeItem('admin_username');
+                    window.location.href = 'vision711-admin-login-K8G7Y.html';
+                }
+            });
+        }
+
+        // ============================================================
+        //  Modal 控制
+        // ============================================================
+        var modalOverlay = document.getElementById('modalOverlay');
+        var modalCancelBtn = document.getElementById('modalCancelBtn');
+
+        function openModal(title, sub, bodyHTML, onSave) {
+            document.getElementById('modalTitle').innerHTML = title;
+            document.getElementById('modalSub').textContent = sub;
+            document.getElementById('modalBody').innerHTML = bodyHTML;
+            modalOverlay.classList.add('show');
+
+            var saveBtn = document.getElementById('modalSaveBtn');
+            var newSaveBtn = saveBtn.cloneNode(true);
+            saveBtn.parentNode.replaceChild(newSaveBtn, saveBtn);
+
+            newSaveBtn.addEventListener('click', function() {
+                if (typeof onSave === 'function') {
+                    onSave();
+                }
+            });
+        }
+
+        function closeModal() {
+            modalOverlay.classList.remove('show');
+        }
+
+        if (modalCancelBtn) {
+            modalCancelBtn.addEventListener('click', closeModal);
+        }
+        if (modalOverlay) {
+            modalOverlay.addEventListener('click', function(e) {
+                if (e.target === this) closeModal();
+            });
+        }
+
+        // 暴露给 admin-user.js
+        window._adminModal = {
+            open: openModal,
+            close: closeModal
+        };
+
+        // ============================================================
+        //  初始化
+        // ============================================================
+        document.getElementById('currentDate').textContent = formatDate();
+
+        var username = localStorage.getItem('admin_username') || 'admin';
+        document.getElementById('adminName').textContent = username;
+
+        // 检查登录状态
+        if (localStorage.getItem('admin_logged_in') !== 'true') {
+            window.location.href = 'vision711-admin-login-K8G7Y.html';
+        }
+
+        console.log('✅ VISION711 Admin Dashboard loaded');
+        console.log('📄 Waiting for admin-user.js to load...');
+    </script>
+
+    <!-- ============================================================
+        用户管理模块 (独立加载)
+       ============================================================ -->
+    <script src="admin-user.js"></script>
+
+</body>
+</html>
