@@ -3,133 +3,519 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Admin Dashboard · DoktorJudi</title>
+    <title>Admin Dashboard · VISION711</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="../css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================================
+           全局重置
+           ============================================================ */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: #06080f;
+            color: #e5e9f0;
+            min-height: 100vh;
+            background-image: url('https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/hero-background/desktop-hero-background.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        /* ============================================================
+           侧边栏
+           ============================================================ */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 240px;
+            height: 100vh;
+            background: rgba(10, 14, 26, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255,255,255,0.05);
+            padding: 24px 16px 30px;
+            overflow-y: auto;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            scrollbar-width: none;
+        }
+        .sidebar::-webkit-scrollbar { display: none; }
+
+        .sidebar .logo {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            margin-bottom: 20px;
+            flex-shrink: 0;
+        }
+        .sidebar .logo h2 {
+            font-size: 22px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: 1px;
+        }
+        .sidebar .logo h2 span {
+            background: linear-gradient(135deg, #00b4ff, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .sidebar .logo .version {
+            font-size: 10px;
+            color: #3a4a6a;
+            display: block;
+            margin-top: 2px;
+            -webkit-text-fill-color: #3a4a6a;
+            letter-spacing: 1px;
+        }
+
+        .sidebar .nav-list {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .sidebar .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            color: #5a6388;
+            text-decoration: none;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 13px;
+            font-weight: 500;
+            position: relative;
+        }
+        .sidebar .nav-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 15px;
+            color: #3a4a6a;
+            transition: 0.3s;
+        }
+        .sidebar .nav-item:hover {
+            background: rgba(255,255,255,0.04);
+            color: #8a9abb;
+        }
+        .sidebar .nav-item:hover i { color: #4a7cff; }
+        .sidebar .nav-item.active {
+            background: rgba(74,124,255,0.1);
+            color: #fff;
+            border: 1px solid rgba(74,124,255,0.15);
+        }
+        .sidebar .nav-item.active i { color: #4a7cff; }
+        .sidebar .nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: -1px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 24px;
+            background: linear-gradient(180deg, #4a7cff, #ffd700);
+            border-radius: 0 3px 3px 0;
+            box-shadow: 0 0 20px rgba(74,124,255,0.3);
+        }
+
+        .sidebar .footer-section {
+            margin-top: auto;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255,255,255,0.04);
+            flex-shrink: 0;
+        }
+        .sidebar .footer-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            color: #3a4a6a;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 13px;
+        }
+        .sidebar .footer-item:hover {
+            background: rgba(255,255,255,0.04);
+            color: #ff6b6b;
+        }
+        .sidebar .footer-item i { width: 20px; text-align: center; }
+        .sidebar .footer-item .version {
+            margin-left: auto;
+            font-size: 10px;
+            color: #2a3560;
+        }
+
+        /* ============================================================
+           主内容区
+           ============================================================ */
+        .main-content {
+            margin-left: 240px;
+            padding: 24px 32px 40px;
+            min-height: 100vh;
+        }
+
+        /* ============================================================
+           Header
+           ============================================================ */
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            background: rgba(10, 14, 26, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.04);
+            margin-bottom: 20px;
+        }
+        .admin-header .left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .admin-header .left h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+        }
+        .admin-header .left h3 i { color: #4a7cff; margin-right: 8px; }
+        .admin-header .left .date {
+            font-size: 12px;
+            color: #4a5a7a;
+        }
+        .admin-header .right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .admin-header .right .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255,255,255,0.04);
+            padding: 8px 16px 8px 12px;
+            border-radius: 40px;
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+        .admin-header .right .user-badge .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2f3e7a, #4a7cff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #fff;
+        }
+        .admin-header .right .user-badge .name {
+            font-size: 13px;
+            font-weight: 500;
+            color: #8a9abb;
+        }
+        .admin-header .right .user-badge .role {
+            font-size: 10px;
+            color: #4a5a7a;
+            background: rgba(74,124,255,0.1);
+            padding: 2px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(74,124,255,0.1);
+        }
+
+        /* ============================================================
+           页面容器
+           ============================================================ */
+        .page {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .page.active { display: block; }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ============================================================
+           手机菜单
+           ============================================================ */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 101;
+            background: rgba(10, 14, 26, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: 10px 14px;
+            color: #8a9abb;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 99;
+        }
+        .overlay.show { display: block; }
+
+        /* ============================================================
+           响应式
+           ============================================================ */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 260px;
+                transition: 0.3s;
+            }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0; padding: 16px; padding-top: 72px; }
+
+            .admin-header { flex-direction: column; gap: 12px; align-items: stretch; }
+            .admin-header .right { justify-content: space-between; flex-wrap: wrap; }
+
+            .menu-toggle { display: flex !important; }
+            .overlay.show { display: block; }
+        }
+
+        @media (max-width: 480px) {
+            .admin-header .right .user-badge .role { display: none; }
+        }
+
+        /* ============================================================
+           滚动条美化
+           ============================================================ */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #2a3560; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3a4a7a; }
+    </style>
 </head>
 <body>
-    <div class="admin-container">
-        <!-- ===== Header ===== -->
-        <div class="admin-header">
-            <div class="logo"><i class="fas fa-shield-alt"></i> ADMIN<span>Panel</span></div>
-            <div class="admin-user">
-                <div class="lang-switcher" style="margin-right:10px;">
-                    <button class="lang-btn active" data-lang="en">EN</button>
-                    <button class="lang-btn" data-lang="zh">中文</button>
-                </div>
-                <span style="font-size:0.75rem; color:#6a78a8;">admin</span>
-                <div class="avatar"><i class="fas fa-user-shield"></i></div>
+
+    <!-- ===== 手机菜单按钮 ===== -->
+    <div class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- ===== 侧边栏 ===== -->
+    <div class="sidebar" id="sidebar">
+        <div class="logo">
+            <h2>VISION<span>711</span></h2>
+            <span class="version">v2.4 · ADMIN</span>
+        </div>
+
+        <div class="nav-list">
+            <div class="nav-item active" data-page="users">
+                <i class="fas fa-users"></i> Users Management
+            </div>
+            <div class="nav-item" data-page="deposits">
+                <i class="fas fa-wallet"></i> Deposits
+            </div>
+            <div class="nav-item" data-page="withdrawals">
+                <i class="fas fa-money-bill-wave"></i> Withdrawals
+            </div>
+            <div class="nav-item" data-page="transactions">
+                <i class="fas fa-exchange-alt"></i> Transactions
+            </div>
+            <div class="nav-item" data-page="settings">
+                <i class="fas fa-cog"></i> Settings
             </div>
         </div>
 
-        <!-- ===== Welcome ===== -->
-        <div class="card-action" style="background: linear-gradient(145deg, #1a2040, #11162e); margin-bottom:12px;">
-            <div class="flex-row">
-                <div>
-                    <span style="font-size:0.8rem; color:#a6b3d9;" data-i18n="admin.dashboard.welcome">Welcome back,</span>
-                    <span style="font-size:1.1rem; font-weight:600;" data-i18n="admin.dashboard.administrator">Administrator</span>
-                </div>
-                <span class="badge" style="background: #2a3360; color:#4cd9a0;">
-                    <i class="fas fa-circle" style="font-size:8px;"></i> <span data-i18n="badge.online">Online</span>
-                </span>
-            </div>
-            <div style="font-size:0.8rem; color:#6a78a8; margin-top:4px;">
-                <span data-i18n="label.lastLogin">Last Login</span>: 2026-07-10 14:30
+        <div class="footer-section">
+            <div class="footer-item" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i> Log Out
+                <span class="version">v2.4</span>
             </div>
         </div>
-
-        <!-- ===== Stats Cards ===== -->
-        <div class="admin-stats-grid">
-            <div class="stat-card-lg">
-                <div class="num">28</div>
-                <div class="label" data-i18n="admin.dashboard.totalUsers">Total Users</div>
-                <div class="change"><i class="fas fa-arrow-up"></i> +3 <span data-i18n="admin.dashboard.thisWeek">This Week</span></div>
-            </div>
-            <div class="stat-card-lg">
-                <div class="num">RM 1.2k</div>
-                <div class="label" data-i18n="admin.dashboard.todayDeposit">Today's Deposit</div>
-                <div class="change"><i class="fas fa-arrow-up"></i> +15%</div>
-            </div>
-            <div class="stat-card-lg">
-                <div class="num">RM 890</div>
-                <div class="label" data-i18n="admin.dashboard.todayWithdraw">Today's Withdraw</div>
-                <div class="change" style="color:#f5b342;"><i class="fas fa-arrow-down"></i> -5%</div>
-            </div>
-            <div class="stat-card-lg">
-                <div class="num">15</div>
-                <div class="label" data-i18n="admin.dashboard.activeBets">Active Bets</div>
-                <div class="change"><i class="fas fa-arrow-up"></i> +2</div>
-            </div>
-        </div>
-
-        <!-- ===== Latest Transactions ===== -->
-        <div class="admin-table">
-            <div class="section-title" style="margin-bottom:4px;">
-                <i class="fas fa-clock"></i> <span data-i18n="admin.dashboard.latestTransactions">Latest Transactions</span>
-            </div>
-            <div class="row">
-                <span><i class="fas fa-user-circle"></i> 60****484</span>
-                <span style="color:#4cd9a0;">+ RM 35.00</span>
-                <span class="status-badge success" data-i18n="label.success">Success</span>
-            </div>
-            <div class="row">
-                <span><i class="fas fa-user-circle"></i> 60****713</span>
-                <span style="color:#f5b342;">- RM 130.00</span>
-                <span class="status-badge success" data-i18n="label.success">Success</span>
-            </div>
-            <div class="row">
-                <span><i class="fas fa-user-circle"></i> 60****350</span>
-                <span style="color:#4cd9a0;">+ RM 50.00</span>
-                <span class="status-badge pending" data-i18n="label.pending">Pending</span>
-            </div>
-            <div class="row">
-                <span><i class="fas fa-user-circle"></i> 60****441</span>
-                <span style="color:#f5b342;">- RM 78.00</span>
-                <span class="status-badge danger" data-i18n="label.failed">Failed</span>
-            </div>
-        </div>
-
-        <!-- ===== System Status ===== -->
-        <div class="admin-table">
-            <div class="section-title" style="margin-bottom:4px;">
-                <i class="fas fa-server"></i> <span data-i18n="admin.dashboard.systemStatus">System Status</span>
-            </div>
-            <div class="row">
-                <span><i class="fas fa-check-circle text-gold"></i> <span data-i18n="admin.dashboard.server">Server</span></span>
-                <span style="color:#4cd9a0;" data-i18n="label.normal">Normal</span>
-                <span style="font-size:0.65rem; color:#4a5588;" data-i18n="admin.dashboard.latency">Latency 12ms</span>
-            </div>
-            <div class="row">
-                <span><i class="fas fa-database text-gold"></i> <span data-i18n="admin.dashboard.database">Database</span></span>
-                <span style="color:#4cd9a0;" data-i18n="label.connected">Connected</span>
-                <span style="font-size:0.65rem; color:#4a5588;">2 <span data-i18n="admin.dashboard.connections">Connections</span></span>
-            </div>
-            <div class="row">
-                <span><i class="fas fa-users text-gold"></i> <span data-i18n="label.onlineUsers">Online Users</span></span>
-                <span style="color:#f5b342;">8</span>
-                <span style="font-size:0.65rem; color:#4a5588;" data-i18n="label.peak">Peak 23</span>
-            </div>
-        </div>
-
-        <!-- ===== Quick Actions ===== -->
-        <div class="quick-actions">
-            <button class="btn btn-primary" style="flex:1; justify-content:center; font-size:0.8rem;">
-                <i class="fas fa-user-plus"></i> <span data-i18n="admin.dashboard.addUser">Add User</span>
-            </button>
-            <button class="btn btn-outline" style="flex:1; justify-content:center; font-size:0.8rem;">
-                <i class="fas fa-file-invoice"></i> <span data-i18n="admin.dashboard.transactionReview">Transaction Review</span>
-            </button>
-            <button class="btn btn-danger" id="admin-logout-btn" style="flex:1; justify-content:center; font-size:0.8rem;">
-                <i class="fas fa-sign-out-alt"></i> <span data-i18n="btn.logout">Logout</span>
-            </button>
-        </div>
-
-        <!-- ===== Back to Home ===== -->
-        <a href="../index.html" style="display:block; text-align:center; margin-top:16px; color:#4a5588; font-size:0.7rem; text-decoration:none;">
-            <i class="fas fa-arrow-left"></i> <span data-i18n="admin.dashboard.backToHome">Back to Home</span>
-        </a>
     </div>
 
-    <script src="../js/main.js"></script>
+    <!-- ===== 主内容 ===== -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="admin-header">
+            <div class="left">
+                <h3><i class="fas fa-users"></i> <span id="pageTitle">Users Management</span></h3>
+                <span class="date" id="currentDate">Loading...</span>
+            </div>
+            <div class="right">
+                <div class="user-badge">
+                    <div class="avatar"><i class="fas fa-user-shield"></i></div>
+                    <span class="name" id="adminName">admin</span>
+                    <span class="role">Super Admin</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== 页面容器 ===== -->
+        <div id="page_users" class="page active"></div>
+        <div id="page_deposits" class="page"></div>
+        <div id="page_withdrawals" class="page"></div>
+        <div id="page_transactions" class="page"></div>
+        <div id="page_settings" class="page"></div>
+    </div>
+
+    <!-- ============================================================
+        Modal (通用)
+       ============================================================ -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-card">
+            <h3 id="modalTitle"><i class="fas fa-user-plus"></i> Add User</h3>
+            <div class="sub" id="modalSub">Create a new user account</div>
+            <div id="modalBody"></div>
+            <div class="modal-actions">
+                <button class="btn-save" id="modalSaveBtn">Save</button>
+                <button class="btn-cancel" id="modalCancelBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+        JavaScript
+       ============================================================ -->
+    <script>
+        // ============================================================
+        //  工具函数
+        // ============================================================
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('show');
+        }
+
+        function formatDate() {
+            const now = new Date();
+            return now.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // ============================================================
+        //  侧边栏导航
+        // ============================================================
+        document.querySelectorAll('.nav-item').forEach(function(item) {
+            item.addEventListener('click', function() {
+                const page = this.dataset.page;
+
+                // 更新导航高亮
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                this.classList.add('active');
+
+                // 切换页面
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                const target = document.getElementById('page_' + page);
+                if (target) {
+                    target.classList.add('active');
+                }
+
+                // 更新标题
+                const titleMap = {
+                    'users': 'Users Management',
+                    'deposits': 'Deposits',
+                    'withdrawals': 'Withdrawals',
+                    'transactions': 'Transactions',
+                    'settings': 'Settings'
+                };
+                document.getElementById('pageTitle').textContent = titleMap[page] || page;
+
+                // 关闭手机菜单
+                if (window.innerWidth <= 768) {
+                    toggleSidebar();
+                }
+            });
+        });
+
+        // ============================================================
+        //  退出登录
+        // ============================================================
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('admin_logged_in');
+                localStorage.removeItem('admin_login_time');
+                localStorage.removeItem('admin_username');
+                window.location.href = 'vision711-admin-login.html';
+            }
+        });
+
+        // ============================================================
+        //  Modal 控制
+        // ============================================================
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalCancelBtn = document.getElementById('modalCancelBtn');
+
+        function openModal(title, sub, bodyHTML, onSave) {
+            document.getElementById('modalTitle').innerHTML = title;
+            document.getElementById('modalSub').textContent = sub;
+            document.getElementById('modalBody').innerHTML = bodyHTML;
+            modalOverlay.classList.add('show');
+
+            // 移除旧事件
+            const saveBtn = document.getElementById('modalSaveBtn');
+            const newSaveBtn = saveBtn.cloneNode(true);
+            saveBtn.parentNode.replaceChild(newSaveBtn, saveBtn);
+
+            newSaveBtn.addEventListener('click', function() {
+                if (typeof onSave === 'function') {
+                    onSave();
+                }
+            });
+        }
+
+        function closeModal() {
+            modalOverlay.classList.remove('show');
+        }
+
+        modalCancelBtn.addEventListener('click', closeModal);
+        modalOverlay.addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // ============================================================
+        //  初始化
+        // ============================================================
+        document.getElementById('currentDate').textContent = formatDate();
+
+        // 加载用户名
+        const username = localStorage.getItem('admin_username') || 'admin';
+        document.getElementById('adminName').textContent = username;
+
+        // 检查登录状态
+        if (localStorage.getItem('admin_logged_in') !== 'true') {
+            window.location.href = 'vision711-admin-login.html';
+        }
+
+        // 默认加载 Users 页面
+        document.querySelector('.nav-item[data-page="users"]')?.classList.add('active');
+        document.getElementById('page_users')?.classList.add('active');
+
+        console.log('✅ VISION711 Admin Dashboard loaded');
+        console.log('📄 Users Management page will be loaded by admin-user.js');
+    </script>
+
+    <!-- ============================================================
+        页面模块 (独立加载)
+       ============================================================ -->
+    <script src="admin-user.js"></script>
+
 </body>
 </html>

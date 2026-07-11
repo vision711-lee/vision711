@@ -1,9 +1,9 @@
-// ===== i18n Translation System =====
+// ===== i18n 多语言翻译系统 =====
 const i18n = {
     currentLang: 'en',
     translations: {
         en: {
-            // Common
+            // ===== 通用 =====
             'app.name': 'DOKTORJUDI',
             'app.tagline': 'No Deposit Free Credit',
             'nav.home': 'Home',
@@ -47,8 +47,8 @@ const i18n = {
             'label.today': 'Today',
             'label.thisWeek': 'This Week',
             'label.lastLogin': 'Last Login',
-            
-            // Home Page
+
+            // ===== 首页 =====
             'home.welcome': 'Welcome back',
             'home.player': 'Player',
             'home.balance': 'Balance',
@@ -60,20 +60,20 @@ const i18n = {
             'home.drawInfo': 'Daily Draw',
             'home.moreInfo': 'More Info',
             'home.adminLogin': 'Admin Login',
-            
-            // Dashboard
+
+            // ===== 仪表板 =====
             'dashboard.title': 'My Dashboard',
             'dashboard.totalDeposit': 'Total Deposit',
             'dashboard.totalBet': 'Total Bet',
             'dashboard.totalWithdraw': 'Total Withdraw',
-            'dashboard.todayTurnover': 'Today\'s Turnover',
+            'dashboard.todayTurnover': "Today's Turnover",
             'dashboard.weeklyCommission': 'Weekly Commission',
             'dashboard.availableBalance': 'Available Balance',
-            'dashboard.todayLucky': 'Today\'s Lucky Number',
+            'dashboard.todayLucky': "Today's Lucky Number",
             'dashboard.recentGames': 'Recent Games',
             'dashboard.noData': 'No Data',
-            
-            // Deposit
+
+            // ===== 充值 =====
             'deposit.title': 'Deposit Center',
             'deposit.currentBalance': 'Current Balance',
             'deposit.method': 'Payment Method',
@@ -86,8 +86,8 @@ const i18n = {
             'deposit.bonus': 'Deposit Bonus',
             'deposit.autoBonus': 'Auto Bonus',
             'deposit.noRecords': 'No Records',
-            
-            // Withdraw
+
+            // ===== 提现 =====
             'withdraw.title': 'Withdraw',
             'withdraw.availableBalance': 'Available Balance',
             'withdraw.method': 'Withdraw Method',
@@ -101,8 +101,8 @@ const i18n = {
             'withdraw.history': 'Withdraw History',
             'withdraw.estimatedTime': 'Estimated Time',
             'withdraw.businessDay': 'Business Day',
-            
-            // Profile
+
+            // ===== 个人中心 =====
             'profile.title': 'Profile',
             'profile.personalInfo': 'Personal Information',
             'profile.settings': 'Settings',
@@ -111,21 +111,52 @@ const i18n = {
             'profile.security': 'Security',
             'profile.verified': 'Verified',
             'profile.enabled': 'Enabled',
-            
-            // Admin Login
+
+            // ===== 登录 =====
+            'login.welcome': 'Welcome Back',
+            'login.subtitle': 'Sign in to continue',
+            'login.username': 'Username',
+            'login.password': 'Password',
+            'login.remember': 'Remember Me',
+            'login.forgot': 'Forgot Password?',
+            'login.noAccount': "Don't have an account?",
+            'login.register': 'Register',
+            'login.error': 'Invalid username or password!',
+            'login.success': 'Login successful! Redirecting...',
+
+            // ===== 注册 =====
+            'register.title': 'Create Account',
+            'register.subtitle': 'Join us and start winning',
+            'register.fullName': 'Full Name',
+            'register.email': 'Email Address',
+            'register.phone': 'Phone Number',
+            'register.username': 'Choose Username',
+            'register.password': 'Create Password',
+            'register.confirm': 'Confirm Password',
+            'register.agree': 'I agree to the',
+            'register.terms': 'Terms & Conditions',
+            'register.haveAccount': 'Already have an account?',
+            'register.login': 'Login',
+            'register.error.match': 'Passwords do not match!',
+            'register.error.min': 'Password must be at least 6 characters!',
+            'register.error.required': 'Please fill in all fields!',
+            'register.success': 'Registration successful! Redirecting to login...',
+            'register.usernameTaken': 'Username already taken!',
+
+            // ===== 管理员登录 =====
             'admin.login.title': 'Administrator Login',
             'admin.login.subtitle': 'Admin Management System',
             'admin.login.secure': 'Secure Login',
             'admin.login.demo': 'Demo Account: admin / admin123',
             'admin.login.back': 'Back to Home',
-            
-            // Admin Dashboard
+
+            // ===== 管理员仪表板 =====
             'admin.dashboard.title': 'Admin Panel',
             'admin.dashboard.welcome': 'Welcome back',
             'admin.dashboard.administrator': 'Administrator',
             'admin.dashboard.totalUsers': 'Total Users',
-            'admin.dashboard.todayDeposit': 'Today\'s Deposit',
-            'admin.dashboard.todayWithdraw': 'Today\'s Withdraw',
+            'admin.dashboard.todayDeposit': "Today's Deposit",
+            'admin.dashboard.todayWithdraw': "Today's Withdraw",
             'admin.dashboard.activeBets': 'Active Bets',
             'admin.dashboard.latestTransactions': 'Latest Transactions',
             'admin.dashboard.systemStatus': 'System Status',
@@ -138,8 +169,8 @@ const i18n = {
             'admin.dashboard.thisWeek': 'This Week',
             'admin.dashboard.latency': 'Latency',
             'admin.dashboard.connections': 'Connections',
-            
-            // Messages
+
+            // ===== 提示消息 =====
             'msg.depositSuccess': 'Deposit RM{amount} successful! Please wait for processing.',
             'msg.depositMin': 'Minimum deposit amount is RM10',
             'msg.withdrawSuccess': 'Withdraw RM{amount} submitted! Estimated 5-10 minutes.',
@@ -149,7 +180,7 @@ const i18n = {
             'msg.logoutConfirm': 'Are you sure you want to logout?',
         },
         zh: {
-            // Common
+            // ===== 通用 =====
             'app.name': 'DOKTORJUDI',
             'app.tagline': '无需存款 免费积分',
             'nav.home': '首页',
@@ -193,8 +224,8 @@ const i18n = {
             'label.today': '今天',
             'label.thisWeek': '本周',
             'label.lastLogin': '最后登录',
-            
-            // Home Page
+
+            // ===== 首页 =====
             'home.welcome': '欢迎回来',
             'home.player': '玩家',
             'home.balance': '余额',
@@ -206,8 +237,8 @@ const i18n = {
             'home.drawInfo': '每日开奖',
             'home.moreInfo': '了解更多',
             'home.adminLogin': '管理员登录',
-            
-            // Dashboard
+
+            // ===== 仪表板 =====
             'dashboard.title': '我的仪表板',
             'dashboard.totalDeposit': '总充值',
             'dashboard.totalBet': '总投注',
@@ -218,8 +249,8 @@ const i18n = {
             'dashboard.todayLucky': '今日幸运数',
             'dashboard.recentGames': '最近游戏',
             'dashboard.noData': '暂无数据',
-            
-            // Deposit
+
+            // ===== 充值 =====
             'deposit.title': '充值中心',
             'deposit.currentBalance': '当前余额',
             'deposit.method': '充值方式',
@@ -232,8 +263,8 @@ const i18n = {
             'deposit.bonus': '充值红利',
             'deposit.autoBonus': '自动发放',
             'deposit.noRecords': '暂无记录',
-            
-            // Withdraw
+
+            // ===== 提现 =====
             'withdraw.title': '提现',
             'withdraw.availableBalance': '可提现余额',
             'withdraw.method': '提现方式',
@@ -247,8 +278,8 @@ const i18n = {
             'withdraw.history': '提现记录',
             'withdraw.estimatedTime': '预计到账',
             'withdraw.businessDay': '工作日',
-            
-            // Profile
+
+            // ===== 个人中心 =====
             'profile.title': '个人中心',
             'profile.personalInfo': '个人信息',
             'profile.settings': '设置',
@@ -257,15 +288,46 @@ const i18n = {
             'profile.security': '安全',
             'profile.verified': '已认证',
             'profile.enabled': '已开启',
-            
-            // Admin Login
+
+            // ===== 登录 =====
+            'login.welcome': '欢迎回来',
+            'login.subtitle': '登录以继续',
+            'login.username': '用户名',
+            'login.password': '密码',
+            'login.remember': '记住我',
+            'login.forgot': '忘记密码？',
+            'login.noAccount': '还没有账号？',
+            'login.register': '立即注册',
+            'login.error': '用户名或密码错误！',
+            'login.success': '登录成功！正在跳转...',
+
+            // ===== 注册 =====
+            'register.title': '创建账号',
+            'register.subtitle': '加入我们，开始赢取奖励',
+            'register.fullName': '全名',
+            'register.email': '电子邮箱',
+            'register.phone': '手机号码',
+            'register.username': '选择用户名',
+            'register.password': '创建密码',
+            'register.confirm': '确认密码',
+            'register.agree': '我同意',
+            'register.terms': '服务条款',
+            'register.haveAccount': '已有账号？',
+            'register.login': '去登录',
+            'register.error.match': '两次输入的密码不一致！',
+            'register.error.min': '密码至少需要6个字符！',
+            'register.error.required': '请填写所有字段！',
+            'register.success': '注册成功！正在跳转至登录...',
+            'register.usernameTaken': '用户名已被占用！',
+
+            // ===== 管理员登录 =====
             'admin.login.title': '管理员登录',
             'admin.login.subtitle': '后台管理系统',
             'admin.login.secure': '安全登录',
             'admin.login.demo': '演示账号: admin / admin123',
             'admin.login.back': '返回首页',
-            
-            // Admin Dashboard
+
+            // ===== 管理员仪表板 =====
             'admin.dashboard.title': '管理面板',
             'admin.dashboard.welcome': '欢迎回来',
             'admin.dashboard.administrator': '管理员',
@@ -284,8 +346,8 @@ const i18n = {
             'admin.dashboard.thisWeek': '本周',
             'admin.dashboard.latency': '延迟',
             'admin.dashboard.connections': '个连接',
-            
-            // Messages
+
+            // ===== 提示消息 =====
             'msg.depositSuccess': '充值 RM{amount} 成功！\n请等待处理。',
             'msg.depositMin': '最低充值金额为 RM10',
             'msg.withdrawSuccess': '提现 RM{amount} 已提交！\n预计5-10分钟到账。',
@@ -297,16 +359,16 @@ const i18n = {
     }
 };
 
-// ===== i18n Functions =====
+// ===== i18n 核心函数 =====
 function t(key, params = {}) {
     const lang = i18n.currentLang;
     let text = i18n.translations[lang]?.[key] || i18n.translations['en'][key] || key;
-    
-    // Replace parameters
+
+    // 替换参数 {param}
     Object.keys(params).forEach(param => {
-        text = text.replace(`{${param}}`, params[param]);
+        text = text.replace(new RegExp(`\\{${param}\\}`, 'g'), params[param]);
     });
-    
+
     return text;
 }
 
@@ -321,22 +383,34 @@ function setLanguage(lang) {
 }
 
 function updateAllTexts() {
+    // 更新文本内容
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         const params = el.dataset.i18nParams ? JSON.parse(el.dataset.i18nParams) : {};
         el.textContent = t(key, params);
     });
-    
+
+    // 更新 placeholder
     document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
         const key = el.getAttribute('data-i18n-placeholder');
         el.placeholder = t(key);
     });
-    
+
+    // 更新 HTML 内容
     document.querySelectorAll('[data-i18n-html]').forEach(el => {
         const key = el.getAttribute('data-i18n-html');
         const params = el.dataset.i18nParams ? JSON.parse(el.dataset.i18nParams) : {};
         el.innerHTML = t(key, params);
     });
+
+    // 更新标题
+    const titleEl = document.querySelector('title');
+    if (titleEl) {
+        const key = titleEl.getAttribute('data-i18n-title');
+        if (key) {
+            titleEl.textContent = t(key);
+        }
+    }
 }
 
 function updateLanguageButtons(lang) {
@@ -345,24 +419,24 @@ function updateLanguageButtons(lang) {
     });
 }
 
-// ===== DOM Ready =====
+// ===== DOM 就绪后执行 =====
 document.addEventListener('DOMContentLoaded', function() {
-    // Load saved language
+    // 加载保存的语言
     const savedLang = localStorage.getItem('preferred_language') || 'en';
     setLanguage(savedLang);
-    
-    // Language switcher
+
+    // 语言切换按钮事件
     document.querySelectorAll('.lang-btn').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.preventDefault();
             setLanguage(this.dataset.lang);
         });
     });
-    
-    // Get current page
+
+    // 获取当前页面
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-    
-    // Highlight navigation
+
+    // 高亮导航
     const navItems = document.querySelectorAll('.nav-item');
     navItems.forEach(item => {
         const href = item.getAttribute('href');
@@ -371,14 +445,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // ===== Admin Login =====
+    // ============================================================
+    //  管理员登录
+    // ============================================================
     const loginBtn = document.querySelector('#admin-login-btn');
     if (loginBtn) {
         loginBtn.addEventListener('click', function(e) {
             e.preventDefault();
             const username = document.querySelector('#admin-username')?.value;
             const password = document.querySelector('#admin-password')?.value;
-            
+
             if (username === 'admin' && password === 'admin123') {
                 window.location.href = 'dashboard.html';
             } else {
@@ -387,7 +463,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // ===== Deposit =====
+    // ============================================================
+    //  充值功能
+    // ============================================================
     const depositBtn = document.querySelector('#deposit-btn');
     if (depositBtn) {
         depositBtn.addEventListener('click', function() {
@@ -400,7 +478,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // ===== Withdraw =====
+    // ============================================================
+    //  提现功能
+    // ============================================================
     const withdrawBtn = document.querySelector('#withdraw-btn');
     if (withdrawBtn) {
         withdrawBtn.addEventListener('click', function() {
@@ -413,7 +493,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // ===== Lucky Draw =====
+    // ============================================================
+    //  幸运抽奖
+    // ============================================================
     const luckyBtn = document.querySelector('#lucky-draw-btn');
     if (luckyBtn) {
         luckyBtn.addEventListener('click', function() {
@@ -426,7 +508,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // ===== Admin Logout =====
+    // ============================================================
+    //  管理员登出
+    // ============================================================
     const logoutBtn = document.querySelector('#admin-logout-btn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', function(e) {
@@ -437,26 +521,30 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // ===== Update dashboard lucky number =====
+    // ============================================================
+    //  仪表板幸运数字
+    // ============================================================
     const dashLucky = document.querySelector('#dash-lucky');
     if (dashLucky && !luckyBtn) {
         const numbers = Math.floor(1000 + Math.random() * 9000);
         dashLucky.textContent = numbers.toString().split('').join(' ');
     }
 
-    console.log(`✅ DoktorJudi Platform Loaded (${i18n.currentLang})`);
-    console.log(`📄 Current Page: ${currentPage}`);
+    console.log(`✅ DoktorJudi 平台已加载 (${i18n.currentLang})`);
+    console.log(`📄 当前页面: ${currentPage}`);
 });
 
-// ===== Carousel 轮播图 =====
+// ============================================================
+//  轮播图 (Carousel)
+// ============================================================
 (function initCarousel() {
     const track = document.getElementById('carouselTrack');
     const dots = document.querySelectorAll('.dot');
     const prevBtn = document.getElementById('carouselPrev');
     const nextBtn = document.getElementById('carouselNext');
-    
+
     if (!track) return;
-    
+
     let currentIndex = 0;
     const totalSlides = document.querySelectorAll('.carousel-slide').length;
     let autoPlayInterval = null;
@@ -467,7 +555,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (index >= totalSlides) index = 0;
         currentIndex = index;
         track.style.transform = `translateX(-${currentIndex * 100}%)`;
-        
+
         // 更新圆点
         dots.forEach((dot, i) => {
             dot.classList.toggle('active', i === currentIndex);

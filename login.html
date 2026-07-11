@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VISION711 · Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <style>
+        .auth-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: #06060f;
+            background-image: url('https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/hero-background/mobile-hero-background.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        .auth-card {
+            max-width: 400px;
+            width: 100%;
+            padding: 32px 28px 28px;
+            position: relative;
+            z-index: 1;
+        }
+        .auth-card .logo-wrap {
+            text-align: center;
+            margin-bottom: 6px;
+        }
+        .auth-card .logo-wrap canvas {
+            height: 70px;
+            width: auto;
+            display: inline-block;
+            border-radius: 8px;
+        }
+        .auth-card .auth-title {
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+            margin-top: 4px;
+            margin-bottom: 2px;
+        }
+        .auth-card .auth-subtitle {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.35);
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+        }
+        .auth-card .auth-links {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            font-size: 0.8rem;
+        }
+        .auth-card .auth-links a {
+            color: rgba(255, 255, 255, 0.3);
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .auth-card .auth-links a:hover {
+            color: #00b4ff;
+        }
+        .auth-card .auth-links .switch-link {
+            color: #00b4ff;
+            font-weight: 600;
+        }
+        .auth-card .auth-links .switch-link:hover {
+            color: #ffd700;
+        }
+        .auth-card .auth-footer {
+            text-align: center;
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .auth-card .auth-footer .back-home {
+            color: rgba(255, 255, 255, 0.12);
+            text-decoration: none;
+            font-size: 0.65rem;
+            transition: 0.3s;
+        }
+        .auth-card .auth-footer .back-home:hover {
+            color: rgba(0, 180, 255, 0.3);
+        }
+        .auth-card .auth-footer .lang-wrap {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+        }
+        .auth-card .auth-footer .lang-wrap .lang-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.15);
+            padding: 2px 14px;
+            border-radius: 20px;
+            font-size: 0.55rem;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 600;
+        }
+        .auth-card .auth-footer .lang-wrap .lang-btn.active {
+            border-color: rgba(0, 180, 255, 0.2);
+            color: rgba(255, 255, 255, 0.4);
+        }
+        .auth-card .auth-footer .lang-wrap .lang-btn:hover {
+            border-color: rgba(0, 180, 255, 0.3);
+            color: rgba(255, 255, 255, 0.4);
+        }
+        .auth-card .input-group-metal {
+            margin-bottom: 14px;
+        }
+        .auth-card .input-group-metal:last-of-type {
+            margin-bottom: 18px;
+        }
+        .auth-card .btn-metal-primary {
+            width: 100%;
+            justify-content: center;
+            padding: 14px;
+            font-size: 0.95rem;
+        }
+        .auth-card .error-msg {
+            color: #e33545;
+            font-size: 0.75rem;
+            text-align: center;
+            margin-bottom: 10px;
+            min-height: 20px;
+        }
+        .auth-card .error-msg.hidden {
+            display: none;
+        }
+        .auth-card .error-msg.success {
+            color: #4cd9a0;
+        }
+        @media (max-width: 480px) {
+            .auth-card {
+                padding: 24px 18px 20px;
+            }
+            .auth-card .auth-title {
+                font-size: 1.1rem;
+            }
+            .auth-card .logo-wrap canvas {
+                height: 56px;
+            }
+            .auth-card .input-group-metal input {
+                font-size: 0.85rem;
+                padding: 12px 6px;
+            }
+            .auth-card .btn-metal-primary {
+                padding: 12px;
+                font-size: 0.85rem;
+            }
+        }
+        @media (min-width: 768px) {
+            .auth-page {
+                background-image: url('https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/hero-background/desktop-hero-background.png');
+            }
+            .auth-card {
+                padding: 40px 36px 32px;
+                max-width: 420px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-page">
+        <div class="auth-card card-metal">
+            <!-- Logo -->
+            <div class="logo-wrap">
+                <a href="/" class="logo-metal">
+                    <canvas id="loginLogoCanvas" width="400" height="200"></canvas>
+                </a>
+            </div>
+
+            <!-- 标题 -->
+            <div class="auth-title" data-i18n="login.welcome">Welcome Back</div>
+            <div class="auth-subtitle" data-i18n="login.subtitle">Sign in to continue</div>
+
+            <!-- 错误/成功信息 -->
+            <div class="error-msg hidden" id="loginError"></div>
+
+            <!-- 登录表单 -->
+            <form id="loginForm" autocomplete="off">
+                <div class="input-group-metal">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="loginUsername" data-i18n-placeholder="login.username" placeholder="Username" value="player" required>
+                </div>
+                <div class="input-group-metal">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="loginPassword" data-i18n-placeholder="login.password" placeholder="Password" value="123456" required>
+                </div>
+
+                <div class="auth-links">
+                    <label style="color:rgba(255,255,255,0.25);font-size:0.75rem;display:flex;align-items:center;gap:6px;cursor:pointer;">
+                        <input type="checkbox" id="rememberMe" checked style="accent-color:#00b4ff;">
+                        <span data-i18n="login.remember">Remember Me</span>
+                    </label>
+                    <a href="#" style="font-size:0.7rem;" data-i18n="login.forgot">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="btn-metal-primary" style="margin-top:14px;">
+                    <i class="fas fa-sign-in-alt"></i> <span data-i18n="btn.login">Login</span>
+                </button>
+            </form>
+
+            <!-- 底部链接 -->
+            <div class="auth-footer">
+                <div style="font-size:0.8rem;color:rgba(255,255,255,0.25);">
+                    <span data-i18n="login.noAccount">Don't have an account?</span>
+                    <a href="/register" class="switch-link" data-i18n="login.register">Register</a>
+                </div>
+                <div class="lang-wrap">
+                    <button class="lang-btn active" data-lang="en">EN</button>
+                    <button class="lang-btn" data-lang="zh">中文</button>
+                </div>
+                <a href="/" class="back-home"><i class="fas fa-arrow-left"></i> <span data-i18n="admin.login.back">Back to Home</span></a>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+        // ===== Login Logo 流光效果 =====
+        (function initLoginLogo() {
+            const canvas = document.getElementById('loginLogoCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.src = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/hero-background/logo.png';
+
+            let logoData = null;
+            let w = 0,
+                h = 0;
+            let startTime = performance.now();
+
+            img.onload = function() {
+                w = img.width;
+                h = img.height;
+                canvas.width = w;
+                canvas.height = h;
+                ctx.drawImage(img, 0, 0);
+                logoData = ctx.getImageData(0, 0, w, h);
+                ctx.clearRect(0, 0, w, h);
+                requestAnimationFrame(drawFrame);
+            };
+
+            function drawFrame(timestamp) {
+                if (!logoData) return;
+                const elapsed = (timestamp - startTime) / 1000;
+                const waitTime = 1.0,
+                    scanDuration = 1.2,
+                    totalTime = waitTime + scanDuration;
+                let timeInCycle = elapsed % totalTime;
+                let progress;
+                if (timeInCycle < waitTime) {
+                    progress = -1;
+                } else {
+                    progress = 1 - (timeInCycle - waitTime) / scanDuration;
+                }
+                ctx.clearRect(0, 0, w, h);
+                ctx.globalAlpha = 0.9;
+                ctx.drawImage(img, 0, 0);
+                ctx.globalAlpha = 1.0;
+                const imageData = ctx.getImageData(0, 0, w, h);
+                const data = imageData.data;
+                const barWidth = Math.max(20, w * 0.25);
+                const centerX = progress * (w + barWidth) - barWidth / 2;
+                for (let y = 0; y < h; y++) {
+                    for (let x = 0; x < w; x++) {
+                        const idx = (y * w + x) * 4;
+                        if (logoData.data[idx + 3] < 128) continue;
+                        const dist = Math.abs(x - centerX);
+                        if (dist > barWidth / 2) continue;
+                        const strength = 1 - (dist / (barWidth / 2));
+                        const alpha = strength * 0.55;
+                        data[idx] = Math.min(255, data[idx] + 180 * alpha);
+                        data[idx + 1] = Math.min(255, data[idx + 1] + 180 * alpha);
+                        data[idx + 2] = Math.min(255, data[idx + 2] + 150 * alpha);
+                    }
+                }
+                ctx.putImageData(imageData, 0, 0);
+                requestAnimationFrame(drawFrame);
+            }
+        })();
+
+        // ===== Login 表单处理 =====
+        (function initLoginForm() {
+            const form = document.getElementById('loginForm');
+            const errorEl = document.getElementById('loginError');
+
+            if (!form) return;
+
+            // 加载保存的用户名
+            const savedUser = localStorage.getItem('login_username') || '';
+            if (savedUser) {
+                const u = document.getElementById('loginUsername');
+                if (u) u.value = savedUser;
+            }
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const username = document.getElementById('loginUsername').value.trim();
+                const password = document.getElementById('loginPassword').value.trim();
+
+                // 演示验证：player/123456 或 admin/admin123
+                const valid = (username === 'player' && password === '123456') ||
+                    (username === 'admin' && password === 'admin123');
+
+                if (valid) {
+                    // 保存登录状态
+                    localStorage.setItem('isLoggedIn', 'true');
+                    localStorage.setItem('login_username', username);
+                    localStorage.setItem('player_name', username.charAt(0).toUpperCase() + username.slice(1));
+
+                    // 显示成功消息
+                    errorEl.textContent = t('login.success');
+                    errorEl.className = 'error-msg success';
+                    errorEl.style.display = 'block';
+
+                    // 跳转
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 800);
+                } else {
+                    // 显示错误
+                    errorEl.textContent = t('login.error');
+                    errorEl.className = 'error-msg';
+                    errorEl.style.display = 'block';
+                }
+            });
+
+            // 输入时隐藏错误
+            document.querySelectorAll('#loginUsername, #loginPassword').forEach(input => {
+                input.addEventListener('input', function() {
+                    errorEl.className = 'error-msg hidden';
+                    errorEl.style.display = 'none';
+                });
+            });
+        })();
+
+        // ===== 同步语言按钮 =====
+        (function syncLang() {
+            const savedLang = localStorage.getItem('preferred_language') || 'en';
+            document.querySelectorAll('.lang-wrap .lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === savedLang);
+                btn.addEventListener('click', function() {
+                    const lang = this.dataset.lang;
+                    if (typeof setLanguage === 'function') {
+                        setLanguage(lang);
+                    } else {
+                        localStorage.setItem('preferred_language', lang);
+                        location.reload();
+                    }
+                    document.querySelectorAll('.lang-wrap .lang-btn').forEach(b => {
+                        b.classList.toggle('active', b.dataset.lang === lang);
+                    });
+                });
+            });
+        })();
+    </script>
+</body>
+</html>

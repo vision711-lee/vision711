@@ -28,11 +28,11 @@
     <!-- 抽屉菜单 -->
     <div class="hamburger-menu" id="hamburgerMenu">
         <div class="hamburger-header">
-            <a href="/" class="logo-metal">
-                <canvas id="hamburgerLogoCanvas" width="400" height="200"></canvas>
-            </a>
-            <span class="hamburger-slogan">Play Safe, Win Safe</span>
-        </div>
+    <a href="/" class="logo-metal">
+        <canvas id="hamburgerLogoCanvas" width="400" height="200"></canvas>
+    </a>
+    <span class="hamburger-slogan">Play Safe, Win Safe</span>
+</div>
 
         <div class="hamburger-user">
             <div class="avatar"><i class="fas fa-user"></i></div>
