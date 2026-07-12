@@ -15,6 +15,7 @@
     var isSupabaseAvailable = false;
     var selectedFile = null;
     var uploadedLogoUrl = '';
+    var editingItemId = null; // 编辑模式下的 ID
 
     try {
         if (typeof supabase !== 'undefined') {
@@ -36,36 +37,91 @@
         var itemsHTML = '';
         if (currentItems && currentItems.length > 0) {
             currentItems.forEach(function(item, index) {
-                var logoDisplay = item.logo_url
-                    ? `<img src="${item.logo_url}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:1px solid rgba(0,180,255,0.15);" onerror="this.style.display='none'">`
-                    : `<div style="width:40px;height:40px;border-radius:50%;background:rgba(0,180,255,0.08);display:flex;align-items:center;justify-content:center;color:#4a5a7a;font-size:0.8rem;"><i class="fas fa-handshake"></i></div>`;
+                var logoDisplay = item.logo_url && item.logo_url.startsWith('http')
+                    ? `<img src="${item.logo_url}" style="width:50px;height:50px;border-radius:50%;object-fit:cover;border:1px solid rgba(0,180,255,0.15);" onerror="this.style.display='none'">`
+                    : `<div style="width:50px;height:50px;border-radius:50%;background:rgba(0,180,255,0.08);display:flex;align-items:center;justify-content:center;color:#4a5a7a;font-size:1.2rem;"><i class="fas fa-handshake"></i></div>`;
 
                 itemsHTML += `
-                    <div style="display:flex;align-items:center;gap:14px;padding:12px 16px;background:rgba(255,255,255,0.02);border-radius:12px;border:1px solid rgba(255,255,255,0.04);">
+                    <div style="
+                        display:flex;
+                        align-items:center;
+                        gap:16px;
+                        padding:14px 18px;
+                        background:rgba(255,255,255,0.02);
+                        border-radius:12px;
+                        border:1px solid rgba(255,255,255,0.04);
+                        transition:0.3s;
+                    " onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='rgba(255,255,255,0.02)'">
+                        <!-- Logo -->
                         ${logoDisplay}
+
+                        <!-- 信息 -->
                         <div style="flex:1;min-width:0;">
-                            <div style="font-weight:600;color:#e5e9f0;font-size:0.85rem;">${item.title || 'Untitled'}</div>
-                            <div style="font-size:0.7rem;color:#5a6388;">${item.welcome_bonus || 'RM 0'} · ${item.daily_rebate || '0%'} · ${item.weekly_bonus || 'RM 0'}</div>
+                            <div style="font-weight:700;color:#e5e9f0;font-size:0.95rem;margin-bottom:4px;">
+                                ${item.title || 'Untitled'}
+                            </div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px 20px;font-size:0.75rem;">
+                                <div style="color:#5a6388;">
+                                    <span style="color:#ffd700;">Welcome Bonus:</span>
+                                    <span style="color:#e5e9f0;">${item.welcome_bonus || 'RM 0'}</span>
+                                </div>
+                                <div style="color:#5a6388;">
+                                    <span style="color:#4cd9a0;">Daily Rebate:</span>
+                                    <span style="color:#e5e9f0;">${item.daily_rebate || '0%'}</span>
+                                </div>
+                                <div style="color:#5a6388;">
+                                    <span style="color:#4a7cff;">Weekly Bonus:</span>
+                                    <span style="color:#e5e9f0;">${item.weekly_bonus || 'RM 0'}</span>
+                                </div>
+                                <div style="color:#5a6388;">
+                                    <span style="color:#ffd700;">Description:</span>
+                                    <span style="color:#8a9abb;font-style:italic;">${item.description || '-'}</span>
+                                </div>
+                            </div>
                         </div>
-                        <button onclick="window._adminPartnership.deleteItem('${item.id}')" style="
-                            background:transparent;
-                            border:none;
-                            color:#4a5a7a;
-                            cursor:pointer;
-                            padding:6px 10px;
-                            border-radius:6px;
-                            transition:0.3s;
-                            font-size:0.8rem;
-                        " onmouseover="this.style.color='#ff6b6b';this.style.background='rgba(255,107,107,0.05)'" onmouseout="this.style.color='#4a5a7a';this.style.background='transparent'">
-                            <i class="fas fa-trash"></i>
-                        </button>
+
+                        <!-- 操作按钮 -->
+                        <div style="display:flex;gap:6px;flex-shrink:0;">
+                            <button onclick="window._adminPartnership.openEditModal('${item.id}')" style="
+                                background:rgba(74,124,255,0.1);
+                                border:1px solid rgba(74,124,255,0.15);
+                                color:#4a7cff;
+                                padding:6px 14px;
+                                border-radius:8px;
+                                cursor:pointer;
+                                font-size:0.7rem;
+                                font-weight:600;
+                                transition:0.3s;
+                                display:flex;
+                                align-items:center;
+                                gap:4px;
+                            " onmouseover="this.style.background='rgba(74,124,255,0.2)'" onmouseout="this.style.background='rgba(74,124,255,0.1)'">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button onclick="window._adminPartnership.deleteItem('${item.id}')" style="
+                                background:rgba(255,107,107,0.08);
+                                border:1px solid rgba(255,107,107,0.1);
+                                color:#ff6b6b;
+                                padding:6px 14px;
+                                border-radius:8px;
+                                cursor:pointer;
+                                font-size:0.7rem;
+                                font-weight:600;
+                                transition:0.3s;
+                                display:flex;
+                                align-items:center;
+                                gap:4px;
+                            " onmouseover="this.style.background='rgba(255,107,107,0.2)'" onmouseout="this.style.background='rgba(255,107,107,0.08)'">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
                     </div>
                 `;
             });
         } else {
             itemsHTML = `
-                <div style="text-align:center;padding:30px 20px;color:#4a5a7a;font-size:0.85rem;">
-                    <i class="fas fa-handshake" style="font-size:2rem;display:block;margin-bottom:10px;color:#2a3560;"></i>
+                <div style="text-align:center;padding:40px 20px;color:#4a5a7a;font-size:0.85rem;">
+                    <i class="fas fa-handshake" style="font-size:2.5rem;display:block;margin-bottom:12px;color:#2a3560;"></i>
                     No partnership items yet. Click "Add Partnership" to create one.
                 </div>
             `;
@@ -106,12 +162,11 @@
                 border: 1px solid rgba(255,255,255,0.04);
                 padding: 20px;
             ">
-                <div style="font-size:12px; color:#5a6388; margin-bottom:12px; font-weight:600;">
-                    <i class="fas fa-list"></i> ${currentItems.length} item(s)
-                    <span style="margin-left:12px; color:#2a3560;">|</span>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;font-size:12px;color:#5a6388;font-weight:600;">
+                    <span><i class="fas fa-list"></i> ${currentItems.length} item(s)</span>
                     <span style="color:#2a3560;">${isSupabaseAvailable ? '✅ Supabase' : '💾 Local'}</span>
                 </div>
-                <div style="display:flex;flex-direction:column;gap:8px;">
+                <div style="display:flex;flex-direction:column;gap:10px;">
                     ${itemsHTML}
                 </div>
             </div>
@@ -226,7 +281,6 @@
             }
 
             if (!isSupabaseAvailable) {
-                // 如果没有 Supabase，将图片转为 base64 存储
                 var reader = new FileReader();
                 reader.onload = function(e) {
                     resolve(e.target.result);
@@ -256,7 +310,6 @@
                         return;
                     }
 
-                    // 获取公开 URL
                     var publicUrl = sb.storage
                         .from('vision-partner')
                         .getPublicUrl(filePath);
@@ -289,6 +342,35 @@
         saveToSupabase(function() {
             renderPartnershipPage();
             showSaveResult(true, 'Partnership added successfully!');
+        });
+    }
+
+    // ============================================================
+    // 更新项目
+    // ============================================================
+    function updateItem(id, data) {
+        var index = currentItems.findIndex(function(item) {
+            return item.id === id;
+        });
+
+        if (index === -1) {
+            showSaveResult(false, 'Item not found');
+            return;
+        }
+
+        currentItems[index] = {
+            ...currentItems[index],
+            logo_url: data.logo_url || currentItems[index].logo_url,
+            title: data.title || currentItems[index].title,
+            welcome_bonus: data.welcome_bonus || currentItems[index].welcome_bonus,
+            daily_rebate: data.daily_rebate || currentItems[index].daily_rebate,
+            weekly_bonus: data.weekly_bonus || currentItems[index].weekly_bonus,
+            description: data.description || currentItems[index].description
+        };
+
+        saveToSupabase(function() {
+            renderPartnershipPage();
+            showSaveResult(true, 'Partnership updated successfully!');
         });
     }
 
@@ -344,11 +426,44 @@
     }
 
     // ============================================================
-    // Modal - 添加 Partnership（带图片上传）
+    // 打开添加 Modal
     // ============================================================
     function openAddModal() {
+        editingItemId = null;
         selectedFile = null;
         uploadedLogoUrl = '';
+        openFormModal('Add Partnership', 'Create a new partnership program item', null);
+    }
+
+    // ============================================================
+    // 打开编辑 Modal
+    // ============================================================
+    function openEditModal(id) {
+        var item = currentItems.find(function(i) { return i.id === id; });
+        if (!item) {
+            showSaveResult(false, 'Item not found');
+            return;
+        }
+
+        editingItemId = id;
+        selectedFile = null;
+        uploadedLogoUrl = item.logo_url || '';
+
+        openFormModal('Edit Partnership', 'Update partnership program item', item);
+    }
+
+    // ============================================================
+    // 通用表单 Modal
+    // ============================================================
+    function openFormModal(title, subtitle, item) {
+        var isEdit = !!item;
+
+        var logoPreviewContent = '';
+        if (isEdit && item.logo_url && item.logo_url.startsWith('http')) {
+            logoPreviewContent = `<img src="${item.logo_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+        } else {
+            logoPreviewContent = `<i class="fas fa-handshake" style="font-size:1.5rem;color:#4a5a7a;"></i>`;
+        }
 
         var bodyHTML = `
             <div class="form-group">
@@ -379,10 +494,12 @@
                         flex-shrink:0;
                         overflow:hidden;
                     " id="logoPreview">
-                        <i class="fas fa-handshake"></i>
+                        ${logoPreviewContent}
                     </div>
                     <div style="flex:1;">
-                        <div style="font-size:0.8rem;color:#5a6388;" id="fileNameText">Click or drag to upload image</div>
+                        <div style="font-size:0.8rem;color:#5a6388;" id="fileNameText">
+                            ${isEdit && item.logo_url ? 'Current logo uploaded' : 'Click or drag to upload image'}
+                        </div>
                         <div style="font-size:0.6rem;color:#2a3560;">PNG, JPG, GIF up to 2MB</div>
                     </div>
                     <input type="file" id="fileInput" accept="image/*" style="display:none;">
@@ -390,9 +507,9 @@
             </div>
             <div class="form-group">
                 <label style="display:block;font-size:12px;color:#5a6388;margin-bottom:4px;font-weight:600;">
-                    <i class="fas fa-tag"></i> Title
+                    <i class="fas fa-building"></i> Partner Company Name
                 </label>
-                <input type="text" id="formTitle" placeholder="e.g. Welcome Bonus" value="Partnership" style="
+                <input type="text" id="formTitle" placeholder="e.g. Partner Company" value="${isEdit ? item.title : 'Partnership'}" style="
                     width:100%;
                     background:rgba(10,14,26,0.8);
                     border:1px solid #2a3560;
@@ -408,7 +525,7 @@
                 <label style="display:block;font-size:12px;color:#5a6388;margin-bottom:4px;font-weight:600;">
                     <i class="fas fa-gift" style="color:#ffd700;"></i> Welcome Bonus
                 </label>
-                <input type="text" id="formWelcomeBonus" placeholder="e.g. RM 88" value="RM 88" style="
+                <input type="text" id="formWelcomeBonus" placeholder="e.g. RM 88" value="${isEdit ? item.welcome_bonus : 'RM 88'}" style="
                     width:100%;
                     background:rgba(10,14,26,0.8);
                     border:1px solid #2a3560;
@@ -424,7 +541,7 @@
                 <label style="display:block;font-size:12px;color:#5a6388;margin-bottom:4px;font-weight:600;">
                     <i class="fas fa-percent" style="color:#4cd9a0;"></i> Daily Rebate
                 </label>
-                <input type="text" id="formDailyRebate" placeholder="e.g. 5%" value="5%" style="
+                <input type="text" id="formDailyRebate" placeholder="e.g. 5%" value="${isEdit ? item.daily_rebate : '5%'}" style="
                     width:100%;
                     background:rgba(10,14,26,0.8);
                     border:1px solid #2a3560;
@@ -440,7 +557,7 @@
                 <label style="display:block;font-size:12px;color:#5a6388;margin-bottom:4px;font-weight:600;">
                     <i class="fas fa-calendar-week" style="color:#4a7cff;"></i> Weekly Bonus
                 </label>
-                <input type="text" id="formWeeklyBonus" placeholder="e.g. RM 188" value="RM 188" style="
+                <input type="text" id="formWeeklyBonus" placeholder="e.g. RM 188" value="${isEdit ? item.weekly_bonus : 'RM 188'}" style="
                     width:100%;
                     background:rgba(10,14,26,0.8);
                     border:1px solid #2a3560;
@@ -456,7 +573,7 @@
                 <label style="display:block;font-size:12px;color:#5a6388;margin-bottom:4px;font-weight:600;">
                     <i class="fas fa-align-left"></i> Description
                 </label>
-                <input type="text" id="formDescription" placeholder="e.g. First deposit bonus" value="Exclusive partnership reward" style="
+                <input type="text" id="formDescription" placeholder="e.g. First deposit bonus" value="${isEdit ? item.description : 'Exclusive partnership reward'}" style="
                     width:100%;
                     background:rgba(10,14,26,0.8);
                     border:1px solid #2a3560;
@@ -472,13 +589,12 @@
 
         if (typeof openModal === 'function') {
             openModal(
-                '<i class="fas fa-plus"></i> Add Partnership',
-                'Create a new partnership program item',
+                '<i class="fas fa-' + (isEdit ? 'edit' : 'plus') + '"></i> ' + title,
+                subtitle,
                 bodyHTML,
                 function() {
                     // 如果有文件正在上传，先上传
                     if (selectedFile) {
-                        // 显示上传状态
                         var saveBtn = document.querySelector('#modalSaveBtn');
                         if (saveBtn) {
                             saveBtn.disabled = true;
@@ -488,7 +604,7 @@
                         uploadImage(selectedFile)
                             .then(function(url) {
                                 uploadedLogoUrl = url;
-                                saveItem();
+                                saveFormData();
                             })
                             .catch(function(err) {
                                 alert('Image upload failed: ' + err);
@@ -498,7 +614,7 @@
                                 }
                             });
                     } else {
-                        saveItem();
+                        saveFormData();
                     }
                 }
             );
@@ -529,15 +645,13 @@
                     selectedFile = file;
                     fileNameText.textContent = file.name;
 
-                    // 预览图片
                     var reader = new FileReader();
                     reader.onload = function(e) {
-                        logoPreview.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;">`;
+                        logoPreview.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
                     };
                     reader.readAsDataURL(file);
                 });
 
-                // 拖拽支持
                 uploadArea.addEventListener('dragover', function(e) {
                     e.preventDefault();
                     this.style.borderColor = 'rgba(74,124,255,0.6)';
@@ -568,7 +682,7 @@
 
                     var reader = new FileReader();
                     reader.onload = function(e) {
-                        logoPreview.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;">`;
+                        logoPreview.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
                     };
                     reader.readAsDataURL(file);
 
@@ -581,29 +695,40 @@
         }
     }
 
-    function saveItem() {
+    // ============================================================
+    // 保存表单数据
+    // ============================================================
+    function saveFormData() {
         var title = document.getElementById('formTitle').value.trim() || 'Partnership';
         var welcome_bonus = document.getElementById('formWelcomeBonus').value.trim() || 'RM 0';
         var daily_rebate = document.getElementById('formDailyRebate').value.trim() || '0%';
         var weekly_bonus = document.getElementById('formWeeklyBonus').value.trim() || 'RM 0';
         var description = document.getElementById('formDescription').value.trim() || '';
 
-        addItem({
+        var data = {
             logo_url: uploadedLogoUrl,
             title: title,
             welcome_bonus: welcome_bonus,
             daily_rebate: daily_rebate,
             weekly_bonus: weekly_bonus,
             description: description
-        });
+        };
+
+        if (editingItemId) {
+            // 编辑模式
+            updateItem(editingItemId, data);
+        } else {
+            // 添加模式
+            addItem(data);
+        }
 
         if (typeof closeModal === 'function') {
             closeModal();
         }
 
-        // 重置
         selectedFile = null;
         uploadedLogoUrl = '';
+        editingItemId = null;
     }
 
     // ============================================================
@@ -613,8 +738,10 @@
         render: renderPartnershipPage,
         load: loadData,
         addItem: addItem,
+        updateItem: updateItem,
         deleteItem: deleteItem,
         openAddModal: openAddModal,
+        openEditModal: openEditModal,
         getItems: function() { return currentItems; }
     };
 
