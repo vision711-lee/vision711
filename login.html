@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>VISION711 · Login</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
@@ -140,6 +141,9 @@
         .auth-card .error-msg.success {
             color: #4cd9a0;
         }
+        .auth-card .error-msg.loading {
+            color: #ffd700;
+        }
         @media (max-width: 480px) {
             .auth-card {
                 padding: 24px 18px 20px;
@@ -191,11 +195,11 @@
             <form id="loginForm" autocomplete="off">
                 <div class="input-group-metal">
                     <i class="fas fa-user"></i>
-                    <input type="text" id="loginUsername" data-i18n-placeholder="login.username" placeholder="Username" value="player" required>
+                    <input type="text" id="loginUsername" data-i18n-placeholder="login.username" placeholder="Username" required>
                 </div>
                 <div class="input-group-metal">
                     <i class="fas fa-lock"></i>
-                    <input type="password" id="loginPassword" data-i18n-placeholder="login.password" placeholder="Password" value="123456" required>
+                    <input type="password" id="loginPassword" data-i18n-placeholder="login.password" placeholder="Password" required>
                 </div>
 
                 <div class="auth-links">
@@ -206,7 +210,7 @@
                     <a href="#" style="font-size:0.7rem;" data-i18n="login.forgot">Forgot Password?</a>
                 </div>
 
-                <button type="submit" class="btn-metal-primary" style="margin-top:14px;">
+                <button type="submit" class="btn-metal-primary" id="loginBtn" style="margin-top:14px;">
                     <i class="fas fa-sign-in-alt"></i> <span data-i18n="btn.login">Login</span>
                 </button>
             </form>
@@ -228,7 +232,16 @@
 
     <script src="js/main.js"></script>
     <script>
-        // ===== Login Logo 流光效果 =====
+        // ============================================================
+        // Supabase 配置
+        // ============================================================
+        var SUPABASE_URL = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co';
+        var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImprYnBiamhyZ2JuemV4dmp2eGd0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4Mzc3MDcyMSwiZXhwIjoyMDk5MzQ2NzIxfQ.cZumC1R8_pGEfQv-BBfqJXAExCYOC7mdDj4OmkfdjRw';
+var supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // ============================================================
+        // 登录 Logo 流光效果
+        // ============================================================
         (function initLoginLogo() {
             const canvas = document.getElementById('loginLogoCanvas');
             if (!canvas) return;
@@ -238,8 +251,7 @@
             img.src = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/hero-background/logo.png';
 
             let logoData = null;
-            let w = 0,
-                h = 0;
+            let w = 0, h = 0;
             let startTime = performance.now();
 
             img.onload = function() {
@@ -256,9 +268,7 @@
             function drawFrame(timestamp) {
                 if (!logoData) return;
                 const elapsed = (timestamp - startTime) / 1000;
-                const waitTime = 1.0,
-                    scanDuration = 1.2,
-                    totalTime = waitTime + scanDuration;
+                const waitTime = 1.0, scanDuration = 1.2, totalTime = waitTime + scanDuration;
                 let timeInCycle = elapsed % totalTime;
                 let progress;
                 if (timeInCycle < waitTime) {
@@ -292,37 +302,117 @@
             }
         })();
 
-        // ===== Login 表单处理 =====
+        // ============================================================
+        // Login 表单处理 - Supabase 版本
+        // ============================================================
         (function initLoginForm() {
             const form = document.getElementById('loginForm');
             const errorEl = document.getElementById('loginError');
-
-            if (!form) return;
+            const loginBtn = document.getElementById('loginBtn');
+            const usernameInput = document.getElementById('loginUsername');
+            const passwordInput = document.getElementById('loginPassword');
 
             // 加载保存的用户名
             const savedUser = localStorage.getItem('login_username') || '';
             if (savedUser) {
-                const u = document.getElementById('loginUsername');
-                if (u) u.value = savedUser;
+                usernameInput.value = savedUser;
             }
 
-            form.addEventListener('submit', function(e) {
+            form.addEventListener('submit', async function(e) {
                 e.preventDefault();
-                const username = document.getElementById('loginUsername').value.trim();
-                const password = document.getElementById('loginPassword').value.trim();
+                
+                const username = usernameInput.value.trim();
+                const password = passwordInput.value;
 
-                // 演示验证：player/123456 或 admin/admin123
-                const valid = (username === 'player' && password === '123456') ||
-                    (username === 'admin' && password === 'admin123');
+                // 验证
+                if (!username || !password) {
+                    errorEl.textContent = 'Please enter username and password';
+                    errorEl.className = 'error-msg';
+                    errorEl.style.display = 'block';
+                    return;
+                }
 
-                if (valid) {
+                // 显示加载状态
+                errorEl.textContent = '⏳ Verifying...';
+                errorEl.className = 'error-msg loading';
+                errorEl.style.display = 'block';
+                loginBtn.disabled = true;
+                loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+
+                try {
+                    // 查询用户 - 从 Supabase users 表
+                    const { data, error } = await supabase
+                        .from('users')
+                        .select('*')
+                        .eq('username', username)
+                        .single();
+
+                    if (error) {
+                        console.error('❌ 查询错误:', error);
+                        errorEl.textContent = '❌ Database error: ' + error.message;
+                        errorEl.className = 'error-msg';
+                        errorEl.style.display = 'block';
+                        loginBtn.disabled = false;
+                        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> <span data-i18n="btn.login">Login</span>';
+                        return;
+                    }
+
+                    if (!data) {
+                        errorEl.textContent = '❌ User not found. Please register first.';
+                        errorEl.className = 'error-msg';
+                        errorEl.style.display = 'block';
+                        loginBtn.disabled = false;
+                        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> <span data-i18n="btn.login">Login</span>';
+                        return;
+                    }
+
+                    // 验证密码
+                    if (data.password_hash !== password) {
+                        errorEl.textContent = '❌ Invalid password!';
+                        errorEl.className = 'error-msg';
+                        errorEl.style.display = 'block';
+                        loginBtn.disabled = false;
+                        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> <span data-i18n="btn.login">Login</span>';
+                        return;
+                    }
+
+                    // 检查账户状态
+                    if (data.status === 'banned') {
+                        errorEl.textContent = '⛔ Account has been banned. Contact support.';
+                        errorEl.className = 'error-msg';
+                        errorEl.style.display = 'block';
+                        loginBtn.disabled = false;
+                        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> <span data-i18n="btn.login">Login</span>';
+                        return;
+                    }
+
+                    // ✅ 登录成功！
+                    console.log('✅ 登录成功:', data);
+
+                    // 更新最后登录时间
+                    try {
+                        await supabase
+                            .from('users')
+                            .update({ last_login: new Date().toISOString() })
+                            .eq('id', data.id);
+                    } catch (e) {
+                        console.warn('⚠️ 更新最后登录时间失败:', e);
+                    }
+
                     // 保存登录状态
                     localStorage.setItem('isLoggedIn', 'true');
                     localStorage.setItem('login_username', username);
-                    localStorage.setItem('player_name', username.charAt(0).toUpperCase() + username.slice(1));
+                    localStorage.setItem('player_name', data.full_name || data.username);
+                    localStorage.setItem('user_id', data.id);
+                    localStorage.setItem('user_data', JSON.stringify(data));
+                    localStorage.setItem('user_balance', data.balance || 0);
+                    localStorage.setItem('user_vip', data.vip_level || 0);
+
+                    // 保存到旧格式兼容
+                    localStorage.setItem('player_name', data.full_name || data.username);
 
                     // 显示成功消息
-                    errorEl.textContent = t('login.success');
+                    errorEl.textContent = '✅ Login successful! Redirecting...';
                     errorEl.className = 'error-msg success';
                     errorEl.style.display = 'block';
 
@@ -330,11 +420,14 @@
                     setTimeout(() => {
                         window.location.href = '/';
                     }, 800);
-                } else {
-                    // 显示错误
-                    errorEl.textContent = t('login.error');
+
+                } catch (err) {
+                    console.error('❌ 登录异常:', err);
+                    errorEl.textContent = '❌ Error: ' + err.message;
                     errorEl.className = 'error-msg';
                     errorEl.style.display = 'block';
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> <span data-i18n="btn.login">Login</span>';
                 }
             });
 
@@ -343,6 +436,10 @@
                 input.addEventListener('input', function() {
                     errorEl.className = 'error-msg hidden';
                     errorEl.style.display = 'none';
+                    if (loginBtn.disabled) {
+                        loginBtn.disabled = false;
+                        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> <span data-i18n="btn.login">Login</span>';
+                    }
                 });
             });
         })();
