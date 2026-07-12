@@ -147,7 +147,7 @@
         }
 
         .partnership-card .card-value {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: 800;
             background: linear-gradient(135deg, #ffd700, #ffed4a);
             -webkit-background-clip: text;
@@ -257,7 +257,7 @@
                 font-size: 2rem;
             }
             .partnership-card .card-title { font-size: 0.9rem; }
-            .partnership-card .card-value { font-size: 1.1rem; }
+            .partnership-card .card-value { font-size: 1rem; }
             .partnership-card .card-actions .btn-claim,
             .partnership-card .card-actions .btn-telegram {
                 font-size: 0.65rem;
@@ -274,7 +274,7 @@
                 height: 100px;
                 font-size: 3rem;
             }
-            .partnership-card .card-value { font-size: 1.6rem; }
+            .partnership-card .card-value { font-size: 1.4rem; }
         }
 
         @media (min-width: 1200px) {
@@ -846,7 +846,7 @@
 <script src="components/hamburger.js"></script>
 
 <!-- ============================================================
-    Partnership 数据加载
+    Partnership 数据加载 - 从 partnership_items 表读取
    ============================================================ -->
 <script>
     (function() {
@@ -857,40 +857,74 @@
 
         function loadPartnershipData() {
             var container = document.getElementById('partnershipGrid');
+            if (!container) return;
 
+            // 检查 Supabase 是否可用
             if (typeof supabase === 'undefined') {
+                console.warn('⚠️ Supabase not loaded, using localStorage');
                 loadFromLocalStorage();
                 return;
             }
 
             var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+            console.log('📥 Fetching partnership_items from Supabase...');
+
             sb.from('partnership_items')
                 .select('*')
                 .order('created_at', { ascending: true })
                 .then(function(res) {
+                    console.log('📊 Supabase response:', res);
+
                     if (res.error) {
-                        console.error('加载失败:', res.error);
+                        console.error('❌ 加载失败:', res.error);
                         loadFromLocalStorage();
                         return;
                     }
-                    renderCards(res.data || []);
+
+                    var items = res.data || [];
+                    console.log('✅ 加载成功:', items.length, 'items');
+
+                    if (items.length === 0) {
+                        console.log('📭 No items found, checking localStorage...');
+                        loadFromLocalStorage();
+                        return;
+                    }
+
+                    renderCards(items);
                 })
                 .catch(function(err) {
-                    console.error('异常:', err);
+                    console.error('❌ 加载异常:', err);
                     loadFromLocalStorage();
                 });
         }
 
         function loadFromLocalStorage() {
+            var container = document.getElementById('partnershipGrid');
+            if (!container) return;
+
             var saved = localStorage.getItem('partnership_items');
             if (saved) {
                 try {
-                    renderCards(JSON.parse(saved));
-                    return;
-                } catch (e) {}
+                    var items = JSON.parse(saved);
+                    console.log('💾 Loaded from localStorage:', items.length, 'items');
+                    if (items.length > 0) {
+                        renderCards(items);
+                        return;
+                    }
+                } catch (e) {
+                    console.warn('⚠️ Parse localStorage failed:', e);
+                }
             }
-            renderCards([]);
+
+            // 空状态
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-handshake"></i>
+                    <div style="font-size:1.1rem; color:rgba(255,255,255,0.3);">No partnership programs available</div>
+                    <div style="font-size:0.8rem; color:rgba(255,255,255,0.1); margin-top:4px;">Check back soon for exclusive offers</div>
+                </div>
+            `;
         }
 
         function renderCards(items) {
@@ -910,15 +944,17 @@
 
             var html = '';
             items.forEach(function(item) {
-                var logoHTML = item.logo_url
-                    ? `<img src="${item.logo_url}" alt="${item.title}" class="card-logo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
-                    : '';
-                var placeholderHTML = item.logo_url ? '' : `<div class="card-logo-placeholder"><i class="fas fa-handshake"></i></div>`;
+                // Logo 显示
+                var logoHTML = '';
+                if (item.logo_url && item.logo_url.startsWith('http')) {
+                    logoHTML = `<img src="${item.logo_url}" alt="${item.title}" class="card-logo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`;
+                } else {
+                    logoHTML = `<div class="card-logo-placeholder"><i class="fas fa-handshake"></i></div>`;
+                }
 
                 html += `
                     <div class="partnership-card">
                         ${logoHTML}
-                        ${placeholderHTML}
                         <div class="card-title">${item.title || 'Partnership'}</div>
                         <div class="card-value">${item.welcome_bonus || 'RM 0'}</div>
                         <div class="card-value" style="font-size:1rem; background:linear-gradient(135deg,#4cd9a0,#2ecc71); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">${item.daily_rebate || '0%'}</div>
@@ -933,6 +969,7 @@
             });
 
             container.innerHTML = html;
+            console.log('✅ Rendered', items.length, 'cards');
         }
 
         // ===== Logo 流光 =====
@@ -994,6 +1031,7 @@
 
         // ===== 启动 =====
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Partnership page initializing...');
             loadPartnershipData();
             initLogos();
 
