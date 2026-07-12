@@ -12,21 +12,16 @@
            Partnership 页面专属样式
            ============================================================ */
 
-        /* 手机版显示顶部横幅，电脑版隐藏 */
         @media (max-width: 767px) {
-            .top-banner-wrapper {
-                display: none !important;
-            }
+            .top-banner-wrapper { display: none !important; }
         }
 
-        /* 电脑版布局 */
         @media (min-width: 768px) {
             .app-container {
                 display: flex !important;
                 padding: 0 !important;
                 min-height: 100vh;
             }
-
             .sidebar {
                 width: 220px !important;
                 flex-shrink: 0 !important;
@@ -42,7 +37,6 @@
                 overflow-y: auto !important;
                 z-index: 10 !important;
             }
-
             .main-content {
                 flex: 1 !important;
                 padding: 24px 12px 30px 0 !important;
@@ -54,9 +48,7 @@
         }
 
         @media (max-width: 767px) {
-            .sidebar {
-                display: none !important;
-            }
+            .sidebar { display: none !important; }
             .app-container {
                 display: block !important;
                 padding: 12px 12px 80px !important;
@@ -123,32 +115,51 @@
         }
 
         .partnership-card .card-logo {
-            font-size: 2.4rem;
-            margin-bottom: 8px;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 10px;
             display: block;
+            border: 2px solid rgba(0, 180, 255, 0.2);
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .partnership-card .card-logo-placeholder {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            background: rgba(0, 180, 255, 0.08);
+            border: 2px solid rgba(0, 180, 255, 0.15);
+            color: #00b4ff;
         }
 
         .partnership-card .card-title {
-            font-size: 0.9rem;
+            font-size: 1.1rem;
             font-weight: 700;
             color: #fff;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
 
         .partnership-card .card-value {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: 800;
             background: linear-gradient(135deg, #ffd700, #ffed4a);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 4px;
         }
 
-        .partnership-card .card-sub {
-            font-size: 0.7rem;
-            color: rgba(255, 255, 255, 0.3);
-            margin-bottom: 12px;
+        .partnership-card .card-desc {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.4);
+            margin: 4px 0 12px;
+            min-height: 20px;
         }
 
         .partnership-card .card-actions {
@@ -202,46 +213,51 @@
             transform: translateY(-2px);
         }
 
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255, 255, 255, 0.2);
+            grid-column: 1 / -1;
+        }
+        .empty-state i {
+            font-size: 3rem;
+            color: rgba(255, 255, 255, 0.05);
+            display: block;
+            margin-bottom: 12px;
+        }
+
         /* 页面标题 */
         .partnership-header {
             text-align: center;
             margin-bottom: 20px;
         }
-
         .partnership-header h2 {
             font-size: 1.4rem;
             font-weight: 700;
             color: #fff;
         }
-
         .partnership-header h2 i {
             color: #ffd700;
             margin-right: 10px;
         }
-
         .partnership-header p {
             color: rgba(255, 255, 255, 0.3);
             font-size: 0.85rem;
             margin-top: 4px;
         }
 
-        /* 手机版适配 */
         @media (max-width: 480px) {
-            .partnership-grid {
-                gap: 12px;
+            .partnership-grid { gap: 12px; }
+            .partnership-card { padding: 16px 12px 14px; }
+            .partnership-card .card-logo,
+            .partnership-card .card-logo-placeholder {
+                width: 60px;
+                height: 60px;
+                font-size: 2rem;
             }
-            .partnership-card {
-                padding: 16px 12px 14px;
-            }
-            .partnership-card .card-logo {
-                font-size: 1.8rem;
-            }
-            .partnership-card .card-value {
-                font-size: 1.2rem;
-            }
-            .partnership-card .card-title {
-                font-size: 0.75rem;
-            }
+            .partnership-card .card-title { font-size: 0.9rem; }
+            .partnership-card .card-value { font-size: 1.1rem; }
             .partnership-card .card-actions .btn-claim,
             .partnership-card .card-actions .btn-telegram {
                 font-size: 0.65rem;
@@ -250,24 +266,19 @@
         }
 
         @media (min-width: 768px) {
-            .partnership-grid {
-                max-width: 900px;
-            }
-            .partnership-card {
-                padding: 24px 20px 20px;
-            }
-            .partnership-card .card-logo {
+            .partnership-grid { max-width: 900px; }
+            .partnership-card { padding: 24px 20px 20px; }
+            .partnership-card .card-logo,
+            .partnership-card .card-logo-placeholder {
+                width: 100px;
+                height: 100px;
                 font-size: 3rem;
             }
-            .partnership-card .card-value {
-                font-size: 1.8rem;
-            }
+            .partnership-card .card-value { font-size: 1.6rem; }
         }
 
         @media (min-width: 1200px) {
-            .partnership-grid {
-                max-width: 1100px;
-            }
+            .partnership-grid { max-width: 1100px; }
         }
 
         /* ===== 手机顶部导航 ===== */
@@ -280,13 +291,11 @@
             width: 100% !important;
             flex-direction: row !important;
         }
-
         .mobile-header .hamburger-wrapper {
             order: 1 !important;
             flex-shrink: 0 !important;
             margin-right: 4px !important;
         }
-
         .mobile-header .mobile-header-right {
             display: flex !important;
             align-items: center !important;
@@ -296,13 +305,11 @@
             justify-content: flex-end !important;
             order: 2 !important;
         }
-
         .mobile-header .logo-metal {
             order: 3 !important;
             flex-shrink: 0 !important;
             margin-left: 2px !important;
         }
-
         .mobile-header .logo-metal canvas {
             height: 60px !important;
             width: auto !important;
@@ -310,13 +317,9 @@
             display: block !important;
             border-radius: 6px !important;
         }
-
         .mobile-header .badge-vip,
         .mobile-header .lang-switcher,
-        .mobile-header .user-avatar-metal {
-            display: none !important;
-        }
-
+        .mobile-header .user-avatar-metal { display: none !important; }
         .mobile-header .header-auth-buttons {
             display: flex !important;
             align-items: center !important;
@@ -324,12 +327,10 @@
             flex-shrink: 0 !important;
             order: 2 !important;
         }
-
         .mobile-header .register-wrapper {
             display: inline-block !important;
             flex-shrink: 0 !important;
         }
-
         .mobile-header .register-btn {
             font-family: 'Montserrat', sans-serif !important;
             font-weight: 700 !important;
@@ -348,7 +349,6 @@
             cursor: pointer !important;
             animation: breatheGlowTop 2.5s ease-in-out infinite;
         }
-
         .mobile-header .register-btn:hover {
             transform: translateY(-2px) !important;
             animation-play-state: paused;
@@ -356,22 +356,11 @@
             background: rgba(0, 180, 255, 0.08) !important;
             box-shadow: 0 6px 30px rgba(0, 180, 255, 0.25) !important;
         }
-
         @keyframes breatheGlowTop {
-            0% {
-                box-shadow: 0 0 8px rgba(0, 180, 255, 0.1), inset 0 0 8px rgba(0, 180, 255, 0.04);
-                border-color: rgba(0, 180, 255, 0.35);
-            }
-            50% {
-                box-shadow: 0 0 35px rgba(0, 180, 255, 0.35), inset 0 0 35px rgba(0, 180, 255, 0.12);
-                border-color: rgba(0, 180, 255, 0.7);
-            }
-            100% {
-                box-shadow: 0 0 8px rgba(0, 180, 255, 0.1), inset 0 0 8px rgba(0, 180, 255, 0.04);
-                border-color: rgba(0, 180, 255, 0.35);
-            }
+            0% { box-shadow: 0 0 8px rgba(0, 180, 255, 0.1), inset 0 0 8px rgba(0, 180, 255, 0.04); border-color: rgba(0, 180, 255, 0.35); }
+            50% { box-shadow: 0 0 35px rgba(0, 180, 255, 0.35), inset 0 0 35px rgba(0, 180, 255, 0.12); border-color: rgba(0, 180, 255, 0.7); }
+            100% { box-shadow: 0 0 8px rgba(0, 180, 255, 0.1), inset 0 0 8px rgba(0, 180, 255, 0.04); border-color: rgba(0, 180, 255, 0.35); }
         }
-
         .mobile-header .login-btn {
             font-family: 'Montserrat', sans-serif !important;
             font-weight: 700 !important;
@@ -390,16 +379,12 @@
             text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
             letter-spacing: 0.5px !important;
         }
-
         .mobile-header .login-btn:hover {
             transform: translateY(-2px) !important;
             box-shadow: 0 6px 30px rgba(0, 180, 255, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
             background: linear-gradient(145deg, #00c8ff 0%, #00a0e8 30%, #00d4ff 60%, #0088d4 100%) !important;
         }
-
-        .mobile-header .mobile-header-slogan {
-            display: none;
-        }
+        .mobile-header .mobile-header-slogan { display: none; }
 
         /* ===== 手机底部导航 ===== */
         .bottom-nav {
@@ -420,7 +405,6 @@
             border-radius: 0 !important;
             justify-content: space-around !important;
         }
-
         .bottom-nav .nav-item {
             display: flex !important;
             flex-direction: column !important;
@@ -432,20 +416,13 @@
             padding: 4px 10px !important;
             position: relative !important;
         }
-
         .bottom-nav .nav-item i {
             font-size: 1.2rem !important;
             color: rgba(255, 255, 255, 0.2) !important;
         }
-
         .bottom-nav .nav-item.active i,
-        .bottom-nav .nav-item.active span {
-            color: #00b4ff !important;
-        }
-        .bottom-nav .nav-item.active span {
-            font-weight: 600 !important;
-        }
-
+        .bottom-nav .nav-item.active span { color: #00b4ff !important; }
+        .bottom-nav .nav-item.active span { font-weight: 600 !important; }
         .bottom-nav .nav-item.active::after {
             content: '' !important;
             position: absolute !important;
@@ -458,11 +435,8 @@
             border-radius: 2px !important;
             box-shadow: 0 0 10px rgba(0, 180, 255, 0.3) !important;
         }
-
         @supports (padding-bottom: env(safe-area-inset-bottom)) {
-            .bottom-nav {
-                padding-bottom: max(6px, env(safe-area-inset-bottom)) !important;
-            }
+            .bottom-nav { padding-bottom: max(6px, env(safe-area-inset-bottom)) !important; }
         }
 
         /* ===== Hamburger 样式 ===== */
@@ -478,7 +452,6 @@
             position: relative;
             transition: 0.3s;
         }
-
         .hamburger-btn span {
             display: block;
             width: 24px;
@@ -488,12 +461,10 @@
             transition: all 0.3s ease;
             transform-origin: center;
         }
-
         .hamburger-btn.menu-open span {
             opacity: 0 !important;
             transform: scale(0.5) !important;
         }
-
         .hamburger-overlay {
             position: fixed;
             top: 0;
@@ -508,12 +479,10 @@
             visibility: hidden;
             transition: all 0.3s ease;
         }
-
         .hamburger-overlay.open {
             opacity: 1;
             visibility: visible;
         }
-
         .hamburger-menu {
             position: fixed;
             top: 0;
@@ -534,11 +503,7 @@
             display: flex;
             flex-direction: column;
         }
-
-        .hamburger-menu.open {
-            transform: translateX(0);
-        }
-
+        .hamburger-menu.open { transform: translateX(0); }
         .hamburger-header {
             display: flex;
             flex-direction: column;
@@ -550,14 +515,12 @@
             flex-shrink: 0;
             gap: 8px;
         }
-
         .hamburger-header .logo-metal canvas {
             display: block;
             width: auto;
             height: 100px;
             border-radius: 12px;
         }
-
         .hamburger-slogan {
             font-family: 'Montserrat', sans-serif;
             font-weight: 800;
@@ -576,12 +539,10 @@
             animation: shimmerGlacier 5s linear infinite;
             text-shadow: none;
         }
-
         @keyframes shimmerGlacier {
             0% { background-position: 0% center; }
             100% { background-position: 300% center; }
         }
-
         .hamburger-nav {
             display: flex;
             flex-direction: column;
@@ -590,7 +551,6 @@
             flex: 1;
             overflow-y: auto;
         }
-
         .hamburger-nav a {
             display: flex;
             align-items: center;
@@ -604,7 +564,6 @@
             transition: all 0.3s ease;
             position: relative;
         }
-
         .hamburger-nav a i {
             width: 22px;
             text-align: center;
@@ -612,26 +571,17 @@
             color: rgba(255, 255, 255, 0.2);
             transition: 0.3s;
         }
-
         .hamburger-nav a:hover {
             background: rgba(255, 255, 255, 0.04);
             color: rgba(255, 255, 255, 0.7);
         }
-
-        .hamburger-nav a:hover i {
-            color: rgba(0, 180, 255, 0.5);
-        }
-
+        .hamburger-nav a:hover i { color: rgba(0, 180, 255, 0.5); }
         .hamburger-nav a.active {
             background: rgba(0, 180, 255, 0.08);
             border: 1px solid rgba(0, 180, 255, 0.08);
             color: #fff;
         }
-
-        .hamburger-nav a.active i {
-            color: #00b4ff;
-        }
-
+        .hamburger-nav a.active i { color: #00b4ff; }
         .hamburger-nav a.active::before {
             content: '';
             position: absolute;
@@ -644,7 +594,6 @@
             border-radius: 0 3px 3px 0;
             box-shadow: 0 0 20px rgba(0, 180, 255, 0.3);
         }
-
         .hamburger-lang {
             display: flex;
             gap: 8px;
@@ -653,7 +602,6 @@
             margin-top: 4px;
             flex-shrink: 0;
         }
-
         .hamburger-lang .lang-btn {
             background: transparent;
             border: 1px solid rgba(255, 255, 255, 0.05);
@@ -665,24 +613,20 @@
             transition: 0.3s;
             font-weight: 600;
         }
-
         .hamburger-lang .lang-btn.active {
             border-color: rgba(0, 180, 255, 0.2);
             color: rgba(255, 255, 255, 0.5);
             background: rgba(0, 180, 255, 0.05);
         }
-
         .hamburger-lang .lang-btn:hover {
             border-color: rgba(0, 180, 255, 0.3);
             color: rgba(255, 255, 255, 0.5);
         }
-
         .hamburger-footer {
             padding-top: 12px;
             border-top: 1px solid rgba(255, 255, 255, 0.04);
             flex-shrink: 0;
         }
-
         .hamburger-footer a {
             display: flex;
             align-items: center;
@@ -694,13 +638,10 @@
             border-radius: 8px;
             transition: 0.3s;
         }
-
         .hamburger-footer a:hover {
             color: rgba(0, 180, 255, 0.3);
             background: rgba(255, 255, 255, 0.02);
         }
-
-        /* Hamburger 用户区域 */
         .hamburger-user {
             display: flex;
             align-items: center;
@@ -712,7 +653,6 @@
             margin-bottom: 16px;
             flex-shrink: 0;
         }
-
         .hamburger-user .avatar {
             width: 44px;
             height: 44px;
@@ -726,23 +666,16 @@
             color: #00b4ff;
             flex-shrink: 0;
         }
-
-        .hamburger-user .info {
-            flex: 1;
-            min-width: 0;
-        }
-
+        .hamburger-user .info { flex: 1; min-width: 0; }
         .hamburger-user .info .name {
             font-size: 0.95rem;
             font-weight: 600;
             color: #fff;
         }
-
         .hamburger-user .info .role {
             font-size: 0.7rem;
             color: rgba(255, 255, 255, 0.3);
         }
-
         .hamburger-user .vip-badge {
             background: linear-gradient(145deg, rgba(255, 215, 0, 0.2), rgba(255, 215, 0, 0.05));
             border: 1px solid rgba(255, 215, 0, 0.2);
@@ -755,7 +688,6 @@
             white-space: nowrap;
             flex-shrink: 0;
         }
-
         .hamburger-auth {
             display: flex;
             gap: 10px;
@@ -766,7 +698,6 @@
             border-radius: 16px;
             border: 1px solid rgba(255, 255, 255, 0.04);
         }
-
         .hamburger-auth a {
             flex: 1;
             display: flex;
@@ -780,72 +711,48 @@
             text-decoration: none;
             transition: all 0.3s ease;
         }
-
         .hamburger-login-btn {
             background: linear-gradient(145deg, #00b4ff 0%, #0090e0 30%, #00c8ff 60%, #0077cc 100%);
             border: none;
             color: #fff !important;
             box-shadow: 0 2px 16px rgba(0, 180, 255, 0.3);
         }
-
         .hamburger-login-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 30px rgba(0, 180, 255, 0.4);
         }
-
         .hamburger-register-btn {
             background: transparent;
             border: 1px solid rgba(0, 180, 255, 0.12);
             color: #00b4ff !important;
             animation: breatheGlow 2.5s ease-in-out infinite;
         }
-
         .hamburger-register-btn:hover {
             transform: translateY(-2px);
             animation-play-state: paused;
             border-color: rgba(0, 180, 255, 0.6);
             background: rgba(0, 180, 255, 0.05);
         }
-
         @keyframes breatheGlow {
-            0% {
-                box-shadow: 0 0 5px rgba(0, 180, 255, 0.05), inset 0 0 5px rgba(0, 180, 255, 0.02);
-                border-color: rgba(0, 180, 255, 0.12);
-            }
-            50% {
-                box-shadow: 0 0 30px rgba(0, 180, 255, 0.25), inset 0 0 30px rgba(0, 180, 255, 0.08);
-                border-color: rgba(0, 180, 255, 0.5);
-            }
-            100% {
-                box-shadow: 0 0 5px rgba(0, 180, 255, 0.05), inset 0 0 5px rgba(0, 180, 255, 0.02);
-                border-color: rgba(0, 180, 255, 0.12);
-            }
+            0% { box-shadow: 0 0 5px rgba(0, 180, 255, 0.05), inset 0 0 5px rgba(0, 180, 255, 0.02); border-color: rgba(0, 180, 255, 0.12); }
+            50% { box-shadow: 0 0 30px rgba(0, 180, 255, 0.25), inset 0 0 30px rgba(0, 180, 255, 0.08); border-color: rgba(0, 180, 255, 0.5); }
+            100% { box-shadow: 0 0 5px rgba(0, 180, 255, 0.05), inset 0 0 5px rgba(0, 180, 255, 0.02); border-color: rgba(0, 180, 255, 0.12); }
         }
 
-        /* 电脑版隐藏手机元素 */
         @media (min-width: 768px) {
-            .mobile-header {
-                display: none !important;
-            }
-            .bottom-nav {
-                display: none !important;
-            }
+            .mobile-header { display: none !important; }
+            .bottom-nav { display: none !important; }
         }
-
-        /* 手机版隐藏侧边栏 */
         @media (max-width: 767px) {
-            .sidebar {
-                display: none !important;
-            }
+            .sidebar { display: none !important; }
         }
 
-        /* 加载状态 */
         .partnership-loading {
             text-align: center;
             padding: 40px 20px;
             color: rgba(255, 255, 255, 0.3);
+            grid-column: 1 / -1;
         }
-
         .partnership-loading i {
             font-size: 2rem;
             color: #00b4ff;
@@ -917,7 +824,6 @@
 
         <!-- ===== Partnership Grid ===== -->
         <div class="partnership-grid" id="partnershipGrid">
-            <!-- 卡片由 JavaScript 动态渲染 -->
             <div class="partnership-loading">
                 <i class="fas fa-spinner fa-spin"></i>
                 Loading partnership data...
@@ -946,147 +852,80 @@
     (function() {
         'use strict';
 
-        // Supabase 配置
         var SUPABASE_URL = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co';
         var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImprYnBiamhyZ2JuemV4dmp2eGd0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4Mzc3MDcyMSwiZXhwIjoyMDk5MzQ2NzIxfQ.cZumC1R8_pGEfQv-BBfqJXAExCYOC7mdDj4OmkfdjRw';
 
-        // 默认值
-        var DEFAULT_VALUES = {
-            welcome_bonus: 'RM 88',
-            daily_rebate: '5%',
-            weekly_bonus: 'RM 188',
-            new_register_free: 'RM 25'
-        };
-
-        var partnershipData = null;
-
-        // ============================================================
-        // 从 Supabase 加载数据
-        // ============================================================
         function loadPartnershipData() {
             var container = document.getElementById('partnershipGrid');
 
-            // 检查是否已加载 Supabase
             if (typeof supabase === 'undefined') {
-                console.warn('Supabase not loaded, using localStorage fallback');
                 loadFromLocalStorage();
                 return;
             }
 
             var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-            sb.from('partnership_settings')
+            sb.from('partnership_items')
                 .select('*')
-                .limit(1)
+                .order('created_at', { ascending: true })
                 .then(function(res) {
                     if (res.error) {
-                        console.error('加载 Partnership 数据失败:', res.error);
+                        console.error('加载失败:', res.error);
                         loadFromLocalStorage();
                         return;
                     }
-
-                    if (res.data && res.data.length > 0) {
-                        partnershipData = res.data[0];
-                        renderPartnershipCards(partnershipData);
-                    } else {
-                        // 没有数据，使用默认值并创建
-                        partnershipData = {
-                            id: 1,
-                            welcome_bonus: DEFAULT_VALUES.welcome_bonus,
-                            daily_rebate: DEFAULT_VALUES.daily_rebate,
-                            weekly_bonus: DEFAULT_VALUES.weekly_bonus,
-                            new_register_free: DEFAULT_VALUES.new_register_free,
-                            updated_at: new Date().toISOString()
-                        };
-                        renderPartnershipCards(partnershipData);
-                        // 尝试创建记录
-                        sb.from('partnership_settings')
-                            .insert(partnershipData)
-                            .then(function() {})
-                            .catch(function() {});
-                    }
+                    renderCards(res.data || []);
                 })
                 .catch(function(err) {
-                    console.error('加载异常:', err);
+                    console.error('异常:', err);
                     loadFromLocalStorage();
                 });
         }
 
-        // ============================================================
-        // 从 localStorage 加载（备用）
-        // ============================================================
         function loadFromLocalStorage() {
-            var saved = localStorage.getItem('partnership_settings');
+            var saved = localStorage.getItem('partnership_items');
             if (saved) {
                 try {
-                    partnershipData = JSON.parse(saved);
-                    renderPartnershipCards(partnershipData);
+                    renderCards(JSON.parse(saved));
                     return;
                 } catch (e) {}
             }
-
-            // 使用默认值
-            partnershipData = {
-                welcome_bonus: DEFAULT_VALUES.welcome_bonus,
-                daily_rebate: DEFAULT_VALUES.daily_rebate,
-                weekly_bonus: DEFAULT_VALUES.weekly_bonus,
-                new_register_free: DEFAULT_VALUES.new_register_free
-            };
-            renderPartnershipCards(partnershipData);
+            renderCards([]);
         }
 
-        // ============================================================
-        // 渲染卡片
-        // ============================================================
-        function renderPartnershipCards(data) {
+        function renderCards(items) {
             var container = document.getElementById('partnershipGrid');
             if (!container) return;
 
-            var cards = [
-                {
-                    key: 'welcome_bonus',
-                    logo: '🎁',
-                    title: 'Welcome Bonus',
-                    value: data.welcome_bonus || DEFAULT_VALUES.welcome_bonus,
-                    sub: 'First deposit bonus',
-                    claimLink: 'deposit.html'
-                },
-                {
-                    key: 'daily_rebate',
-                    logo: '🔄',
-                    title: 'Daily Rebate',
-                    value: data.daily_rebate || DEFAULT_VALUES.daily_rebate,
-                    sub: 'Daily cashback on losses',
-                    claimLink: 'dashboard.html'
-                },
-                {
-                    key: 'weekly_bonus',
-                    logo: '📊',
-                    title: 'Weekly Bonus',
-                    value: data.weekly_bonus || DEFAULT_VALUES.weekly_bonus,
-                    sub: 'Weekly turnover bonus',
-                    claimLink: 'dashboard.html'
-                },
-                {
-                    key: 'new_register_free',
-                    logo: '✨',
-                    title: 'NEW REGISTER FREE',
-                    value: data.new_register_free || DEFAULT_VALUES.new_register_free,
-                    sub: 'Free credit for new members',
-                    claimLink: 'register.html'
-                }
-            ];
+            if (!items || items.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-handshake"></i>
+                        <div style="font-size:1.1rem; color:rgba(255,255,255,0.3);">No partnership programs available</div>
+                        <div style="font-size:0.8rem; color:rgba(255,255,255,0.1); margin-top:4px;">Check back soon for exclusive offers</div>
+                    </div>
+                `;
+                return;
+            }
 
             var html = '';
-            cards.forEach(function(card) {
+            items.forEach(function(item) {
+                var logoHTML = item.logo_url
+                    ? `<img src="${item.logo_url}" alt="${item.title}" class="card-logo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+                    : '';
+                var placeholderHTML = item.logo_url ? '' : `<div class="card-logo-placeholder"><i class="fas fa-handshake"></i></div>`;
+
                 html += `
-                    <div class="partnership-card" data-key="${card.key}">
-                        <span class="card-logo">${card.logo}</span>
-                        <div class="card-title">${card.title}</div>
-                        <div class="card-value">${card.value}</div>
-                        <div class="card-sub">${card.sub}</div>
+                    <div class="partnership-card">
+                        ${logoHTML}
+                        ${placeholderHTML}
+                        <div class="card-title">${item.title || 'Partnership'}</div>
+                        <div class="card-value">${item.welcome_bonus || 'RM 0'}</div>
+                        <div class="card-value" style="font-size:1rem; background:linear-gradient(135deg,#4cd9a0,#2ecc71); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">${item.daily_rebate || '0%'}</div>
+                        <div class="card-value" style="font-size:1rem; background:linear-gradient(135deg,#4a7cff,#8ca3ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">${item.weekly_bonus || 'RM 0'}</div>
+                        <div class="card-desc">${item.description || ''}</div>
                         <div class="card-actions">
-                            <a href="${card.claimLink}" class="btn-claim"><i class="fas fa-gift"></i> Claim Now</a>
+                            <a href="deposit.html" class="btn-claim"><i class="fas fa-gift"></i> Claim Now</a>
                             <a href="https://t.me/vision711" target="_blank" class="btn-telegram"><i class="fab fa-telegram-plane"></i> Join Telegram</a>
                         </div>
                     </div>
@@ -1096,21 +935,12 @@
             container.innerHTML = html;
         }
 
-        // ============================================================
-        // 初始化 Logo 流光
-        // ============================================================
+        // ===== Logo 流光 =====
         function initLogos() {
-            // Sidebar Logo
-            var sidebarCanvas = document.getElementById('sidebarLogoCanvas');
-            if (sidebarCanvas) {
-                initLogoCanvas(sidebarCanvas);
-            }
-
-            // Header Logo
-            var headerCanvas = document.getElementById('headerLogoCanvas');
-            if (headerCanvas) {
-                initLogoCanvas(headerCanvas);
-            }
+            ['sidebarLogoCanvas', 'headerLogoCanvas'].forEach(function(id) {
+                var canvas = document.getElementById(id);
+                if (canvas) initLogoCanvas(canvas);
+            });
         }
 
         function initLogoCanvas(canvas) {
@@ -1119,15 +949,11 @@
             img.crossOrigin = 'anonymous';
             img.src = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/hero-background/logo.png';
 
-            var logoData = null;
-            var w = 0, h = 0;
-            var startTime = performance.now();
+            var logoData = null, w = 0, h = 0, startTime = performance.now();
 
             img.onload = function() {
-                w = img.width;
-                h = img.height;
-                canvas.width = w;
-                canvas.height = h;
+                w = img.width; h = img.height;
+                canvas.width = w; canvas.height = h;
                 ctx.drawImage(img, 0, 0);
                 logoData = ctx.getImageData(0, 0, w, h);
                 ctx.clearRect(0, 0, w, h);
@@ -1139,12 +965,7 @@
                 var elapsed = (timestamp - startTime) / 1000;
                 var waitTime = 1.0, scanDuration = 1.2, totalTime = waitTime + scanDuration;
                 var timeInCycle = elapsed % totalTime;
-                var progress;
-                if (timeInCycle < waitTime) {
-                    progress = -1;
-                } else {
-                    progress = 1 - (timeInCycle - waitTime) / scanDuration;
-                }
+                var progress = timeInCycle < waitTime ? -1 : 1 - (timeInCycle - waitTime) / scanDuration;
                 ctx.clearRect(0, 0, w, h);
                 ctx.globalAlpha = 0.9;
                 ctx.drawImage(img, 0, 0);
@@ -1171,14 +992,11 @@
             }
         }
 
-        // ============================================================
-        // 启动
-        // ============================================================
+        // ===== 启动 =====
         document.addEventListener('DOMContentLoaded', function() {
             loadPartnershipData();
             initLogos();
 
-            // 语言切换
             var savedLang = localStorage.getItem('preferred_language') || 'en';
             document.querySelectorAll('.lang-btn').forEach(function(btn) {
                 btn.classList.toggle('active', btn.dataset.lang === savedLang);
@@ -1192,7 +1010,6 @@
                 });
             });
 
-            // 登录状态
             var isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
             var authButtons = document.querySelector('.header-auth-buttons');
             var slogan = document.querySelector('.mobile-header-slogan');
