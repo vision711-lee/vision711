@@ -23,23 +23,17 @@
         }
 
         .top-banner {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%) translateY(-120%);
-            width: calc(100% - 24px);
-            max-width: 480px;
-            padding: 18px 22px;
-            border-radius: 20px;
-            background: linear-gradient(160deg, #0a1a3a, #0d2048);
-            border: 1px solid rgba(0, 180, 255, 0.2);
-            box-shadow: 0 12px 50px rgba(0, 0, 0, 0.8), 0 0 80px rgba(0, 100, 255, 0.06);
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            transition: transform 0.5s cubic-bezier(0.34, 1.2, 0.64, 1);
-            pointer-events: auto;
-        }
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%) translateY(-120%);
+    width: calc(100% - 24px);
+    max-width: 480px;
+    /* 删除所有背景、边框、阴影相关样式 */
+    transition: transform 0.5s cubic-bezier(0.34, 1.2, 0.64, 1);
+    pointer-events: auto;
+    position: relative;  /* 让关闭按钮可以绝对定位 */
+}
 
         .top-banner::after {
             content: '';
@@ -308,6 +302,28 @@
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.04); }
 }
+
+/* 手机版固定横幅 - 左右缝隙更小，更长 */
+.mobile-banner-fixed {
+    width: calc(100% - 4px);
+    max-width: 100%;
+    margin: -8px auto 8px !important;
+    padding: 0 4px;
+}
+
+.mobile-banner-fixed img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 0px;
+}
+
+/* 手机版显示，电脑版隐藏 */
+@media (min-width: 768px) {
+    .mobile-banner-fixed {
+        display: none !important;
+    }
+}
     </style>
 </head>
 <body>
@@ -318,15 +334,47 @@
     手机版：顶部循环横幅
     ============================================================ -->
     <div class="top-banner-wrapper">
-        <div class="top-banner" id="topBanner">
-            <div class="banner-icon"><i class="fas fa-bullhorn"></i></div>
-            <div class="banner-text">
-                <div class="title">🎯 限时活动</div>
-                <div class="desc">首存 RM20 送 100% 红利 · 立即参与</div>
-            </div>
-            <button class="banner-close" id="bannerCloseBtn"><i class="fas fa-times"></i></button>
-        </div>
+    <div class="top-banner" id="topBanner" style="
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    ">
+        <img 
+            src="https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/vision-partner/mobile-partner-badge.png" 
+            alt="活动横幅"
+            style="
+                width: 100%;
+                height: auto;
+                display: block;
+                border-radius: 16px;
+            "
+        >
+        <button class="banner-close" id="bannerCloseBtn" style="
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.3);
+            border: none;
+            color: rgba(255,255,255,0.6);
+            font-size: 0.7rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 10;
+        ">
+            <i class="fas fa-times"></i>
+        </button>
     </div>
+</div>
 
     <!-- ===== SIDEBAR ===== -->
     <div class="sidebar">
@@ -359,20 +407,20 @@
         </div>
     </div>
 
-    <!-- ============================================================
-    电脑版：卡片 - 在侧边栏右侧
-    ============================================================ -->
-    <div class="desktop-card-wrapper">
-    <img 
-        src="https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/vision-partner/desktop-partner-badge.png" 
-        alt="限时活动"
-        style="
-            width: 220px;
-            height: auto;
-            display: block;
-            animation: breatheScale 3s ease-in-out infinite;
-        "
-    >
+   <!-- 电脑版卡片 - 添加点击跳转 -->
+<div class="desktop-card-wrapper">
+    <a href="/partnership" style="display:block; text-decoration:none; cursor:pointer;">
+        <img 
+            src="https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/vision-partner/desktop-partner-badge.png" 
+            alt="限时活动"
+            style="
+                width: 220px;
+                height: auto;
+                display: block;
+                animation: breatheScale 3s ease-in-out infinite;
+            "
+        >
+    </a>
 </div>
 
     <!-- ===== MAIN CONTENT ===== -->
@@ -453,6 +501,114 @@
             </div>
         </div>
 
+<!-- 手机版固定横幅 -->
+<div class="mobile-banner-fixed" style="position: relative; overflow: hidden; border-radius: 16px;">
+    <a href="/partnership" style="display:block; text-decoration:none; cursor:pointer;">
+        <img 
+            src="https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/vision-partner/mobile-partner-badge.png" 
+            alt="活动横幅"
+            style="
+                width: 100%;
+                height: auto;
+                display: block;
+                border-radius: 16px;
+            "
+        >
+    </a>
+    <canvas id="bannerShimmerCanvas" style="
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        border-radius: 16px;
+    "></canvas>
+</div>
+
+<script>
+(function initBannerShimmer() {
+    const canvas = document.getElementById('bannerShimmerCanvas');
+    if (!canvas) return;
+    
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.src = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/vision-partner/mobile-partner-badge.png';
+    
+    let logoData = null;
+    let w = 0, h = 0;
+    let startTime = performance.now();
+    
+    img.onload = function() {
+        w = img.width;
+        h = img.height;
+        canvas.width = w;
+        canvas.height = h;
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        logoData = ctx.getImageData(0, 0, w, h);
+        ctx.clearRect(0, 0, w, h);
+        requestAnimationFrame(drawFrame);
+    };
+    
+    function drawFrame(timestamp) {
+        if (!logoData) return;
+        
+        const ctx = canvas.getContext('2d');
+        const elapsed = (timestamp - startTime) / 1000;
+        const waitTime = 0.8;
+        const scanDuration = 1.0;
+        const totalTime = waitTime + scanDuration;
+        
+        let timeInCycle = elapsed % totalTime;
+        let progress;
+        if (timeInCycle < waitTime) {
+            progress = -1;
+        } else {
+            progress = 1 - (timeInCycle - waitTime) / scanDuration;
+        }
+        
+        ctx.clearRect(0, 0, w, h);
+        ctx.globalAlpha = 0.9;
+        ctx.drawImage(img, 0, 0);
+        ctx.globalAlpha = 1.0;
+        
+        const imageData = ctx.getImageData(0, 0, w, h);
+        const data = imageData.data;
+        
+        const barWidth = Math.max(30, (w + h) * 0.15);
+        const centerX = progress * (w + barWidth) - barWidth / 2;
+        const centerY = progress * (h + barWidth) - barWidth / 2;
+        
+        for (let y = 0; y < h; y++) {
+            for (let x = 0; x < w; x++) {
+                const idx = (y * w + x) * 4;
+                if (logoData.data[idx + 3] < 128) continue;
+                
+                const dx = x - centerX;
+                const dy = y - centerY;
+                const dist = Math.abs(dx + dy) / Math.sqrt(2);
+                
+                if (dist > barWidth / 2) continue;
+                
+                const strength = 1 - (dist / (barWidth / 2));
+                const alpha = strength * 0.8;
+                
+                data[idx] = Math.min(255, data[idx] + 220 * alpha);
+                data[idx + 1] = Math.min(255, data[idx + 1] + 220 * alpha);
+                data[idx + 2] = Math.min(255, data[idx + 2] + 180 * alpha);
+            }
+        }
+        
+        ctx.putImageData(imageData, 0, 0);
+        requestAnimationFrame(drawFrame);
+    }
+})();
+</script>
+
         <!-- ===== 幸运抽奖 ===== -->
         <div class="lucky-draw">
             <div class="flex-row">
@@ -486,58 +642,7 @@
 JavaScript
 ============================================================ -->
 <script>
-    // ============================================================
-    // 手机版：顶部循环横幅
-    // ============================================================
-    (function() {
-        const banner = document.getElementById('topBanner');
-        const closeBtn = document.getElementById('bannerCloseBtn');
-        let isPaused = false;
-        let timer = null;
-        let cycleTimer = null;
-
-        function startCycle() {
-            if (isPaused || !banner) return;
-            clearTimeout(timer);
-            clearTimeout(cycleTimer);
-            banner.classList.add('show');
-            timer = setTimeout(function() {
-                banner.classList.remove('show');
-                cycleTimer = setTimeout(function() {
-                    startCycle();
-                }, 5000);
-            }, 3000);
-        }
-
-        if (closeBtn) {
-            closeBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                banner.classList.remove('show');
-                isPaused = true;
-                clearTimeout(timer);
-                clearTimeout(cycleTimer);
-            });
-        }
-
-        if (banner) {
-            banner.addEventListener('click', function(e) {
-                if (e.target.closest('.banner-close')) return;
-                alert('🎯 跳转到活动页面');
-            });
-        }
-
-        startCycle();
-
-        document.addEventListener('visibilitychange', function() {
-            if (!document.hidden && !isPaused && banner) {
-                clearTimeout(timer);
-                clearTimeout(cycleTimer);
-                banner.classList.remove('show');
-                setTimeout(startCycle, 300);
-            }
-        });
-    })();
-
+    
     // ============================================================
     // 电脑版：卡片点击
     // ============================================================
