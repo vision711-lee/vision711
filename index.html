@@ -10,7 +10,6 @@
     <style>
         /* ============================================================
            手机版：顶部循环横幅 - 完全不透明，覆盖一切
-           (仅在手机版显示)
            ============================================================ */
         @media (max-width: 767px) {
             .top-banner-wrapper {
@@ -130,37 +129,69 @@
         }
 
         /* ============================================================
-           电脑版：固定正方形活动卡片 - 放在侧边栏右侧
-           (仅在电脑版显示)
+           电脑版：卡片放在侧边栏和轮播图之间的缝隙
+           布局: [侧边栏] [卡片] [轮播图+主内容]
            ============================================================ */
         @media (min-width: 768px) {
-            /* 电脑版固定卡片 - 定位在侧边栏右侧 */
-            .desktop-banner-card {
+            /* 主内容区域使用 flex 布局 */
+            .app-container {
                 display: flex !important;
-                position: fixed;
-                top: 50%;
-                left: 240px;
-                transform: translateY(-50%) translateX(20px);
-                width: 160px;
+                padding: 0 !important;
+                min-height: 100vh;
+            }
+
+            /* 侧边栏固定宽度 */
+            .sidebar {
+                width: 220px !important;
+                flex-shrink: 0 !important;
+                position: sticky !important;
+                top: 0 !important;
+                height: 100vh !important;
+                display: flex !important;
+                flex-direction: column !important;
+                background: rgba(10, 10, 32, 0.75) !important;
+                backdrop-filter: blur(16px) !important;
+                border-right: 1px solid rgba(255, 255, 255, 0.06) !important;
+                padding: 24px 16px 30px !important;
+                overflow-y: auto !important;
+                z-index: 10 !important;
+            }
+
+            /* 卡片容器 - 固定在侧边栏和主内容之间 */
+            .desktop-card-wrapper {
+                flex-shrink: 0;
+                width: 140px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0 16px;
+                position: sticky;
+                top: 0;
+                height: 100vh;
+            }
+
+            .desktop-banner-card {
+                width: 120px;
                 height: 160px;
-                border-radius: 20px;
+                border-radius: 16px;
                 background: linear-gradient(160deg, #0a1a3a, #0d2048);
-                border: 1px solid rgba(0, 180, 255, 0.15);
-                box-shadow: 0 12px 50px rgba(0, 0, 0, 0.6), 0 0 60px rgba(0, 100, 255, 0.04);
-                padding: 20px 16px;
+                border: 1px solid rgba(0, 180, 255, 0.12);
+                box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5), 0 0 60px rgba(0, 100, 255, 0.03);
+                padding: 16px 12px;
+                display: flex;
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
                 text-align: center;
-                z-index: 100;
                 overflow: hidden;
                 transition: all 0.3s ease;
+                flex-shrink: 0;
             }
 
             .desktop-banner-card:hover {
-                transform: translateY(-50%) translateX(24px) scale(1.02);
+                transform: translateY(-2px);
                 border-color: rgba(0, 180, 255, 0.25);
-                box-shadow: 0 16px 60px rgba(0, 0, 0, 0.7), 0 0 80px rgba(0, 100, 255, 0.06);
+                box-shadow: 0 12px 50px rgba(0, 0, 0, 0.6), 0 0 80px rgba(0, 100, 255, 0.06);
             }
 
             .desktop-banner-card::after {
@@ -174,13 +205,13 @@
             }
 
             .desktop-banner-card .card-icon {
-                font-size: 2.2rem;
+                font-size: 1.8rem;
                 color: #4dc8ff;
-                margin-bottom: 8px;
+                margin-bottom: 6px;
             }
 
             .desktop-banner-card .card-title {
-                font-size: 0.8rem;
+                font-size: 0.7rem;
                 font-weight: 700;
                 color: #4dc8ff;
                 letter-spacing: 0.5px;
@@ -188,19 +219,19 @@
             }
 
             .desktop-banner-card .card-desc {
-                font-size: 0.55rem;
+                font-size: 0.5rem;
                 color: rgba(255, 255, 255, 0.3);
                 letter-spacing: 0.3px;
                 line-height: 1.5;
             }
 
             .desktop-banner-card .card-cta {
-                margin-top: 10px;
-                font-size: 0.55rem;
+                margin-top: 8px;
+                font-size: 0.5rem;
                 font-weight: 600;
                 color: #4dc8ff;
                 border: 1px solid rgba(0, 180, 255, 0.1);
-                padding: 4px 16px;
+                padding: 4px 14px;
                 border-radius: 30px;
                 cursor: pointer;
                 transition: 0.3s;
@@ -212,39 +243,63 @@
                 border-color: rgba(0, 180, 255, 0.2);
             }
 
+            /* 主内容 - 剩余宽度 */
+            .main-content {
+                flex: 1 !important;
+                padding: 24px 30px 30px 0 !important;
+                max-width: none !important;
+                min-height: 100vh;
+                overflow-x: hidden;
+            }
+
             /* 手机版隐藏电脑卡片 */
-            .desktop-banner-card {
+            .desktop-card-wrapper {
                 display: none;
             }
 
-            /* 侧边栏宽度固定，主内容左内边距给卡片留空间 */
-            .main-content {
-                padding-left: 200px !important;
-            }
-
-            /* 轮播图等元素适应新布局 */
-            .carousel-container,
-            .card-welcome,
-            .live-transaction,
-            .lucky-draw,
-            .stats-grid {
-                max-width: calc(100% - 60px) !important;
+            /* 电脑版隐藏手机横幅 */
+            .top-banner-wrapper {
+                display: none !important;
             }
         }
 
-        /* 大屏幕适配 */
+        /* ============================================================
+           大屏幕适配
+           ============================================================ */
         @media (min-width: 1200px) {
-            .desktop-banner-card {
-                left: 260px;
+            .sidebar {
+                width: 260px !important;
+            }
+            .desktop-card-wrapper {
                 width: 180px;
-                height: 180px;
-                transform: translateY(-50%) translateX(24px);
+                padding: 0 24px;
             }
-            .desktop-banner-card:hover {
-                transform: translateY(-50%) translateX(28px) scale(1.02);
+            .desktop-banner-card {
+                width: 150px;
+                height: 200px;
+                padding: 20px 16px;
             }
-            .main-content {
-                padding-left: 220px !important;
+            .desktop-banner-card .card-icon {
+                font-size: 2.2rem;
+            }
+            .desktop-banner-card .card-title {
+                font-size: 0.85rem;
+            }
+            .desktop-banner-card .card-desc {
+                font-size: 0.6rem;
+            }
+            .desktop-banner-card .card-cta {
+                font-size: 0.6rem;
+                padding: 4px 18px;
+            }
+        }
+
+        /* ============================================================
+           手机版隐藏电脑卡片
+           ============================================================ */
+        @media (max-width: 767px) {
+            .desktop-card-wrapper {
+                display: none !important;
             }
         }
     </style>
@@ -254,7 +309,7 @@
 <div class="app-container">
 
     <!-- ============================================================
-    手机版：顶部循环横幅 (仅手机显示)
+    手机版：顶部循环横幅
     ============================================================ -->
     <div class="top-banner-wrapper" id="topBannerWrapper">
         <div class="top-banner" id="topBanner">
@@ -268,14 +323,16 @@
     </div>
 
     <!-- ============================================================
-    电脑版：固定正方形活动卡片 (仅电脑显示)
-    位置：侧边栏右侧
+    电脑版：卡片放在侧边栏和轮播图之间
+    布局: [侧边栏] [卡片] [轮播图+主内容]
     ============================================================ -->
-    <div class="desktop-banner-card" id="desktopBannerCard">
-        <div class="card-icon"><i class="fas fa-gift"></i></div>
-        <div class="card-title">🎯 限时活动</div>
-        <div class="card-desc">首存 RM20<br>送 100% 红利</div>
-        <button class="card-cta" id="desktopCta">立即参与 →</button>
+    <div class="desktop-card-wrapper" id="desktopCardWrapper">
+        <div class="desktop-banner-card" id="desktopBannerCard">
+            <div class="card-icon"><i class="fas fa-gift"></i></div>
+            <div class="card-title">🎯 限时活动</div>
+            <div class="card-desc">首存 RM20<br>送 100% 红利</div>
+            <button class="card-cta" id="desktopCta">立即参与 →</button>
+        </div>
     </div>
 
     <!-- ===== SIDEBAR ===== -->
@@ -425,7 +482,6 @@ JavaScript
     // 显示3秒 → 隐藏 → 等待5秒
     // ============================================================
     (function() {
-        // 只在手机版执行
         if (window.innerWidth >= 768) return;
 
         const banner = document.getElementById('topBanner');
@@ -474,20 +530,10 @@ JavaScript
                 setTimeout(startCycle, 300);
             }
         });
-
-        // 窗口变化时重新检测
-        window.addEventListener('resize', function() {
-            // 如果变成电脑版，隐藏横幅
-            if (window.innerWidth >= 768 && banner) {
-                banner.classList.remove('show');
-                clearTimeout(timer);
-                clearTimeout(cycleTimer);
-            }
-        });
     })();
 
     // ============================================================
-    // 电脑版：正方形卡片点击事件
+    // 电脑版：卡片点击事件
     // ============================================================
     (function() {
         const cta = document.getElementById('desktopCta');
