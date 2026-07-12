@@ -894,11 +894,6 @@ html, body {
         order: 2 !important;
     }
 
-    /* 手机顶部 Slogan - 隐藏 */
-    .mobile-header-slogan {
-        display: none !important;
-    }
-
     /* 手机顶部 Logo */
     .mobile-header .logo-metal {
         order: 3 !important;
