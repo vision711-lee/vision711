@@ -518,3 +518,24 @@ if (isLoggedIn) {
         }
     }
 })();
+
+// ===== 页面切换时重新检测登录状态 =====
+document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) {
+        // 页面重新可见时刷新登录状态
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        const slogan = document.getElementById('headerSlogan');
+        const authButtons = document.getElementById('headerAuthButtons');
+
+        if (slogan && authButtons) {
+            if (isLoggedIn) {
+                slogan.style.display = 'inline-block';
+                slogan.textContent = 'Play Safe, Win Safe';
+                authButtons.style.display = 'none';
+            } else {
+                slogan.style.display = 'none';
+                authButtons.style.display = 'flex';
+            }
+        }
+    }
+});
