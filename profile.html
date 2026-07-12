@@ -64,29 +64,29 @@
             <div style="width:80px;height:80px;border-radius:50%;margin:0 auto 12px;background:repeating-linear-gradient(90deg,transparent 0px,transparent 2px,rgba(255,255,255,0.03) 2px,rgba(255,255,255,0.03) 3px),linear-gradient(145deg,#0d0d30,#1a1a4a);border:2px solid rgba(0,180,255,0.3);display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:#00b4ff;box-shadow:0 0 40px rgba(0,180,255,0.05);">
                 <i class="fas fa-user"></i>
             </div>
-            <h3 style="color:#fff;font-size:1.1rem;" data-i18n="home.player">Player</h3>
-            <span class="badge-gold" style="display:inline-block;margin-top:4px;">VIP 2</span>
-            <span class="text-muted" style="display:block;font-size:0.75rem;margin-top:4px;">ID: #PL-2026-001</span>
+            <h3 style="color:#fff;font-size:1.1rem;" id="profileName">Player</h3>
+            <span class="badge-gold" style="display:inline-block;margin-top:4px;" id="profileVip">VIP 2</span>
+            <span class="text-muted" style="display:block;font-size:0.75rem;margin-top:4px;" id="profileId">ID: #PL-2026-001</span>
         </div>
 
         <!-- 个人信息 -->
         <div class="card-metal">
             <div class="section-title" style="margin-bottom:4px;"><i class="fas fa-user-circle"></i> <span data-i18n="profile.personalInfo">Personal Information</span></div>
             <div class="row-metal">
-                <span class="label"><i class="fas fa-envelope" style="color:#ffd700;"></i> <span data-i18n="label.email">Email</span></span>
-                <span style="color:rgba(255,255,255,0.7);">player@email.com</span>
+                <span class="label"><i class="fas fa-user" style="color:#ffd700;"></i> <span data-i18n="label.username">Username</span></span>
+                <span style="color:rgba(255,255,255,0.7);" id="profileUsername">-</span>
             </div>
             <div class="row-metal">
                 <span class="label"><i class="fas fa-phone" style="color:#ffd700;"></i> <span data-i18n="label.phone">Phone</span></span>
-                <span style="color:rgba(255,255,255,0.7);">+60 12-345 6789</span>
+                <span style="color:rgba(255,255,255,0.7);" id="profilePhone">-</span>
             </div>
             <div class="row-metal">
                 <span class="label"><i class="fas fa-calendar" style="color:#ffd700;"></i> <span data-i18n="label.registered">Registered</span></span>
-                <span style="color:rgba(255,255,255,0.7);">2026-01-15</span>
+                <span style="color:rgba(255,255,255,0.7);" id="profileRegistered">-</span>
             </div>
             <div class="row-metal">
-                <span class="label"><i class="fas fa-gamepad" style="color:#ffd700;"></i> <span data-i18n="label.totalGames">Total Games</span></span>
-                <span style="color:rgba(255,255,255,0.7);">0</span>
+                <span class="label"><i class="fas fa-coins" style="color:#ffd700;"></i> <span data-i18n="label.balance">Balance</span></span>
+                <span style="color:#4ade80;font-weight:600;" id="profileBalance">RM 0.00</span>
             </div>
         </div>
 
@@ -107,6 +107,29 @@
             </div>
         </div>
 
+        <!-- ===== Logout 按钮 ===== -->
+        <div style="margin-top:20px; padding-bottom:60px;">
+            <button onclick="handleLogout()" style="
+                width: 100%;
+                padding: 14px;
+                background: linear-gradient(145deg, #cc2244, #aa1133);
+                border: none;
+                border-radius: 40px;
+                color: #fff;
+                font-weight: 700;
+                font-size: 1rem;
+                cursor: pointer;
+                box-shadow: 0 4px 20px rgba(204, 34, 68, 0.3);
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+            " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 30px rgba(204,34,68,0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 20px rgba(204,34,68,0.3)'">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+
         <!-- 手机底部导航 -->
         <div class="bottom-nav">
             <a href="/" class="nav-item"><i class="fas fa-home"></i><span data-i18n="nav.home">Home</span></a>
@@ -121,5 +144,87 @@
 
 <script src="js/main.js"></script>
 <script src="components/hamburger.js"></script>
+<script>
+    // ===== 加载用户数据 =====
+    (function loadProfile() {
+        const userData = JSON.parse(localStorage.getItem('user_data') || '{}');
+        const username = localStorage.getItem('login_username') || 'Player';
+        const balance = localStorage.getItem('user_balance') || 0;
+        const vip = localStorage.getItem('user_vip') || 0;
+
+        // 显示用户名
+        const nameEl = document.getElementById('profileName');
+        if (nameEl) {
+            nameEl.textContent = userData.full_name || userData.username || username;
+        }
+
+        // 显示 VIP
+        const vipEl = document.getElementById('profileVip');
+        if (vipEl) {
+            vipEl.textContent = 'VIP ' + vip;
+        }
+
+        // 显示 ID
+        const idEl = document.getElementById('profileId');
+        if (idEl) {
+            idEl.textContent = 'ID: ' + (userData.id || 'N/A');
+        }
+
+        // 显示用户名
+        const usernameEl = document.getElementById('profileUsername');
+        if (usernameEl) {
+            usernameEl.textContent = userData.username || username;
+        }
+
+        // 显示手机号
+        const phoneEl = document.getElementById('profilePhone');
+        if (phoneEl) {
+            phoneEl.textContent = userData.phone || '-';
+        }
+
+        // 显示注册日期
+        const registeredEl = document.getElementById('profileRegistered');
+        if (registeredEl) {
+            if (userData.registered_at) {
+                const date = new Date(userData.registered_at);
+                registeredEl.textContent = date.toISOString().split('T')[0];
+            } else {
+                registeredEl.textContent = '-';
+            }
+        }
+
+        // 显示余额
+        const balanceEl = document.getElementById('profileBalance');
+        if (balanceEl) {
+            balanceEl.textContent = 'RM ' + (parseFloat(balance) || 0).toFixed(2);
+        }
+    })();
+
+    // ===== Logout 功能 =====
+    function handleLogout() {
+        if (confirm('Are you sure you want to logout?')) {
+            // 清除所有登录信息
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('login_username');
+            localStorage.removeItem('player_name');
+            localStorage.removeItem('user_id');
+            localStorage.removeItem('user_data');
+            localStorage.removeItem('user_balance');
+            localStorage.removeItem('user_vip');
+            
+            // 跳转到首页
+            window.location.href = '/';
+        }
+    }
+
+    // ===== 语言显示 =====
+    (function updateLangDisplay() {
+        const lang = localStorage.getItem('preferred_language') || 'en';
+        const display = document.getElementById('current-lang-display');
+        if (display) {
+            display.textContent = lang === 'en' ? 'English' : '中文';
+        }
+    })();
+</script>
 </body>
 </html>
