@@ -6,11 +6,149 @@
     <title>VISION711 · Home</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================================
+           顶部循环横幅 - 直接嵌入
+           ============================================================ */
+        .top-banner-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            height: 0;
+            overflow: visible;
+            pointer-events: none;
+        }
+
+        .top-banner {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%) translateY(-120%);
+            width: calc(100% - 32px);
+            max-width: 440px;
+            padding: 12px 16px;
+            border-radius: 16px;
+            background: linear-gradient(160deg, rgba(8, 18, 50, 0.96), rgba(12, 28, 70, 0.92));
+            backdrop-filter: blur(20px) saturate(1.6);
+            -webkit-backdrop-filter: blur(20px) saturate(1.6);
+            border: 1px solid rgba(0, 180, 255, 0.12);
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(0, 180, 255, 0.06);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: transform 0.5s cubic-bezier(0.34, 1.2, 0.64, 1);
+            pointer-events: auto;
+        }
+
+        .top-banner::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1.5px;
+            background: linear-gradient(90deg, transparent, rgba(0, 180, 255, 0.2), rgba(0, 200, 255, 0.35), rgba(0, 180, 255, 0.2), transparent);
+            border-radius: 16px 16px 0 0;
+        }
+
+        .top-banner .banner-icon {
+            flex-shrink: 0;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(0, 180, 255, 0.06);
+            border: 1px solid rgba(0, 180, 255, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            color: #4dc8ff;
+        }
+
+        .top-banner .banner-text {
+            flex: 1;
+            min-width: 0;
+        }
+        .top-banner .banner-text .title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #4dc8ff;
+            letter-spacing: 0.5px;
+            margin-bottom: 1px;
+        }
+        .top-banner .banner-text .desc {
+            font-size: 0.6rem;
+            color: rgba(255, 255, 255, 0.25);
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .top-banner .banner-close {
+            flex-shrink: 0;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.02);
+            border: none;
+            color: rgba(255, 255, 255, 0.08);
+            font-size: 0.55rem;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .top-banner .banner-close:hover {
+            background: rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.2);
+        }
+
+        .top-banner.show {
+            transform: translateX(-50%) translateY(12px);
+        }
+
+        @media (max-width: 480px) {
+            .top-banner {
+                padding: 10px 12px;
+                width: calc(100% - 20px);
+            }
+            .top-banner .banner-text .title { font-size: 0.6rem; }
+            .top-banner .banner-text .desc { font-size: 0.55rem; }
+            .top-banner .banner-icon { width: 28px; height: 28px; font-size: 0.75rem; }
+        }
+
+        /* ============================================================
+           手机版顶部导航 - 适配横幅，增加上边距
+           ============================================================ */
+        @media (max-width: 767px) {
+            .app-container {
+                padding-top: 60px !important;
+            }
+        }
+    </style>
 </head>
 <body>
 
 <div class="app-container">
+
+    <!-- ============================================================
+    顶部循环横幅
+    ============================================================ -->
+    <div class="top-banner-wrapper">
+        <div class="top-banner" id="topBanner">
+            <div class="banner-icon"><i class="fas fa-bullhorn"></i></div>
+            <div class="banner-text">
+                <div class="title">🎯 限时活动</div>
+                <div class="desc">首存 RM20 送 100% 红利 · 立即参与</div>
+            </div>
+            <button class="banner-close" id="bannerCloseBtn"><i class="fas fa-times"></i></button>
+        </div>
+    </div>
 
     <!-- ===== SIDEBAR (电脑显示，手机隐藏) ===== -->
     <div class="sidebar">
@@ -27,21 +165,11 @@
         </div>
 
         <nav class="sidebar-nav">
-            <a href="/" class="nav-item active">
-                <i class="fas fa-home"></i> <span data-i18n="nav.home">Home</span>
-            </a>
-            <a href="/dashboard" class="nav-item">
-                <i class="fas fa-tachometer-alt"></i> <span data-i18n="nav.dashboard">Dashboard</span>
-            </a>
-            <a href="/deposit" class="nav-item">
-                <i class="fas fa-wallet"></i> <span data-i18n="nav.deposit">Deposit</span>
-            </a>
-            <a href="/withdraw" class="nav-item">
-                <i class="fas fa-arrow-up"></i> <span data-i18n="nav.withdraw">Withdraw</span>
-            </a>
-            <a href="/profile" class="nav-item">
-                <i class="fas fa-user-cog"></i> <span data-i18n="nav.profile">Profile</span>
-            </a>
+            <a href="/" class="nav-item active"><i class="fas fa-home"></i> <span data-i18n="nav.home">Home</span></a>
+            <a href="/dashboard" class="nav-item"><i class="fas fa-tachometer-alt"></i> <span data-i18n="nav.dashboard">Dashboard</span></a>
+            <a href="/deposit" class="nav-item"><i class="fas fa-wallet"></i> <span data-i18n="nav.deposit">Deposit</span></a>
+            <a href="/withdraw" class="nav-item"><i class="fas fa-arrow-up"></i> <span data-i18n="nav.withdraw">Withdraw</span></a>
+            <a href="/profile" class="nav-item"><i class="fas fa-user-cog"></i> <span data-i18n="nav.profile">Profile</span></a>
         </nav>
 
         <div class="sidebar-footer">
@@ -69,9 +197,7 @@
                         <div class="carousel-desc">首次存款可获得 100% 额外红利</div>
                         <span class="carousel-cta">立即领取 →</span>
                     </div>
-                    <div class="carousel-image">
-                        <i class="fas fa-gift"></i>
-                    </div>
+                    <div class="carousel-image"><i class="fas fa-gift"></i></div>
                 </div>
                 <div class="carousel-slide">
                     <div class="carousel-content">
@@ -80,9 +206,7 @@
                         <div class="carousel-desc">存款 RM20 获得幸运号码，赢取大奖</div>
                         <span class="carousel-cta">参与抽奖 →</span>
                     </div>
-                    <div class="carousel-image">
-                        <i class="fas fa-trophy"></i>
-                    </div>
+                    <div class="carousel-image"><i class="fas fa-trophy"></i></div>
                 </div>
                 <div class="carousel-slide">
                     <div class="carousel-content">
@@ -91,9 +215,7 @@
                         <div class="carousel-desc">体验最新老虎机游戏，赢取丰厚奖金</div>
                         <span class="carousel-cta">立即游玩 →</span>
                     </div>
-                    <div class="carousel-image">
-                        <i class="fas fa-gamepad"></i>
-                    </div>
+                    <div class="carousel-image"><i class="fas fa-gamepad"></i></div>
                 </div>
             </div>
             <button class="carousel-btn carousel-btn-left" id="carouselPrev"><i class="fas fa-chevron-left"></i></button>
@@ -105,7 +227,7 @@
             </div>
         </div>
 
-        <!-- ===== 页面内容 ===== -->
+        <!-- ===== 欢迎卡片 ===== -->
         <div class="card-welcome">
             <div class="flex-row">
                 <span class="greeting"><i class="fas fa-hand-peace"></i> <span data-i18n="home.welcome">Welcome back</span>, <span data-i18n="home.player">Player</span></span>
@@ -120,6 +242,7 @@
             </div>
         </div>
 
+        <!-- ===== 实时交易 ===== -->
         <div class="live-transaction">
             <div class="flex-row" style="margin-bottom:10px;">
                 <span style="color:rgba(255,255,255,0.35);font-size:0.75rem;font-weight:600;">
@@ -127,36 +250,17 @@
                 </span>
                 <span class="live-badge"><i class="fas fa-circle" style="font-size:6px;"></i> <span data-i18n="home.live">LIVE</span></span>
             </div>
-            <div class="transaction-item">
-                <span class="user"><i class="fas fa-user-circle"></i> 60****484</span>
-                <span class="amount deposit">+ RM35.00</span>
-                <span class="game-tag">MEGA888</span>
-            </div>
-            <div class="transaction-item">
-                <span class="user"><i class="fas fa-user-circle"></i> 60****713</span>
-                <span class="amount withdraw">- RM130.00</span>
-                <span class="game-tag">PRAGMATIC</span>
-            </div>
-            <div class="transaction-item">
-                <span class="user"><i class="fas fa-user-circle"></i> 60****350</span>
-                <span class="amount deposit">+ RM50.00</span>
-                <span class="game-tag">EVO888H5</span>
-            </div>
-            <div class="transaction-item">
-                <span class="user"><i class="fas fa-user-circle"></i> 60****441</span>
-                <span class="amount withdraw">- RM78.00</span>
-                <span class="game-tag">PRAGMATIC</span>
-            </div>
-            <div class="transaction-item">
-                <span class="user"><i class="fas fa-user-circle"></i> 60****119</span>
-                <span class="amount deposit">+ RM35.00</span>
-                <span class="game-tag">MEGA888</span>
-            </div>
+            <div class="transaction-item"><span class="user"><i class="fas fa-user-circle"></i> 60****484</span><span class="amount deposit">+ RM35.00</span><span class="game-tag">MEGA888</span></div>
+            <div class="transaction-item"><span class="user"><i class="fas fa-user-circle"></i> 60****713</span><span class="amount withdraw">- RM130.00</span><span class="game-tag">PRAGMATIC</span></div>
+            <div class="transaction-item"><span class="user"><i class="fas fa-user-circle"></i> 60****350</span><span class="amount deposit">+ RM50.00</span><span class="game-tag">EVO888H5</span></div>
+            <div class="transaction-item"><span class="user"><i class="fas fa-user-circle"></i> 60****441</span><span class="amount withdraw">- RM78.00</span><span class="game-tag">PRAGMATIC</span></div>
+            <div class="transaction-item"><span class="user"><i class="fas fa-user-circle"></i> 60****119</span><span class="amount deposit">+ RM35.00</span><span class="game-tag">MEGA888</span></div>
             <div class="text-muted text-center" style="font-size:0.7rem;margin-top:6px;cursor:pointer;">
                 <i class="fas fa-chevron-down"></i> <span data-i18n="btn.viewMore">View More</span>
             </div>
         </div>
 
+        <!-- ===== 幸运抽奖 ===== -->
         <div class="lucky-draw">
             <div class="flex-row">
                 <span class="draw-title"><i class="fas fa-gift"></i> <span data-i18n="home.luckyDraw">Deposit Lucky Draw</span></span>
@@ -173,7 +277,7 @@
             </div>
         </div>
 
-        <!-- 手机底部导航 -->
+        <!-- ===== 手机底部导航 ===== -->
         <div class="bottom-nav">
             <a href="/" class="nav-item active"><i class="fas fa-home"></i><span data-i18n="nav.home">Home</span></a>
             <a href="/dashboard" class="nav-item"><i class="fas fa-tachometer-alt"></i><span data-i18n="nav.dashboard">Dashboard</span></a>
@@ -184,6 +288,61 @@
 
     </div><!-- /main-content -->
 </div><!-- /app-container -->
+
+<!-- ============================================================
+JavaScript: 顶部横幅循环 + 原有功能
+============================================================ -->
+<script>
+    // ===== 顶部循环横幅 =====
+    (function() {
+        const banner = document.getElementById('topBanner');
+        const closeBtn = document.getElementById('bannerCloseBtn');
+        let isPaused = false;
+        let timer = null;
+        let cycleTimer = null;
+
+        function startCycle() {
+            if (isPaused) return;
+            clearTimeout(timer);
+            clearTimeout(cycleTimer);
+            banner.classList.add('show');
+            timer = setTimeout(function() {
+                banner.classList.remove('show');
+                cycleTimer = setTimeout(function() {
+                    startCycle();
+                }, 3000);
+            }, 3000);
+        }
+
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                banner.classList.remove('show');
+                isPaused = true;
+                clearTimeout(timer);
+                clearTimeout(cycleTimer);
+            });
+        }
+
+        if (banner) {
+            banner.addEventListener('click', function(e) {
+                if (e.target.closest('.banner-close')) return;
+                alert('🎯 跳转到活动页面');
+            });
+        }
+
+        startCycle();
+
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden && !isPaused) {
+                clearTimeout(timer);
+                clearTimeout(cycleTimer);
+                banner.classList.remove('show');
+                setTimeout(startCycle, 300);
+            }
+        });
+    })();
+</script>
 
 <script src="js/main.js"></script>
 <script src="components/hamburger.js"></script>
