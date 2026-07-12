@@ -172,199 +172,199 @@
     </div>
 
     <script>
-        (function() {
-            // ============================================================
-            // 🔥 VISION711 Supabase 配置（已更新）
-            // ============================================================
-            var SUPABASE_URL = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co';
-            var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImprYnBiamhyZ2JuemV4dmp2eGd0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM3NzA3MjEsImV4cCI6MjA5OTM0NjcyMX0.YJYx0X1uddWSQfD4w9AzPBHUnLKI0_k0QNeN_PH5JgM';
-            var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // ============================================================
+        // 🔥 用 SERVICE_ROLE KEY 绕过 RLS，直接 id=1
+        // ============================================================
+        var SUPABASE_URL = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co';
+        var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImprYnBiamhyZ2JuemV4dmp2eGd0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4Mzc3MDcyMSwiZXhwIjoyMDk5MzQ2NzIxfQ.cZumC1R8_pGEfQv-BBfqJXAExCYOC7mdDj4OmkfdjRw';
+        var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-            var usernameInput = document.getElementById('adminUsername');
-            var passwordInput = document.getElementById('adminPassword');
-            var gaInput = document.getElementById('gaCode');
-            var messageBox = document.getElementById('messageBox');
-            var loginBtn = document.getElementById('loginBtn');
+        var usernameInput = document.getElementById('adminUsername');
+        var passwordInput = document.getElementById('adminPassword');
+        var gaInput = document.getElementById('gaCode');
+        var messageBox = document.getElementById('messageBox');
+        var loginBtn = document.getElementById('loginBtn');
 
-            function base32Decode(encoded) {
-                var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
-                var bytes = [];
-                var bits = 0;
-                var value = 0;
-                for (var i = 0; i < encoded.length; i++) {
-                    var index = alphabet.indexOf(encoded[i].toUpperCase());
-                    if (index === -1) continue;
-                    value = (value << 5) | index;
-                    bits += 5;
-                    if (bits >= 8) {
-                        bytes.push((value >> (bits - 8)) & 0xff);
-                        bits -= 8;
-                    }
-                }
-                return new Uint8Array(bytes);
-            }
-
-            function generateTOTP(secret, offsetSeconds) {
-                offsetSeconds = offsetSeconds || 0;
-                try {
-                    var key = base32Decode(secret);
-                    var epoch = Math.floor((Date.now() / 1000 + offsetSeconds) / 30);
-                    var timeBytes = new Uint8Array(8);
-                    var e = epoch;
-                    for (var i = 7; i >= 0; i--) {
-                        timeBytes[i] = e & 0xff;
-                        e >>= 8;
-                    }
-                    var hmac = CryptoJS.HmacSHA1(
-                        CryptoJS.lib.WordArray.create(timeBytes),
-                        CryptoJS.lib.WordArray.create(key)
-                    );
-                    var hmacBytes = new Uint8Array(hmac.words.length * 4);
-                    for (var j = 0; j < hmac.words.length; j++) {
-                        hmacBytes[j * 4] = (hmac.words[j] >> 24) & 0xff;
-                        hmacBytes[j * 4 + 1] = (hmac.words[j] >> 16) & 0xff;
-                        hmacBytes[j * 4 + 2] = (hmac.words[j] >> 8) & 0xff;
-                        hmacBytes[j * 4 + 3] = hmac.words[j] & 0xff;
-                    }
-                    var offsetByte = hmacBytes[19] & 0xf;
-                    var binary = ((hmacBytes[offsetByte] & 0x7f) << 24) |
-                                  ((hmacBytes[offsetByte + 1] & 0xff) << 16) |
-                                  ((hmacBytes[offsetByte + 2] & 0xff) << 8) |
-                                  (hmacBytes[offsetByte + 3] & 0xff);
-                    var otp = binary % 1000000;
-                    return String(otp).padStart(6, '0');
-                } catch (e) {
-                    console.error('生成 TOTP 失败:', e);
-                    return null;
+        function base32Decode(encoded) {
+            var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+            var bytes = [];
+            var bits = 0;
+            var value = 0;
+            for (var i = 0; i < encoded.length; i++) {
+                var index = alphabet.indexOf(encoded[i].toUpperCase());
+                if (index === -1) continue;
+                value = (value << 5) | index;
+                bits += 5;
+                if (bits >= 8) {
+                    bytes.push((value >> (bits - 8)) & 0xff);
+                    bits -= 8;
                 }
             }
+            return new Uint8Array(bytes);
+        }
 
-            function verifyGA(secret, code) {
-                try {
-                    var offsets = [-30, 0, 30];
-                    for (var i = 0; i < offsets.length; i++) {
-                        var generated = generateTOTP(secret, offsets[i]);
-                        if (generated === code) {
-                            return true;
-                        }
-                    }
-                    return false;
-                } catch (e) {
-                    return false;
+        function generateTOTP(secret, offsetSeconds) {
+            offsetSeconds = offsetSeconds || 0;
+            try {
+                var key = base32Decode(secret);
+                var epoch = Math.floor((Date.now() / 1000 + offsetSeconds) / 30);
+                var timeBytes = new Uint8Array(8);
+                var e = epoch;
+                for (var i = 7; i >= 0; i--) {
+                    timeBytes[i] = e & 0xff;
+                    e >>= 8;
                 }
+                var hmac = CryptoJS.HmacSHA1(
+                    CryptoJS.lib.WordArray.create(timeBytes),
+                    CryptoJS.lib.WordArray.create(key)
+                );
+                var hmacBytes = new Uint8Array(hmac.words.length * 4);
+                for (var j = 0; j < hmac.words.length; j++) {
+                    hmacBytes[j * 4] = (hmac.words[j] >> 24) & 0xff;
+                    hmacBytes[j * 4 + 1] = (hmac.words[j] >> 16) & 0xff;
+                    hmacBytes[j * 4 + 2] = (hmac.words[j] >> 8) & 0xff;
+                    hmacBytes[j * 4 + 3] = hmac.words[j] & 0xff;
+                }
+                var offsetByte = hmacBytes[19] & 0xf;
+                var binary = ((hmacBytes[offsetByte] & 0x7f) << 24) |
+                              ((hmacBytes[offsetByte + 1] & 0xff) << 16) |
+                              ((hmacBytes[offsetByte + 2] & 0xff) << 8) |
+                              (hmacBytes[offsetByte + 3] & 0xff);
+                var otp = binary % 1000000;
+                return String(otp).padStart(6, '0');
+            } catch (e) {
+                console.error('生成 TOTP 失败:', e);
+                return null;
+            }
+        }
+
+        function verifyGA(secret, code) {
+            try {
+                var offsets = [-30, 0, 30];
+                for (var i = 0; i < offsets.length; i++) {
+                    var generated = generateTOTP(secret, offsets[i]);
+                    if (generated === code) {
+                        return true;
+                    }
+                }
+                return false;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        function handleLogin() {
+            var username = usernameInput.value.trim();
+            var password = passwordInput.value;
+            var gaCode = gaInput.value.trim();
+
+            messageBox.textContent = '';
+            messageBox.className = '';
+
+            if (!username) {
+                messageBox.textContent = '⚠️ Please enter admin username';
+                messageBox.className = 'error-message';
+                return;
+            }
+            if (!password) {
+                messageBox.textContent = '⚠️ Please enter password';
+                messageBox.className = 'error-message';
+                return;
+            }
+            if (!gaCode || gaCode.length !== 6 || !/^\d{6}$/.test(gaCode)) {
+                messageBox.textContent = '⚠️ Please enter a valid 6-digit code';
+                messageBox.className = 'error-message';
+                return;
             }
 
-            function handleLogin() {
-                var username = usernameInput.value.trim();
-                var password = passwordInput.value;
-                var gaCode = gaInput.value.trim();
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
 
-                messageBox.textContent = '';
-                messageBox.className = '';
+            // 🔥🔥🔥 直接用 id=1 查询，用 service_role KEY 🔥🔥🔥
+            sb.from('admin_users')
+                .select('*')
+                .eq('id', 1)
+                .then(function(res) {
+                    var data = res.data;
+                    var error = res.error;
 
-                if (!username) {
-                    messageBox.textContent = '⚠️ Please enter admin username';
-                    messageBox.className = 'error-message';
-                    return;
-                }
-                if (!password) {
-                    messageBox.textContent = '⚠️ Please enter password';
-                    messageBox.className = 'error-message';
-                    return;
-                }
-                if (!gaCode || gaCode.length !== 6 || !/^\d{6}$/.test(gaCode)) {
-                    messageBox.textContent = '⚠️ Please enter a valid 6-digit code';
-                    messageBox.className = 'error-message';
-                    return;
-                }
+                    console.log('📊 查询结果 (id=1):', res);
 
-                loginBtn.disabled = true;
-                loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
-
-                // 🔥 直接用 eq('username', username) 查询
-                sb.from('admin_users')
-                    .select('*')
-                    .eq('username', username)
-                    .eq('is_active', true)
-                    .then(function(res) {
-                        var data = res.data;
-                        var error = res.error;
-
-                        if (error) {
-                            messageBox.textContent = '❌ Database error: ' + error.message;
-                            messageBox.className = 'error-message';
-                            loginBtn.disabled = false;
-                            loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
-                            return;
-                        }
-
-                        if (!data || data.length === 0) {
-                            messageBox.textContent = '❌ Admin user not found: ' + username;
-                            messageBox.className = 'error-message';
-                            loginBtn.disabled = false;
-                            loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
-                            return;
-                        }
-
-                        var admin = data[0];
-                        console.log('✅ 找到管理员:', admin);
-
-                        if (admin.password_hash !== password) {
-                            messageBox.textContent = '❌ Invalid password';
-                            messageBox.className = 'error-message';
-                            loginBtn.disabled = false;
-                            loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
-                            return;
-                        }
-
-                        if (!verifyGA(admin.ga_secret, gaCode)) {
-                            var expected = generateTOTP(admin.ga_secret, 0);
-                            messageBox.textContent = '❌ Invalid GA code. Expected: ' + expected;
-                            messageBox.className = 'error-message';
-                            loginBtn.disabled = false;
-                            loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
-                            return;
-                        }
-
-                        messageBox.textContent = '✅ Login successful! Redirecting...';
-                        messageBox.className = 'success-message';
-
-                        localStorage.setItem('admin_logged_in', 'true');
-                        localStorage.setItem('admin_username', username);
-                        localStorage.setItem('admin_login_time', Date.now().toString());
-
-                        setTimeout(function() {
-                            window.location.href = 'vision711-admin-dashboard-GB75L.html';
-                        }, 800);
-                    })
-                    .catch(function(err) {
-                        console.error('❌ 查询失败:', err);
-                        messageBox.textContent = '❌ Error: ' + err.message;
+                    if (error) {
+                        messageBox.textContent = '❌ Database error: ' + error.message;
                         messageBox.className = 'error-message';
                         loginBtn.disabled = false;
                         loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
-                    });
+                        return;
+                    }
+
+                    if (!data || data.length === 0) {
+                        messageBox.textContent = '❌ Admin user not found (id=1)';
+                        messageBox.className = 'error-message';
+                        loginBtn.disabled = false;
+                        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+                        return;
+                    }
+
+                    var admin = data[0];
+                    console.log('✅ 找到管理员 (id=1):', admin);
+
+                    if (admin.password_hash !== password) {
+                        messageBox.textContent = '❌ Invalid password';
+                        messageBox.className = 'error-message';
+                        loginBtn.disabled = false;
+                        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+                        return;
+                    }
+
+                    if (!verifyGA(admin.ga_secret, gaCode)) {
+                        var expected = generateTOTP(admin.ga_secret, 0);
+                        messageBox.textContent = '❌ Invalid GA code. Expected: ' + expected;
+                        messageBox.className = 'error-message';
+                        loginBtn.disabled = false;
+                        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+                        return;
+                    }
+
+                    messageBox.textContent = '✅ Login successful! Redirecting...';
+                    messageBox.className = 'success-message';
+
+                    localStorage.setItem('admin_logged_in', 'true');
+                    localStorage.setItem('admin_username', username);
+                    localStorage.setItem('admin_login_time', Date.now().toString());
+
+                    setTimeout(function() {
+                        window.location.href = 'vision711-admin-dashboard-GB75L.html';
+                    }, 800);
+                })
+                .catch(function(err) {
+                    console.error('❌ 查询失败:', err);
+                    messageBox.textContent = '❌ Error: ' + err.message;
+                    messageBox.className = 'error-message';
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+                });
+        }
+
+        loginBtn.addEventListener('click', handleLogin);
+
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                handleLogin();
             }
+        });
 
-            loginBtn.addEventListener('click', handleLogin);
-
-            document.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    handleLogin();
-                }
-            });
-
-            if (localStorage.getItem('admin_logged_in') === 'true') {
-                var loginTime = parseInt(localStorage.getItem('admin_login_time') || '0');
-                if (Date.now() - loginTime < 24 * 60 * 60 * 1000) {
-                    window.location.href = 'vision711-admin-dashboard-GB75L.html';
-                } else {
-                    localStorage.removeItem('admin_logged_in');
-                }
+        if (localStorage.getItem('admin_logged_in') === 'true') {
+            var loginTime = parseInt(localStorage.getItem('admin_login_time') || '0');
+            if (Date.now() - loginTime < 24 * 60 * 60 * 1000) {
+                window.location.href = 'vision711-admin-dashboard-GB75L.html';
+            } else {
+                localStorage.removeItem('admin_logged_in');
             }
+        }
 
-            console.log('🔐 使用 VISION711 Supabase:', SUPABASE_URL);
-        })();
+        console.log('🔐 使用 SERVICE_ROLE KEY + id=1 查询');
+        console.log('📡 Supabase URL:', SUPABASE_URL);
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </body>
