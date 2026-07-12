@@ -11,6 +11,42 @@
     }
 
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    
+    // 检查登录状态
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true' || false;
+const playerName = localStorage.getItem('player_name') || localStorage.getItem('login_username') || 'Player';
+
+    // 根据登录状态生成用户区域 HTML
+    let userSectionHTML;
+if (isLoggedIn) {
+    // 从 localStorage 获取真实用户数据
+    const userData = JSON.parse(localStorage.getItem('user_data') || '{}');
+    const displayName = userData.full_name || userData.username || playerName;
+    const vipLevel = userData.vip_level || 0;
+    const userId = userData.id || 'N/A';
+    
+    userSectionHTML = `
+    <div class="hamburger-user">
+        <div class="avatar"><i class="fas fa-user"></i></div>
+        <div class="info">
+            <div class="name">${displayName}</div>
+            <div class="role">ID: ${userId}</div>
+        </div>
+        <span class="vip-badge"><i class="fas fa-gem"></i> VIP ${vipLevel}</span>
+    </div>
+    `;
+} else {
+        userSectionHTML = `
+<div class="hamburger-auth">
+    <a href="/login" class="hamburger-login-btn">
+        <i class="fas fa-sign-in-alt"></i> <span data-i18n="btn.login">Login</span>
+    </a>
+    <a href="/register" class="hamburger-register-btn">
+        <i class="fas fa-user-plus"></i> Register
+    </a>
+</div>
+`;
+    }
 
     const template = `
     <!-- Hamburger 按钮 -->
@@ -28,20 +64,13 @@
     <!-- 抽屉菜单 -->
     <div class="hamburger-menu" id="hamburgerMenu">
         <div class="hamburger-header">
-    <a href="/" class="logo-metal">
-        <canvas id="hamburgerLogoCanvas" width="400" height="200"></canvas>
-    </a>
-    <span class="hamburger-slogan">Play Safe, Win Safe</span>
-</div>
-
-        <div class="hamburger-user">
-            <div class="avatar"><i class="fas fa-user"></i></div>
-            <div class="info">
-                <div class="name" data-i18n="home.player">Player</div>
-                <div class="role">ID: #PL-2026-001</div>
-            </div>
-            <span class="vip-badge"><i class="fas fa-gem"></i> VIP 2</span>
+            <a href="/" class="logo-metal">
+                <canvas id="hamburgerLogoCanvas" width="400" height="200"></canvas>
+            </a>
+            <span class="hamburger-slogan">Play Safe, Win Safe</span>
         </div>
+
+        ${userSectionHTML}
 
         <nav class="hamburger-nav">
             <a href="/" class="nav-item" data-page="index">
@@ -481,6 +510,7 @@
     if (slogan && authButtons) {
         if (isLoggedIn) {
             slogan.style.display = 'inline-block';
+            slogan.textContent = 'Play Safe, Win Safe';
             authButtons.style.display = 'none';
         } else {
             slogan.style.display = 'none';

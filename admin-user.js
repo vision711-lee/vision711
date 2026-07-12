@@ -6,6 +6,10 @@
 (function() {
     'use strict';
 
+const SUPABASE_URL = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImprYnBiamhyZ2JuemV4dmp2eGd0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4Mzc3MDcyMSwiZXhwIjoyMDk5MzQ2NzIxfQ.cZumC1R8_pGEfQv-BBfqJXAExCYOC7mdDj4OmkfdjRw';
+const supabaseAdmin = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
     // ============================================================
     //  数据
     // ============================================================
@@ -181,135 +185,123 @@
         return 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
     }
 
-    // ============================================================
-    //  加载用户数据 (从 localStorage)
-    // ============================================================
-    function loadUsers() {
-        try {
-            const data = localStorage.getItem('admin_users');
-            if (data) {
-                users = JSON.parse(data);
-            } else {
-                // 默认示例数据
-                users = [
-                    {
-                        id: generateId(),
-                        username: 'player1',
-                        email: 'player1@email.com',
-                        phone: '+60 12-345 6789',
-                        balance: 1250.00,
-                        status: 'active',
-                        joined: '2026-01-15',
-                        color: '#2f3e7a',
-                        color2: '#4a7cff'
-                    },
-                    {
-                        id: generateId(),
-                        username: 'player2',
-                        email: 'player2@email.com',
-                        phone: '+60 12-345 6790',
-                        balance: 350.50,
-                        status: 'active',
-                        joined: '2026-02-20',
-                        color: '#7a3e2f',
-                        color2: '#ff6b4a'
-                    },
-                    {
-                        id: generateId(),
-                        username: 'player3',
-                        email: 'player3@email.com',
-                        phone: '+60 12-345 6791',
-                        balance: 0.00,
-                        status: 'inactive',
-                        joined: '2026-03-10',
-                        color: '#3e2f7a',
-                        color2: '#8a6bff'
-                    },
-                    {
-                        id: generateId(),
-                        username: 'player4',
-                        email: 'player4@email.com',
-                        phone: '+60 12-345 6792',
-                        balance: 7800.00,
-                        status: 'active',
-                        joined: '2026-04-05',
-                        color: '#2f7a3e',
-                        color2: '#4aff8a'
-                    },
-                    {
-                        id: generateId(),
-                        username: 'player5',
-                        email: 'player5@email.com',
-                        phone: '+60 12-345 6793',
-                        balance: 120.00,
-                        status: 'active',
-                        joined: '2026-05-12',
-                        color: '#7a2f6a',
-                        color2: '#ff4ac0'
-                    }
-                ];
-                saveUsers();
+function loadUsers() {
+    // 从 Supabase 加载真实数据
+    supabaseAdmin
+        .from('users')
+        .select('*')
+        .order('registered_at', { ascending: false })
+        .then(({ data, error }) => {
+            if (error) {
+                console.error('加载用户失败:', error);
+                users = [];
+                renderUsers();
+                return;
             }
-        } catch (e) {
-            console.error('Load users error:', e);
-            users = [];
-        }
-        renderUsers();
-    }
+            
+            if (data && data.length > 0) {
+                users = data.map(user => ({
+                    id: user.id,
+                    username: user.username,
+                    email: user.email || '-',
+                    phone: user.phone || '-',
+                    balance: user.balance || 0,
+                    status: user.status || 'active',
+                    joined: user.registered_at ? new Date(user.registered_at).toISOString().split('T')[0] : '-',
+                    color: user.color || '#2f3e7a',
+                    color2: user.color2 || '#4a7cff'
+                }));
+            } else {
+                users = [];
+            }
+            renderUsers();
+        });
+}
 
     // ============================================================
     //  保存用户数据
     // ============================================================
     function saveUsers() {
-        try {
-            localStorage.setItem('admin_users', JSON.stringify(users));
-        } catch (e) {
-            console.error('Save users error:', e);
-        }
-    }
+    // 数据已经在 Supabase 里了，不需要本地保存
+    // 但为了兼容现有代码，保留空函数
+    console.log('数据已保存在 Supabase');
+}
 
     // ============================================================
     //  添加用户
     // ============================================================
     function addUser(data) {
-        const newUser = {
-            id: generateId(),
-            username: data.username || 'player',
-            email: data.email || '',
-            phone: data.phone || '',
-            balance: parseFloat(data.balance) || 0,
-            status: data.status || 'active',
-            joined: new Date().toISOString().split('T')[0],
-            color: data.color || '#2f3e7a',
-            color2: data.color2 || '#4a7cff'
-        };
-        users.unshift(newUser);
-        saveUsers();
-        renderUsers();
-        return newUser;
-    }
+    const newUser = {
+        username: data.username,
+        full_name: data.username,
+        phone: data.phone || '',
+        password_hash: 'default123',
+        balance: parseFloat(data.balance) || 0,
+        status: data.status || 'active',
+        vip_level: 0,
+        color: data.color || '#2f3e7a',
+        color2: data.color2 || '#4a7cff',
+        registered_at: new Date().toISOString()
+    };
+    
+    supabaseAdmin
+        .from('users')
+        .insert(newUser)
+        .select()
+        .then(({ data, error }) => {
+            if (error) {
+                console.error('添加用户失败:', error);
+                alert('添加失败: ' + error.message);
+                return;
+            }
+            loadUsers(); // 刷新列表
+        });
+}
 
     // ============================================================
     //  编辑用户
     // ============================================================
     function editUser(id, data) {
-        const index = users.findIndex(u => u.id === id);
-        if (index === -1) return null;
-        users[index] = { ...users[index], ...data };
-        saveUsers();
-        renderUsers();
-        return users[index];
-    }
+    const updateData = {
+        username: data.username,
+        phone: data.phone || '',
+        balance: parseFloat(data.balance) || 0,
+        status: data.status || 'active'
+    };
+    
+    supabaseAdmin
+        .from('users')
+        .update(updateData)
+        .eq('id', id)
+        .then(({ error }) => {
+            if (error) {
+                console.error('更新失败:', error);
+                alert('更新失败: ' + error.message);
+                return;
+            }
+            loadUsers(); // 刷新列表
+        });
+}
 
     // ============================================================
     //  删除用户
     // ============================================================
     function deleteUser(id) {
-        if (!confirm('Are you sure you want to delete this user?')) return;
-        users = users.filter(u => u.id !== id);
-        saveUsers();
-        renderUsers();
-    }
+    if (!confirm('确定要删除这个用户吗？')) return;
+    
+    supabaseAdmin
+        .from('users')
+        .delete()
+        .eq('id', id)
+        .then(({ error }) => {
+            if (error) {
+                console.error('删除失败:', error);
+                alert('删除失败: ' + error.message);
+                return;
+            }
+            loadUsers(); // 刷新列表
+        });
+}
 
     // ============================================================
     //  分页跳转
