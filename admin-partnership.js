@@ -1,996 +1,228 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VISION711 · Partnership</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-    <style>
-        /* ============================================================
-           Partnership 页面专属样式
-           ============================================================ */
-
-        /* 手机版显示顶部横幅，电脑版隐藏 */
-        @media (max-width: 767px) {
-            .top-banner-wrapper {
-                display: none !important;
-            }
-        }
-
-        /* 电脑版布局 */
-        @media (min-width: 768px) {
-            .app-container {
-                display: flex !important;
-                padding: 0 !important;
-                min-height: 100vh;
-            }
-
-            .sidebar {
-                width: 220px !important;
-                flex-shrink: 0 !important;
-                position: sticky !important;
-                top: 0 !important;
-                height: 100vh !important;
-                display: flex !important;
-                flex-direction: column !important;
-                background: rgba(10, 10, 32, 0.75) !important;
-                backdrop-filter: blur(16px) !important;
-                border-right: 1px solid rgba(255, 255, 255, 0.06) !important;
-                padding: 24px 16px 30px !important;
-                overflow-y: auto !important;
-                z-index: 10 !important;
-            }
-
-            .main-content {
-                flex: 1 !important;
-                padding: 24px 12px 30px 0 !important;
-                max-width: none !important;
-                min-height: 100vh;
-                overflow-x: hidden;
-                margin-left: -232px;
-            }
-        }
-
-        @media (max-width: 767px) {
-            .sidebar {
-                display: none !important;
-            }
-            .app-container {
-                display: block !important;
-                padding: 12px 12px 80px !important;
-                min-height: 100vh;
-                width: 100%;
-                background: transparent !important;
-            }
-            .main-content {
-                display: block !important;
-                padding: 0 !important;
-                max-width: 100% !important;
-                min-height: auto !important;
-                flex: none !important;
-            }
-            body {
-                background-image: url('https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/hero-background/mobile-hero-background.png');
-                background-size: cover;
-                background-position: center;
-                background-attachment: fixed;
-                background-repeat: no-repeat;
-                background-color: #06060f;
-            }
-        }
-
-        @media (min-width: 768px) {
-            body {
-                background-image: url('https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/hero-background/desktop-hero-background.png');
-                background-size: cover;
-                background-position: center;
-                background-attachment: fixed;
-                background-repeat: no-repeat;
-                background-color: #06060f;
-            }
-        }
-
-        /* ===== Partnership 卡片网格 ===== */
-        .partnership-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .partnership-card {
-            background: repeating-linear-gradient(90deg, transparent 0px, transparent 3px, rgba(255, 255, 255, 0.015) 3px, rgba(255, 255, 255, 0.015) 4px), linear-gradient(145deg, #0a0a20 0%, #141435 25%, #1a1a4a 50%, #101030 75%, #0a0a20 100%);
-            border: 1px solid transparent;
-            background-image: linear-gradient(var(--card-bg, #0d0d2a), var(--card-bg, #0d0d2a)), linear-gradient(135deg, rgba(0, 180, 255, 0.25), rgba(255, 215, 0, 0.15), rgba(0, 180, 255, 0.25));
-            background-origin: padding-box, border-box;
-            background-clip: padding-box, border-box;
-            border-radius: 20px;
-            padding: 20px 16px 18px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-            transition: all 0.3s ease;
-        }
-
-        .partnership-card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(0, 180, 255, 0.3);
-            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5), 0 0 40px rgba(0, 180, 255, 0.05);
-        }
-
-        .partnership-card .card-logo {
-            font-size: 2.4rem;
-            margin-bottom: 8px;
-            display: block;
-        }
-
-        .partnership-card .card-title {
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 4px;
-        }
-
-        .partnership-card .card-value {
-            font-size: 1.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #ffd700, #ffed4a);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 4px;
-        }
-
-        .partnership-card .card-sub {
-            font-size: 0.7rem;
-            color: rgba(255, 255, 255, 0.3);
-            margin-bottom: 12px;
-        }
-
-        .partnership-card .card-actions {
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .partnership-card .card-actions .btn-claim {
-            background: linear-gradient(145deg, #ffd700, #d4a000);
-            border: none;
-            color: #0a0a20;
-            padding: 8px 24px;
-            border-radius: 40px;
-            font-weight: 700;
-            font-size: 0.75rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(255, 215, 0, 0.25);
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .partnership-card .card-actions .btn-claim:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(255, 215, 0, 0.35);
-        }
-
-        .partnership-card .card-actions .btn-telegram {
-            background: transparent;
-            border: 1px solid rgba(0, 180, 255, 0.2);
-            color: #00b4ff;
-            padding: 8px 20px;
-            border-radius: 40px;
-            font-weight: 600;
-            font-size: 0.75rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .partnership-card .card-actions .btn-telegram:hover {
-            background: rgba(0, 180, 255, 0.08);
-            border-color: rgba(0, 180, 255, 0.4);
-            transform: translateY(-2px);
-        }
-
-        /* 页面标题 */
-        .partnership-header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .partnership-header h2 {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #fff;
-        }
-
-        .partnership-header h2 i {
-            color: #ffd700;
-            margin-right: 10px;
-        }
-
-        .partnership-header p {
-            color: rgba(255, 255, 255, 0.3);
-            font-size: 0.85rem;
-            margin-top: 4px;
-        }
-
-        /* 手机版适配 */
-        @media (max-width: 480px) {
-            .partnership-grid {
-                gap: 12px;
-            }
-            .partnership-card {
-                padding: 16px 12px 14px;
-            }
-            .partnership-card .card-logo {
-                font-size: 1.8rem;
-            }
-            .partnership-card .card-value {
-                font-size: 1.2rem;
-            }
-            .partnership-card .card-title {
-                font-size: 0.75rem;
-            }
-            .partnership-card .card-actions .btn-claim,
-            .partnership-card .card-actions .btn-telegram {
-                font-size: 0.65rem;
-                padding: 6px 16px;
-            }
-        }
-
-        @media (min-width: 768px) {
-            .partnership-grid {
-                max-width: 900px;
-            }
-            .partnership-card {
-                padding: 24px 20px 20px;
-            }
-            .partnership-card .card-logo {
-                font-size: 3rem;
-            }
-            .partnership-card .card-value {
-                font-size: 1.8rem;
-            }
-        }
-
-        @media (min-width: 1200px) {
-            .partnership-grid {
-                max-width: 1100px;
-            }
-        }
-
-        /* ===== 手机顶部导航 ===== */
-        .mobile-header {
-            display: flex !important;
-            align-items: center !important;
-            justify-content: flex-start !important;
-            gap: 6px !important;
-            margin-bottom: 16px !important;
-            width: 100% !important;
-            flex-direction: row !important;
-        }
-
-        .mobile-header .hamburger-wrapper {
-            order: 1 !important;
-            flex-shrink: 0 !important;
-            margin-right: 4px !important;
-        }
-
-        .mobile-header .mobile-header-right {
-            display: flex !important;
-            align-items: center !important;
-            gap: 10px !important;
-            flex-shrink: 0 !important;
-            margin-left: auto !important;
-            justify-content: flex-end !important;
-            order: 2 !important;
-        }
-
-        .mobile-header .logo-metal {
-            order: 3 !important;
-            flex-shrink: 0 !important;
-            margin-left: 2px !important;
-        }
-
-        .mobile-header .logo-metal canvas {
-            height: 60px !important;
-            width: auto !important;
-            max-height: 60px !important;
-            display: block !important;
-            border-radius: 6px !important;
-        }
-
-        .mobile-header .badge-vip,
-        .mobile-header .lang-switcher,
-        .mobile-header .user-avatar-metal {
-            display: none !important;
-        }
-
-        .mobile-header .header-auth-buttons {
-            display: flex !important;
-            align-items: center !important;
-            gap: 8px !important;
-            flex-shrink: 0 !important;
-            order: 2 !important;
-        }
-
-        .mobile-header .register-wrapper {
-            display: inline-block !important;
-            flex-shrink: 0 !important;
-        }
-
-        .mobile-header .register-btn {
-            font-family: 'Montserrat', sans-serif !important;
-            font-weight: 700 !important;
-            font-size: 0.75rem !important;
-            padding: 8px 18px !important;
-            border-radius: 8px !important;
-            text-decoration: none !important;
-            transition: all 0.3s ease !important;
-            white-space: nowrap !important;
-            display: inline-block !important;
-            background: transparent !important;
-            border: 1px solid rgba(0, 180, 255, 0.4) !important;
-            color: #00b4ff !important;
-            line-height: 1.4 !important;
-            letter-spacing: 0.5px !important;
-            cursor: pointer !important;
-            animation: breatheGlowTop 2.5s ease-in-out infinite;
-        }
-
-        .mobile-header .register-btn:hover {
-            transform: translateY(-2px) !important;
-            animation-play-state: paused;
-            border-color: rgba(0, 180, 255, 0.9) !important;
-            background: rgba(0, 180, 255, 0.08) !important;
-            box-shadow: 0 6px 30px rgba(0, 180, 255, 0.25) !important;
-        }
-
-        @keyframes breatheGlowTop {
-            0% {
-                box-shadow: 0 0 8px rgba(0, 180, 255, 0.1), inset 0 0 8px rgba(0, 180, 255, 0.04);
-                border-color: rgba(0, 180, 255, 0.35);
-            }
-            50% {
-                box-shadow: 0 0 35px rgba(0, 180, 255, 0.35), inset 0 0 35px rgba(0, 180, 255, 0.12);
-                border-color: rgba(0, 180, 255, 0.7);
-            }
-            100% {
-                box-shadow: 0 0 8px rgba(0, 180, 255, 0.1), inset 0 0 8px rgba(0, 180, 255, 0.04);
-                border-color: rgba(0, 180, 255, 0.35);
-            }
-        }
-
-        .mobile-header .login-btn {
-            font-family: 'Montserrat', sans-serif !important;
-            font-weight: 700 !important;
-            font-size: 0.75rem !important;
-            padding: 8px 22px !important;
-            border-radius: 8px !important;
-            text-decoration: none !important;
-            transition: all 0.3s ease !important;
-            white-space: nowrap !important;
-            display: inline-block !important;
-            background: linear-gradient(145deg, #00b4ff 0%, #0090e0 30%, #00c8ff 60%, #0077cc 100%) !important;
-            border: none !important;
-            color: #fff !important;
-            box-shadow: 0 2px 16px rgba(0, 180, 255, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
-            line-height: 1.4 !important;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
-            letter-spacing: 0.5px !important;
-        }
-
-        .mobile-header .login-btn:hover {
-            transform: translateY(-2px) !important;
-            box-shadow: 0 6px 30px rgba(0, 180, 255, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
-            background: linear-gradient(145deg, #00c8ff 0%, #00a0e8 30%, #00d4ff 60%, #0088d4 100%) !important;
-        }
-
-        .mobile-header .mobile-header-slogan {
-            display: none;
-        }
-
-        /* ===== 手机底部导航 ===== */
-        .bottom-nav {
-            display: flex !important;
-            position: fixed !important;
-            bottom: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            width: 100% !important;
-            background: repeating-linear-gradient(90deg, transparent 0px, transparent 3px, rgba(255, 255, 255, 0.015) 3px, rgba(255, 255, 255, 0.015) 4px), linear-gradient(180deg, #06060f 0%, #0a0a20 100%) !important;
-            border-top: 1px solid rgba(0, 180, 255, 0.08) !important;
-            padding: 6px 0 env(safe-area-inset-bottom, 6px) 0 !important;
-            z-index: 1000 !important;
-            box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.6) !important;
-            backdrop-filter: blur(10px) !important;
-            -webkit-backdrop-filter: blur(10px) !important;
-            margin: 0 !important;
-            border-radius: 0 !important;
-            justify-content: space-around !important;
-        }
-
-        .bottom-nav .nav-item {
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: center !important;
-            color: rgba(255, 255, 255, 0.2) !important;
-            font-size: 0.55rem !important;
-            gap: 2px !important;
-            text-decoration: none !important;
-            padding: 4px 10px !important;
-            position: relative !important;
-        }
-
-        .bottom-nav .nav-item i {
-            font-size: 1.2rem !important;
-            color: rgba(255, 255, 255, 0.2) !important;
-        }
-
-        .bottom-nav .nav-item.active i,
-        .bottom-nav .nav-item.active span {
-            color: #00b4ff !important;
-        }
-        .bottom-nav .nav-item.active span {
-            font-weight: 600 !important;
-        }
-
-        .bottom-nav .nav-item.active::after {
-            content: '' !important;
-            position: absolute !important;
-            top: -1px !important;
-            left: 50% !important;
-            transform: translateX(-50%) !important;
-            width: 20px !important;
-            height: 2px !important;
-            background: linear-gradient(90deg, #00b4ff, #ffd700) !important;
-            border-radius: 2px !important;
-            box-shadow: 0 0 10px rgba(0, 180, 255, 0.3) !important;
-        }
-
-        @supports (padding-bottom: env(safe-area-inset-bottom)) {
-            .bottom-nav {
-                padding-bottom: max(6px, env(safe-area-inset-bottom)) !important;
-            }
-        }
-
-        /* ===== Hamburger 样式 ===== */
-        .hamburger-btn {
-            display: flex !important;
-            flex-direction: column;
-            gap: 4px;
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            padding: 4px;
-            z-index: 1001;
-            position: relative;
-            transition: 0.3s;
-        }
-
-        .hamburger-btn span {
-            display: block;
-            width: 24px;
-            height: 2px;
-            background: rgba(255, 255, 255, 0.6);
-            border-radius: 2px;
-            transition: all 0.3s ease;
-            transform-origin: center;
-        }
-
-        .hamburger-btn.menu-open span {
-            opacity: 0 !important;
-            transform: scale(0.5) !important;
-        }
-
-        .hamburger-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.35);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
-            z-index: 999;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .hamburger-overlay.open {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .hamburger-menu {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 280px;
-            max-width: 80vw;
-            height: 100%;
-            background: rgba(10, 10, 32, 0.55);
-            backdrop-filter: blur(24px) saturate(1.6);
-            -webkit-backdrop-filter: blur(24px) saturate(1.6);
-            border-right: 1px solid rgba(255, 255, 255, 0.08);
-            padding: 20px 18px 30px;
-            z-index: 1000;
-            transform: translateX(-100%);
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow-y: auto;
-            box-shadow: 4px 0 40px rgba(0, 0, 0, 0.4), inset 0 0 80px rgba(0, 180, 255, 0.03);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .hamburger-menu.open {
-            transform: translateX(0);
-        }
-
-        .hamburger-header {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding-bottom: 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-            margin-bottom: 20px;
-            flex-shrink: 0;
-            gap: 8px;
-        }
-
-        .hamburger-header .logo-metal canvas {
-            display: block;
-            width: auto;
-            height: 100px;
-            border-radius: 12px;
-        }
-
-        .hamburger-slogan {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 800;
-            font-style: italic;
-            font-size: 1.0rem;
-            letter-spacing: 2px;
-            white-space: nowrap;
-            flex-shrink: 0;
-            display: inline-block;
-            text-align: center;
-            background: linear-gradient(120deg, #a0e9ff 0%, #4db8ff 20%, #ffffff 45%, #6fcbff 70%, #a0e9ff 100%);
-            background-size: 300% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: shimmerGlacier 5s linear infinite;
-            text-shadow: none;
-        }
-
-        @keyframes shimmerGlacier {
-            0% { background-position: 0% center; }
-            100% { background-position: 300% center; }
-        }
-
-        .hamburger-nav {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            margin-bottom: 16px;
-            flex: 1;
-            overflow-y: auto;
-        }
-
-        .hamburger-nav a {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding: 12px 14px;
-            border-radius: 12px;
-            color: rgba(255, 255, 255, 0.4);
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .hamburger-nav a i {
-            width: 22px;
-            text-align: center;
-            font-size: 1.1rem;
-            color: rgba(255, 255, 255, 0.2);
-            transition: 0.3s;
-        }
-
-        .hamburger-nav a:hover {
-            background: rgba(255, 255, 255, 0.04);
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        .hamburger-nav a:hover i {
-            color: rgba(0, 180, 255, 0.5);
-        }
-
-        .hamburger-nav a.active {
-            background: rgba(0, 180, 255, 0.08);
-            border: 1px solid rgba(0, 180, 255, 0.08);
-            color: #fff;
-        }
-
-        .hamburger-nav a.active i {
-            color: #00b4ff;
-        }
-
-        .hamburger-nav a.active::before {
-            content: '';
-            position: absolute;
-            left: -1px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 3px;
-            height: 20px;
-            background: linear-gradient(180deg, #00b4ff, #ffd700);
-            border-radius: 0 3px 3px 0;
-            box-shadow: 0 0 20px rgba(0, 180, 255, 0.3);
-        }
-
-        .hamburger-lang {
-            display: flex;
-            gap: 8px;
-            padding: 12px 14px;
-            border-top: 1px solid rgba(255, 255, 255, 0.04);
-            margin-top: 4px;
-            flex-shrink: 0;
-        }
-
-        .hamburger-lang .lang-btn {
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            color: rgba(255, 255, 255, 0.2);
-            padding: 4px 16px;
-            border-radius: 20px;
-            font-size: 0.6rem;
-            cursor: pointer;
-            transition: 0.3s;
-            font-weight: 600;
-        }
-
-        .hamburger-lang .lang-btn.active {
-            border-color: rgba(0, 180, 255, 0.2);
-            color: rgba(255, 255, 255, 0.5);
-            background: rgba(0, 180, 255, 0.05);
-        }
-
-        .hamburger-lang .lang-btn:hover {
-            border-color: rgba(0, 180, 255, 0.3);
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        .hamburger-footer {
-            padding-top: 12px;
-            border-top: 1px solid rgba(255, 255, 255, 0.04);
-            flex-shrink: 0;
-        }
-
-        .hamburger-footer a {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: rgba(255, 255, 255, 0.12);
-            text-decoration: none;
-            font-size: 0.65rem;
-            padding: 8px 14px;
-            border-radius: 8px;
-            transition: 0.3s;
-        }
-
-        .hamburger-footer a:hover {
-            color: rgba(0, 180, 255, 0.3);
-            background: rgba(255, 255, 255, 0.02);
-        }
-
-        /* Hamburger 用户区域 */
-        .hamburger-user {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding: 14px 12px;
-            background: rgba(255, 255, 255, 0.04);
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            margin-bottom: 16px;
-            flex-shrink: 0;
-        }
-
-        .hamburger-user .avatar {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: repeating-linear-gradient(90deg, transparent 0px, transparent 2px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.03) 3px), linear-gradient(145deg, #0d0d30, #1a1a4a);
-            border: 2px solid rgba(0, 180, 255, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            color: #00b4ff;
-            flex-shrink: 0;
-        }
-
-        .hamburger-user .info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .hamburger-user .info .name {
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: #fff;
-        }
-
-        .hamburger-user .info .role {
-            font-size: 0.7rem;
-            color: rgba(255, 255, 255, 0.3);
-        }
-
-        .hamburger-user .vip-badge {
-            background: linear-gradient(145deg, rgba(255, 215, 0, 0.2), rgba(255, 215, 0, 0.05));
-            border: 1px solid rgba(255, 215, 0, 0.2);
-            color: #ffd700;
-            font-weight: 700;
-            font-size: 0.6rem;
-            padding: 4px 12px;
-            border-radius: 30px;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.05);
-            white-space: nowrap;
-            flex-shrink: 0;
-        }
-
-        .hamburger-auth {
-            display: flex;
-            gap: 10px;
-            padding: 12px 14px;
-            margin-bottom: 16px;
-            flex-shrink: 0;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.04);
-        }
-
-        .hamburger-auth a {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 10px 16px;
-            border-radius: 40px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .hamburger-login-btn {
-            background: linear-gradient(145deg, #00b4ff 0%, #0090e0 30%, #00c8ff 60%, #0077cc 100%);
-            border: none;
-            color: #fff !important;
-            box-shadow: 0 2px 16px rgba(0, 180, 255, 0.3);
-        }
-
-        .hamburger-login-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 30px rgba(0, 180, 255, 0.4);
-        }
-
-        .hamburger-register-btn {
-            background: transparent;
-            border: 1px solid rgba(0, 180, 255, 0.12);
-            color: #00b4ff !important;
-            animation: breatheGlow 2.5s ease-in-out infinite;
-        }
-
-        .hamburger-register-btn:hover {
-            transform: translateY(-2px);
-            animation-play-state: paused;
-            border-color: rgba(0, 180, 255, 0.6);
-            background: rgba(0, 180, 255, 0.05);
-        }
-
-        @keyframes breatheGlow {
-            0% {
-                box-shadow: 0 0 5px rgba(0, 180, 255, 0.05), inset 0 0 5px rgba(0, 180, 255, 0.02);
-                border-color: rgba(0, 180, 255, 0.12);
-            }
-            50% {
-                box-shadow: 0 0 30px rgba(0, 180, 255, 0.25), inset 0 0 30px rgba(0, 180, 255, 0.08);
-                border-color: rgba(0, 180, 255, 0.5);
-            }
-            100% {
-                box-shadow: 0 0 5px rgba(0, 180, 255, 0.05), inset 0 0 5px rgba(0, 180, 255, 0.02);
-                border-color: rgba(0, 180, 255, 0.12);
-            }
-        }
-
-        /* 电脑版隐藏手机元素 */
-        @media (min-width: 768px) {
-            .mobile-header {
-                display: none !important;
-            }
-            .bottom-nav {
-                display: none !important;
-            }
-        }
-
-        /* 手机版隐藏侧边栏 */
-        @media (max-width: 767px) {
-            .sidebar {
-                display: none !important;
-            }
-        }
-
-        /* 加载状态 */
-        .partnership-loading {
-            text-align: center;
-            padding: 40px 20px;
-            color: rgba(255, 255, 255, 0.3);
-        }
-
-        .partnership-loading i {
-            font-size: 2rem;
-            color: #00b4ff;
-            display: block;
-            margin-bottom: 12px;
-        }
-    </style>
-</head>
-<body>
-
-<div class="app-container">
-
-    <!-- ===== SIDEBAR ===== -->
-    <div class="sidebar">
-        <div class="sidebar-logo-wrapper">
-            <a href="/" class="logo-metal">
-                <canvas id="sidebarLogoCanvas" width="400" height="200"></canvas>
-            </a>
-            <span class="sidebar-slogan">Play Safe, Win Safe</span>
-        </div>
-
-        <div class="lang-switcher">
-            <button class="lang-btn active" data-lang="en">EN</button>
-            <button class="lang-btn" data-lang="zh">中文</button>
-        </div>
-
-        <nav class="sidebar-nav">
-            <a href="/" class="nav-item"><i class="fas fa-home"></i> <span data-i18n="nav.home">Home</span></a>
-            <a href="/dashboard" class="nav-item"><i class="fas fa-tachometer-alt"></i> <span data-i18n="nav.dashboard">Dashboard</span></a>
-            <a href="/deposit" class="nav-item"><i class="fas fa-wallet"></i> <span data-i18n="nav.deposit">Deposit</span></a>
-            <a href="/withdraw" class="nav-item"><i class="fas fa-arrow-up"></i> <span data-i18n="nav.withdraw">Withdraw</span></a>
-            <a href="/profile" class="nav-item"><i class="fas fa-user-cog"></i> <span data-i18n="nav.profile">Profile</span></a>
-        </nav>
-
-        <div class="sidebar-footer">
-            <div class="user-avatar-metal"><i class="fas fa-user"></i></div>
-            <div class="user-info">
-                <div class="name">Player</div>
-                <div class="role">VIP 2</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ===== MAIN CONTENT ===== -->
-    <div class="main-content">
-
-        <!-- 手机顶部导航 -->
-        <div class="mobile-header">
-            <div id="hamburgerPlaceholder"></div>
-            <div class="mobile-header-right" id="mobileHeaderRight">
-                <div class="header-auth-buttons" id="headerAuthButtons">
-                    <div class="register-wrapper" id="registerWrapper">
-                        <a href="/register" class="register-btn">Register</a>
+// ============================================================
+// admin-partnership.js - Partnership 管理模块
+// 在 Admin Dashboard 中加载
+// ============================================================
+
+(function() {
+    'use strict';
+
+    console.log('✅ admin-partnership.js loading...');
+
+    var SUPABASE_URL = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co';
+    var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImprYnBiamhyZ2JuemV4dmp2eGd0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4Mzc3MDcyMSwiZXhwIjoyMDk5MzQ2NzIxfQ.cZumC1R8_pGEfQv-BBfqJXAExCYOC7mdDj4OmkfdjRw';
+
+    var DEFAULT_VALUES = {
+        welcome_bonus: 'RM 88',
+        daily_rebate: '5%',
+        weekly_bonus: 'RM 188',
+        new_register_free: 'RM 25'
+    };
+
+    var currentData = null;
+    var isSupabaseAvailable = false;
+
+    // 检查 Supabase
+    try {
+        if (typeof supabase !== 'undefined') {
+            isSupabaseAvailable = true;
+            console.log('✅ Supabase available');
+        } else {
+            console.warn('⚠️ Supabase not available, using localStorage');
+        }
+    } catch (e) {
+        console.warn('⚠️ Supabase check failed:', e);
+    }
+
+    // ============================================================
+    // 渲染 Partnership 管理页面
+    // ============================================================
+    function renderPartnershipPage() {
+        console.log('📊 Rendering partnership page...');
+        var container = document.getElementById('page_partnership');
+        if (!container) {
+            console.warn('⚠️ #page_partnership not found');
+            return;
+        }
+
+        var data = currentData || DEFAULT_VALUES;
+
+        var html = `
+            <div style="margin-bottom: 20px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                    <div>
+                        <div style="font-size:22px; font-weight:700; color:#fff;">
+                            <i class="fas fa-handshake" style="color:#ffd700;"></i> Partnership Settings
+                        </div>
+                        <div style="font-size:13px; color:#5a6388;">Configure partnership program values shown on user page</div>
                     </div>
-                    <a href="/login" class="login-btn">Login</a>
+                    <button onclick="window._adminPartnership.saveSettings()" style="
+                        background: linear-gradient(135deg, #4a7cff, #2f3e7a);
+                        border: none;
+                        padding: 12px 28px;
+                        border-radius: 40px;
+                        color: #fff;
+                        font-weight: 600;
+                        font-size: 14px;
+                        cursor: pointer;
+                        transition: 0.3s;
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                    ">
+                        <i class="fas fa-save"></i> Save Settings
+                    </button>
                 </div>
-                <span class="mobile-header-slogan" id="headerSlogan" style="display:none;">Play Safe, Win Safe</span>
-                <a href="/" class="logo-metal">
-                    <canvas id="headerLogoCanvas" width="400" height="200"></canvas>
-                </a>
             </div>
-        </div>
 
-        <!-- ===== Page Header ===== -->
-        <div class="partnership-header">
-            <h2><i class="fas fa-handshake"></i> Partnership Program</h2>
-            <p>Join our partner program and earn exclusive rewards</p>
-        </div>
+            <div style="
+                background: rgba(10, 14, 26, 0.6);
+                backdrop-filter: blur(12px);
+                border-radius: 16px;
+                border: 1px solid rgba(255,255,255,0.04);
+                padding: 24px;
+            ">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+                    <div class="form-group">
+                        <label style="display:block; font-size:12px; color:#5a6388; margin-bottom:4px; font-weight:600;">
+                            <i class="fas fa-gift" style="color:#ffd700;"></i> Welcome Bonus (RM)
+                        </label>
+                        <input type="text" id="partnership_welcome_bonus" value="${data.welcome_bonus || DEFAULT_VALUES.welcome_bonus}" style="
+                            width:100%;
+                            background: rgba(10,14,26,0.8);
+                            border: 1px solid #2a3560;
+                            border-radius: 12px;
+                            padding: 12px 16px;
+                            color: #fff;
+                            font-size: 14px;
+                            outline: none;
+                            box-sizing: border-box;
+                        ">
+                    </div>
+                    <div class="form-group">
+                        <label style="display:block; font-size:12px; color:#5a6388; margin-bottom:4px; font-weight:600;">
+                            <i class="fas fa-percent" style="color:#4cd9a0;"></i> Daily Rebate (%)
+                        </label>
+                        <input type="text" id="partnership_daily_rebate" value="${data.daily_rebate || DEFAULT_VALUES.daily_rebate}" style="
+                            width:100%;
+                            background: rgba(10,14,26,0.8);
+                            border: 1px solid #2a3560;
+                            border-radius: 12px;
+                            padding: 12px 16px;
+                            color: #fff;
+                            font-size: 14px;
+                            outline: none;
+                            box-sizing: border-box;
+                        ">
+                    </div>
+                    <div class="form-group">
+                        <label style="display:block; font-size:12px; color:#5a6388; margin-bottom:4px; font-weight:600;">
+                            <i class="fas fa-calendar-week" style="color:#ffd700;"></i> Weekly Bonus (RM)
+                        </label>
+                        <input type="text" id="partnership_weekly_bonus" value="${data.weekly_bonus || DEFAULT_VALUES.weekly_bonus}" style="
+                            width:100%;
+                            background: rgba(10,14,26,0.8);
+                            border: 1px solid #2a3560;
+                            border-radius: 12px;
+                            padding: 12px 16px;
+                            color: #fff;
+                            font-size: 14px;
+                            outline: none;
+                            box-sizing: border-box;
+                        ">
+                    </div>
+                    <div class="form-group">
+                        <label style="display:block; font-size:12px; color:#5a6388; margin-bottom:4px; font-weight:600;">
+                            <i class="fas fa-user-plus" style="color:#4cd9a0;"></i> New Register Free (RM)
+                        </label>
+                        <input type="text" id="partnership_new_register_free" value="${data.new_register_free || DEFAULT_VALUES.new_register_free}" style="
+                            width:100%;
+                            background: rgba(10,14,26,0.8);
+                            border: 1px solid #2a3560;
+                            border-radius: 12px;
+                            padding: 12px 16px;
+                            color: #fff;
+                            font-size: 14px;
+                            outline: none;
+                            box-sizing: border-box;
+                        ">
+                    </div>
+                </div>
 
-        <!-- ===== Partnership Grid ===== -->
-        <div class="partnership-grid" id="partnershipGrid">
-            <!-- 卡片由 JavaScript 动态渲染 -->
-            <div class="partnership-loading">
-                <i class="fas fa-spinner fa-spin"></i>
-                Loading partnership data...
+                <!-- Preview -->
+                <div style="margin-top:20px; padding-top:20px; border-top:1px solid rgba(255,255,255,0.04);">
+                    <div style="font-size:12px; color:#5a6388; margin-bottom:12px;">
+                        <i class="fas fa-eye"></i> Live Preview (as seen on user page)
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                        <div style="background:rgba(255,255,255,0.02); border-radius:12px; padding:14px 18px; border:1px solid rgba(255,255,255,0.04);">
+                            <div style="font-size:11px; color:#5a6388;">🎁 Welcome Bonus</div>
+                            <div style="font-size:20px; font-weight:700; color:#ffd700;" id="preview_welcome_bonus">${data.welcome_bonus || DEFAULT_VALUES.welcome_bonus}</div>
+                        </div>
+                        <div style="background:rgba(255,255,255,0.02); border-radius:12px; padding:14px 18px; border:1px solid rgba(255,255,255,0.04);">
+                            <div style="font-size:11px; color:#5a6388;">🔄 Daily Rebate</div>
+                            <div style="font-size:20px; font-weight:700; color:#4cd9a0;" id="preview_daily_rebate">${data.daily_rebate || DEFAULT_VALUES.daily_rebate}</div>
+                        </div>
+                        <div style="background:rgba(255,255,255,0.02); border-radius:12px; padding:14px 18px; border:1px solid rgba(255,255,255,0.04);">
+                            <div style="font-size:11px; color:#5a6388;">📊 Weekly Bonus</div>
+                            <div style="font-size:20px; font-weight:700; color:#ffd700;" id="preview_weekly_bonus">${data.weekly_bonus || DEFAULT_VALUES.weekly_bonus}</div>
+                        </div>
+                        <div style="background:rgba(255,255,255,0.02); border-radius:12px; padding:14px 18px; border:1px solid rgba(255,255,255,0.04);">
+                            <div style="font-size:11px; color:#5a6388;">✨ New Register Free</div>
+                            <div style="font-size:20px; font-weight:700; color:#4cd9a0;" id="preview_new_register_free">${data.new_register_free || DEFAULT_VALUES.new_register_free}</div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <!-- 手机底部导航 -->
-        <div class="bottom-nav">
-            <a href="/" class="nav-item"><i class="fas fa-home"></i><span data-i18n="nav.home">Home</span></a>
-            <a href="/dashboard" class="nav-item"><i class="fas fa-tachometer-alt"></i><span data-i18n="nav.dashboard">Dashboard</span></a>
-            <a href="/deposit" class="nav-item"><i class="fas fa-wallet"></i><span data-i18n="nav.deposit">Deposit</span></a>
-            <a href="/withdraw" class="nav-item"><i class="fas fa-arrow-up"></i><span data-i18n="nav.withdraw">Withdraw</span></a>
-            <a href="/profile" class="nav-item"><i class="fas fa-user-cog"></i><span data-i18n="nav.profile">Profile</span></a>
-        </div>
+            <div style="margin-top:12px; text-align:right; font-size:12px; color:#3a4a6a;">
+                ${data.updated_at ? 'Last updated: ' + new Date(data.updated_at).toLocaleString() : 'No data saved yet'}
+                <span style="margin-left:16px; color:#2a3560;">|</span>
+                <span style="color:#2a3560;">${isSupabaseAvailable ? '✅ Supabase connected' : '💾 Local storage'}</span>
+            </div>
+        `;
 
-    </div><!-- /main-content -->
-</div><!-- /app-container -->
+        container.innerHTML = html;
 
-<script src="js/main.js"></script>
-<script src="components/hamburger.js"></script>
+        // 绑定输入事件更新预览
+        document.querySelectorAll('#page_partnership input').forEach(function(input) {
+            input.addEventListener('input', function() {
+                window._adminPartnership.updatePreview();
+            });
+        });
+    }
 
-<!-- ============================================================
-    Partnership 数据加载
-   ============================================================ -->
-<script>
-    (function() {
-        'use strict';
+    // ============================================================
+    // 加载数据
+    // ============================================================
+    function loadData() {
+        console.log('📥 Loading partnership data...');
 
-        // Supabase 配置
-        var SUPABASE_URL = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co';
-        var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImprYnBiamhyZ2JuemV4dmp2eGd0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4Mzc3MDcyMSwiZXhwIjoyMDk5MzQ2NzIxfQ.cZumC1R8_pGEfQv-BBfqJXAExCYOC7mdDj4OmkfdjRw';
+        if (!isSupabaseAvailable) {
+            loadFromLocalStorage();
+            return;
+        }
 
-        // 默认值
-        var DEFAULT_VALUES = {
-            welcome_bonus: 'RM 88',
-            daily_rebate: '5%',
-            weekly_bonus: 'RM 188',
-            new_register_free: 'RM 25'
-        };
-
-        var partnershipData = null;
-
-        // ============================================================
-        // 从 Supabase 加载数据
-        // ============================================================
-        function loadPartnershipData() {
-            var container = document.getElementById('partnershipGrid');
-
-            // 检查是否已加载 Supabase
-            if (typeof supabase === 'undefined') {
-                console.warn('Supabase not loaded, using localStorage fallback');
-                loadFromLocalStorage();
-                return;
-            }
-
+        try {
             var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
             sb.from('partnership_settings')
                 .select('*')
                 .limit(1)
                 .then(function(res) {
+                    console.log('📊 Supabase response:', res);
+
                     if (res.error) {
-                        console.error('加载 Partnership 数据失败:', res.error);
+                        console.error('❌ 加载失败:', res.error);
                         loadFromLocalStorage();
                         return;
                     }
 
                     if (res.data && res.data.length > 0) {
-                        partnershipData = res.data[0];
-                        renderPartnershipCards(partnershipData);
+                        currentData = res.data[0];
+                        console.log('✅ 数据加载成功:', currentData);
                     } else {
-                        // 没有数据，使用默认值并创建
-                        partnershipData = {
+                        // 创建默认数据
+                        currentData = {
                             id: 1,
                             welcome_bonus: DEFAULT_VALUES.welcome_bonus,
                             daily_rebate: DEFAULT_VALUES.daily_rebate,
@@ -998,219 +230,230 @@
                             new_register_free: DEFAULT_VALUES.new_register_free,
                             updated_at: new Date().toISOString()
                         };
-                        renderPartnershipCards(partnershipData);
-                        // 尝试创建记录
+                        // 尝试插入
                         sb.from('partnership_settings')
-                            .insert(partnershipData)
-                            .then(function() {})
-                            .catch(function() {});
+                            .insert(currentData)
+                            .then(function() {
+                                console.log('✅ 默认数据已创建');
+                            })
+                            .catch(function(err) {
+                                console.warn('⚠️ 创建默认数据失败:', err);
+                            });
+                    }
+                    renderPartnershipPage();
+                })
+                .catch(function(err) {
+                    console.error('❌ 加载异常:', err);
+                    loadFromLocalStorage();
+                });
+        } catch (e) {
+            console.error('❌ Supabase 错误:', e);
+            loadFromLocalStorage();
+        }
+    }
+
+    function loadFromLocalStorage() {
+        console.log('💾 Loading from localStorage...');
+        var saved = localStorage.getItem('partnership_settings');
+        if (saved) {
+            try {
+                currentData = JSON.parse(saved);
+                console.log('✅ localStorage 数据:', currentData);
+                renderPartnershipPage();
+                return;
+            } catch (e) {
+                console.warn('⚠️ 解析 localStorage 失败:', e);
+            }
+        }
+
+        currentData = {
+            welcome_bonus: DEFAULT_VALUES.welcome_bonus,
+            daily_rebate: DEFAULT_VALUES.daily_rebate,
+            weekly_bonus: DEFAULT_VALUES.weekly_bonus,
+            new_register_free: DEFAULT_VALUES.new_register_free,
+            updated_at: new Date().toISOString()
+        };
+        localStorage.setItem('partnership_settings', JSON.stringify(currentData));
+        renderPartnershipPage();
+        console.log('✅ 使用默认值');
+    }
+
+    // ============================================================
+    // 保存设置
+    // ============================================================
+    function saveSettings() {
+        console.log('💾 Saving partnership settings...');
+
+        var welcomeEl = document.getElementById('partnership_welcome_bonus');
+        var dailyEl = document.getElementById('partnership_daily_rebate');
+        var weeklyEl = document.getElementById('partnership_weekly_bonus');
+        var freeEl = document.getElementById('partnership_new_register_free');
+
+        if (!welcomeEl || !dailyEl || !weeklyEl || !freeEl) {
+            console.warn('⚠️ 找不到输入元素');
+            showSaveResult(false, 'Form elements not found');
+            return;
+        }
+
+        var data = {
+            welcome_bonus: welcomeEl.value.trim() || DEFAULT_VALUES.welcome_bonus,
+            daily_rebate: dailyEl.value.trim() || DEFAULT_VALUES.daily_rebate,
+            weekly_bonus: weeklyEl.value.trim() || DEFAULT_VALUES.weekly_bonus,
+            new_register_free: freeEl.value.trim() || DEFAULT_VALUES.new_register_free,
+            updated_at: new Date().toISOString()
+        };
+
+        console.log('📝 保存数据:', data);
+
+        // 保存到 localStorage（备份）
+        localStorage.setItem('partnership_settings', JSON.stringify(data));
+
+        if (!isSupabaseAvailable) {
+            currentData = data;
+            showSaveResult(true);
+            renderPartnershipPage();
+            return;
+        }
+
+        try {
+            var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+            sb.from('partnership_settings')
+                .select('id')
+                .limit(1)
+                .then(function(res) {
+                    if (res.error) {
+                        console.error('❌ 检查记录失败:', res.error);
+                        showSaveResult(false, res.error.message);
+                        return;
+                    }
+
+                    if (res.data && res.data.length > 0) {
+                        // 更新
+                        sb.from('partnership_settings')
+                            .update(data)
+                            .eq('id', res.data[0].id)
+                            .then(function(updateRes) {
+                                if (updateRes.error) {
+                                    console.error('❌ 更新失败:', updateRes.error);
+                                    showSaveResult(false, updateRes.error.message);
+                                } else {
+                                    currentData = data;
+                                    console.log('✅ 更新成功');
+                                    showSaveResult(true);
+                                    renderPartnershipPage();
+                                }
+                            })
+                            .catch(function(err) {
+                                console.error('❌ 更新异常:', err);
+                                showSaveResult(false, err.message);
+                            });
+                    } else {
+                        // 插入
+                        sb.from('partnership_settings')
+                            .insert(data)
+                            .then(function(insertRes) {
+                                if (insertRes.error) {
+                                    console.error('❌ 插入失败:', insertRes.error);
+                                    showSaveResult(false, insertRes.error.message);
+                                } else {
+                                    currentData = data;
+                                    console.log('✅ 插入成功');
+                                    showSaveResult(true);
+                                    renderPartnershipPage();
+                                }
+                            })
+                            .catch(function(err) {
+                                console.error('❌ 插入异常:', err);
+                                showSaveResult(false, err.message);
+                            });
                     }
                 })
                 .catch(function(err) {
-                    console.error('加载异常:', err);
-                    loadFromLocalStorage();
+                    console.error('❌ 查询异常:', err);
+                    showSaveResult(false, err.message);
                 });
+        } catch (e) {
+            console.error('❌ Supabase 错误:', e);
+            showSaveResult(false, e.message);
         }
+    }
 
-        // ============================================================
-        // 从 localStorage 加载（备用）
-        // ============================================================
-        function loadFromLocalStorage() {
-            var saved = localStorage.getItem('partnership_settings');
-            if (saved) {
-                try {
-                    partnershipData = JSON.parse(saved);
-                    renderPartnershipCards(partnershipData);
-                    return;
-                } catch (e) {}
+    // ============================================================
+    // 显示保存结果
+    // ============================================================
+    function showSaveResult(success, message) {
+        var container = document.getElementById('page_partnership');
+        if (!container) return;
+
+        var existing = container.querySelector('.save-result');
+        if (existing) existing.remove();
+
+        var div = document.createElement('div');
+        div.className = 'save-result';
+        div.style.cssText = `
+            margin-top: 12px;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            ${success ? 'background: rgba(76, 217, 160, 0.1); border: 1px solid rgba(76, 217, 160, 0.2); color: #4cd9a0;' : 'background: rgba(255, 107, 107, 0.1); border: 1px solid rgba(255, 107, 107, 0.2); color: #ff6b6b;'}
+        `;
+        div.textContent = success ? '✅ Settings saved successfully!' : '❌ Save failed: ' + (message || 'Unknown error');
+
+        container.insertBefore(div, container.firstChild.nextSibling);
+
+        setTimeout(function() {
+            if (div.parentNode) {
+                div.style.opacity = '0';
+                div.style.transition = 'opacity 0.5s';
+                setTimeout(function() {
+                    if (div.parentNode) div.remove();
+                }, 500);
             }
+        }, 3000);
+    }
 
-            // 使用默认值
-            partnershipData = {
-                welcome_bonus: DEFAULT_VALUES.welcome_bonus,
-                daily_rebate: DEFAULT_VALUES.daily_rebate,
-                weekly_bonus: DEFAULT_VALUES.weekly_bonus,
-                new_register_free: DEFAULT_VALUES.new_register_free
-            };
-            renderPartnershipCards(partnershipData);
+    // ============================================================
+    // 实时预览更新
+    // ============================================================
+    function updatePreview() {
+        var welcome = document.getElementById('partnership_welcome_bonus');
+        var daily = document.getElementById('partnership_daily_rebate');
+        var weekly = document.getElementById('partnership_weekly_bonus');
+        var free = document.getElementById('partnership_new_register_free');
+
+        var previewWelcome = document.getElementById('preview_welcome_bonus');
+        var previewDaily = document.getElementById('preview_daily_rebate');
+        var previewWeekly = document.getElementById('preview_weekly_bonus');
+        var previewFree = document.getElementById('preview_new_register_free');
+
+        if (welcome && previewWelcome) {
+            previewWelcome.textContent = welcome.value.trim() || DEFAULT_VALUES.welcome_bonus;
         }
-
-        // ============================================================
-        // 渲染卡片
-        // ============================================================
-        function renderPartnershipCards(data) {
-            var container = document.getElementById('partnershipGrid');
-            if (!container) return;
-
-            var cards = [
-                {
-                    key: 'welcome_bonus',
-                    logo: '🎁',
-                    title: 'Welcome Bonus',
-                    value: data.welcome_bonus || DEFAULT_VALUES.welcome_bonus,
-                    sub: 'First deposit bonus',
-                    claimLink: '/deposit'
-                },
-                {
-                    key: 'daily_rebate',
-                    logo: '🔄',
-                    title: 'Daily Rebate',
-                    value: data.daily_rebate || DEFAULT_VALUES.daily_rebate,
-                    sub: 'Daily cashback on losses',
-                    claimLink: '/dashboard'
-                },
-                {
-                    key: 'weekly_bonus',
-                    logo: '📊',
-                    title: 'Weekly Bonus',
-                    value: data.weekly_bonus || DEFAULT_VALUES.weekly_bonus,
-                    sub: 'Weekly turnover bonus',
-                    claimLink: '/dashboard'
-                },
-                {
-                    key: 'new_register_free',
-                    logo: '✨',
-                    title: 'NEW REGISTER FREE',
-                    value: data.new_register_free || DEFAULT_VALUES.new_register_free,
-                    sub: 'Free credit for new members',
-                    claimLink: '/register'
-                }
-            ];
-
-            var html = '';
-            cards.forEach(function(card) {
-                html += `
-                    <div class="partnership-card" data-key="${card.key}">
-                        <span class="card-logo">${card.logo}</span>
-                        <div class="card-title">${card.title}</div>
-                        <div class="card-value">${card.value}</div>
-                        <div class="card-sub">${card.sub}</div>
-                        <div class="card-actions">
-                            <a href="${card.claimLink}" class="btn-claim"><i class="fas fa-gift"></i> Claim Now</a>
-                            <a href="https://t.me/vision711" target="_blank" class="btn-telegram"><i class="fab fa-telegram-plane"></i> Join Telegram</a>
-                        </div>
-                    </div>
-                `;
-            });
-
-            container.innerHTML = html;
+        if (daily && previewDaily) {
+            previewDaily.textContent = daily.value.trim() || DEFAULT_VALUES.daily_rebate;
         }
-
-        // ============================================================
-        // 初始化 Logo 流光
-        // ============================================================
-        function initLogos() {
-            // Sidebar Logo
-            var sidebarCanvas = document.getElementById('sidebarLogoCanvas');
-            if (sidebarCanvas) {
-                initLogoCanvas(sidebarCanvas);
-            }
-
-            // Header Logo
-            var headerCanvas = document.getElementById('headerLogoCanvas');
-            if (headerCanvas) {
-                initLogoCanvas(headerCanvas);
-            }
+        if (weekly && previewWeekly) {
+            previewWeekly.textContent = weekly.value.trim() || DEFAULT_VALUES.weekly_bonus;
         }
-
-        function initLogoCanvas(canvas) {
-            var ctx = canvas.getContext('2d');
-            var img = new Image();
-            img.crossOrigin = 'anonymous';
-            img.src = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/hero-background/logo.png';
-
-            var logoData = null;
-            var w = 0, h = 0;
-            var startTime = performance.now();
-
-            img.onload = function() {
-                w = img.width;
-                h = img.height;
-                canvas.width = w;
-                canvas.height = h;
-                ctx.drawImage(img, 0, 0);
-                logoData = ctx.getImageData(0, 0, w, h);
-                ctx.clearRect(0, 0, w, h);
-                requestAnimationFrame(drawFrame);
-            };
-
-            function drawFrame(timestamp) {
-                if (!logoData) return;
-                var elapsed = (timestamp - startTime) / 1000;
-                var waitTime = 1.0, scanDuration = 1.2, totalTime = waitTime + scanDuration;
-                var timeInCycle = elapsed % totalTime;
-                var progress;
-                if (timeInCycle < waitTime) {
-                    progress = -1;
-                } else {
-                    progress = 1 - (timeInCycle - waitTime) / scanDuration;
-                }
-                ctx.clearRect(0, 0, w, h);
-                ctx.globalAlpha = 0.9;
-                ctx.drawImage(img, 0, 0);
-                ctx.globalAlpha = 1.0;
-                var imageData = ctx.getImageData(0, 0, w, h);
-                var data = imageData.data;
-                var barWidth = Math.max(20, w * 0.25);
-                var centerX = progress * (w + barWidth) - barWidth / 2;
-                for (var y = 0; y < h; y++) {
-                    for (var x = 0; x < w; x++) {
-                        var idx = (y * w + x) * 4;
-                        if (logoData.data[idx + 3] < 128) continue;
-                        var dist = Math.abs(x - centerX);
-                        if (dist > barWidth / 2) continue;
-                        var strength = 1 - (dist / (barWidth / 2));
-                        var alpha = strength * 0.55;
-                        data[idx] = Math.min(255, data[idx] + 180 * alpha);
-                        data[idx + 1] = Math.min(255, data[idx + 1] + 180 * alpha);
-                        data[idx + 2] = Math.min(255, data[idx + 2] + 150 * alpha);
-                    }
-                }
-                ctx.putImageData(imageData, 0, 0);
-                requestAnimationFrame(drawFrame);
-            }
+        if (free && previewFree) {
+            previewFree.textContent = free.value.trim() || DEFAULT_VALUES.new_register_free;
         }
+    }
 
-        // ============================================================
-        // 启动
-        // ============================================================
-        document.addEventListener('DOMContentLoaded', function() {
-            loadPartnershipData();
-            initLogos();
+    // ============================================================
+    // 暴露全局接口
+    // ============================================================
+    window._adminPartnership = {
+        render: renderPartnershipPage,
+        load: loadData,
+        saveSettings: saveSettings,
+        updatePreview: updatePreview,
+        getData: function() { return currentData; }
+    };
 
-            // 语言切换
-            var savedLang = localStorage.getItem('preferred_language') || 'en';
-            document.querySelectorAll('.lang-btn').forEach(function(btn) {
-                btn.classList.toggle('active', btn.dataset.lang === savedLang);
-                btn.addEventListener('click', function() {
-                    var lang = this.dataset.lang;
-                    localStorage.setItem('preferred_language', lang);
-                    document.querySelectorAll('.lang-btn').forEach(function(b) {
-                        b.classList.toggle('active', b.dataset.lang === lang);
-                    });
-                    location.reload();
-                });
-            });
+    console.log('✅ admin-partnership.js loaded successfully');
+    console.log('📦 Available: window._adminPartnership');
 
-            // 登录状态
-            var isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-            var authButtons = document.querySelector('.header-auth-buttons');
-            var slogan = document.querySelector('.mobile-header-slogan');
-            if (authButtons && slogan) {
-                if (isLoggedIn) {
-                    authButtons.style.display = 'none';
-                    slogan.style.display = 'inline-block';
-                    slogan.textContent = 'Play Safe, Win Safe';
-                } else {
-                    authButtons.style.display = 'flex';
-                    slogan.style.display = 'none';
-                }
-            }
-        });
-
-        console.log('✅ Partnership page loaded');
-    })();
-</script>
-
-</body>
-</html>
+})();
