@@ -131,7 +131,7 @@
 
         /* ============================================================
            电脑版布局: [侧边栏] [卡片] [主内容]
-           卡片在侧边栏右侧
+           卡片高度与轮播图一致，往右拉长
            ============================================================ */
         @media (min-width: 768px) {
             .app-container {
@@ -156,27 +156,36 @@
                 z-index: 10 !important;
             }
 
-            /* 卡片 - 在侧边栏右侧 */
-            .desktop-card-wrapper {
-                flex-shrink: 0;
-                width: 140px;
-                display: flex !important;
-                align-items: center;
-                justify-content: center;
-                padding: 0 16px;
-                position: sticky;
-                top: 0;
-                height: 100vh;
-            }
+            /* 卡片容器 - 只保留容器，不限制图片样式 */
+.desktop-card-wrapper {
+    flex-shrink: 0;
+    width: 220px;
+    display: flex !important;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 0 12px;
+    padding-top: 20px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+}
 
+/* 图片自适应容器 */
+.desktop-card-wrapper img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+            /* 卡片 - 高度与轮播图一致，宽度拉长 */
             .desktop-banner-card {
-                width: 120px;
-                height: 160px;
+                width: 100%;
+                height: 280px;
                 border-radius: 16px;
                 background: linear-gradient(160deg, #0a1a3a, #0d2048);
                 border: 1px solid rgba(0, 180, 255, 0.12);
                 box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5), 0 0 60px rgba(0, 100, 255, 0.03);
-                padding: 16px 12px;
+                padding: 24px 16px;
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
@@ -205,33 +214,33 @@
             }
 
             .desktop-banner-card .card-icon {
-                font-size: 1.8rem;
+                font-size: 2.2rem;
                 color: #4dc8ff;
-                margin-bottom: 6px;
+                margin-bottom: 10px;
             }
 
             .desktop-banner-card .card-title {
-                font-size: 0.7rem;
+                font-size: 0.8rem;
                 font-weight: 700;
                 color: #4dc8ff;
                 letter-spacing: 0.5px;
-                margin-bottom: 4px;
+                margin-bottom: 6px;
             }
 
             .desktop-banner-card .card-desc {
-                font-size: 0.5rem;
+                font-size: 0.6rem;
                 color: rgba(255, 255, 255, 0.3);
                 letter-spacing: 0.3px;
-                line-height: 1.5;
+                line-height: 1.6;
             }
 
             .desktop-banner-card .card-cta {
-                margin-top: 8px;
-                font-size: 0.5rem;
+                margin-top: 12px;
+                font-size: 0.55rem;
                 font-weight: 600;
                 color: #4dc8ff;
                 border: 1px solid rgba(0, 180, 255, 0.1);
-                padding: 4px 14px;
+                padding: 6px 20px;
                 border-radius: 30px;
                 cursor: pointer;
                 transition: 0.3s;
@@ -245,10 +254,11 @@
 
             .main-content {
                 flex: 1 !important;
-                padding: 24px 30px 30px 0 !important;
+                padding: 24px 12px 30px 0 !important;
                 max-width: none !important;
                 min-height: 100vh;
                 overflow-x: hidden;
+                margin-left: -232px;
             }
 
             .desktop-card-wrapper {
@@ -267,26 +277,26 @@
                 width: 260px !important;
             }
             .desktop-card-wrapper {
-                width: 180px;
-                padding: 0 24px;
+                width: 300px;
+                padding: 0 14px;
+                padding-top: 24px;
             }
             .desktop-banner-card {
-                width: 150px;
-                height: 200px;
-                padding: 20px 16px;
+                height: 213px;
+                padding: 28px 20px;
             }
             .desktop-banner-card .card-icon {
-                font-size: 2.2rem;
+                font-size: 2.6rem;
             }
             .desktop-banner-card .card-title {
-                font-size: 0.85rem;
+                font-size: 0.9rem;
             }
             .desktop-banner-card .card-desc {
-                font-size: 0.6rem;
+                font-size: 0.65rem;
             }
             .desktop-banner-card .card-cta {
                 font-size: 0.6rem;
-                padding: 4px 18px;
+                padding: 6px 24px;
             }
         }
 
@@ -310,18 +320,6 @@
                 <div class="desc">首存 RM20 送 100% 红利 · 立即参与</div>
             </div>
             <button class="banner-close" id="bannerCloseBtn"><i class="fas fa-times"></i></button>
-        </div>
-    </div>
-
-    <!-- ============================================================
-    电脑版：卡片 - 在侧边栏右侧
-    ============================================================ -->
-    <div class="desktop-card-wrapper">
-        <div class="desktop-banner-card" id="desktopBannerCard">
-            <div class="card-icon"><i class="fas fa-gift"></i></div>
-            <div class="card-title">🎯 限时活动</div>
-            <div class="card-desc">首存 RM20<br>送 100% 红利</div>
-            <button class="card-cta" id="desktopCta">立即参与 →</button>
         </div>
     </div>
 
@@ -355,6 +353,26 @@
             </div>
         </div>
     </div>
+
+    <!-- ============================================================
+    电脑版：卡片 - 在侧边栏右侧
+    ============================================================ -->
+    <div class="desktop-card-wrapper">
+    <img 
+        src="https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/vision-partner/desktop-partner-badge.png" 
+        alt="限时活动"
+        id="desktopBannerCard"
+        style="
+            width: 220px;
+            height: auto;
+            display: block;
+            border: none;
+            border-radius: 0;
+            box-shadow: none;
+            background: none;
+        "
+    >
+</div>
 
     <!-- ===== MAIN CONTENT ===== -->
     <div class="main-content">
@@ -469,7 +487,6 @@ JavaScript
 <script>
     // ============================================================
     // 手机版：顶部循环横幅
-    // 显示3秒 → 隐藏 → 等待5秒
     // ============================================================
     (function() {
         const banner = document.getElementById('topBanner');
