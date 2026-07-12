@@ -1814,6 +1814,11 @@ html, body {
     .mobile-only {
         display: none !important;
     }
+
+    /* 电脑隐藏电脑卡片包装器（不需要了） */
+    .desktop-card-wrapper {
+        display: none !important;
+    }
 }
 
 /* ============================================================
