@@ -161,43 +161,17 @@
             z-index: 1;
         }
 
-        /* ===== Logo ===== */
+        /* ===== Logo - 直接用原图，不加圆框，放大 ===== */
         .card-royal .card-logo {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin: 0 auto 14px;
+            width: 140px;
+            height: auto;
+            margin: 0 auto 12px;
             display: block;
-            border: 3px solid rgba(255, 215, 0, 0.2);
-            box-shadow: 0 0 60px rgba(255, 215, 0, 0.04);
             transition: all 0.4s ease;
         }
 
         .card-royal:hover .card-logo {
-            border-color: rgba(255, 215, 0, 0.4);
-            box-shadow: 0 0 80px rgba(255, 215, 0, 0.08);
-        }
-
-        .card-royal .card-logo-placeholder {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            margin: 0 auto 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3.2rem;
-            background: linear-gradient(145deg, rgba(255, 215, 0, 0.06), rgba(255, 215, 0, 0.01));
-            border: 3px solid rgba(255, 215, 0, 0.2);
-            color: #ffd700;
-            box-shadow: 0 0 60px rgba(255, 215, 0, 0.04);
-            transition: all 0.4s ease;
-        }
-
-        .card-royal:hover .card-logo-placeholder {
-            border-color: rgba(255, 215, 0, 0.4);
-            box-shadow: 0 0 80px rgba(255, 215, 0, 0.08);
+            transform: scale(1.05);
         }
 
         /* ===== 标题 ===== */
@@ -219,19 +193,11 @@
             100% { background-position: 300% center; }
         }
 
-        .card-royal .card-subtitle {
-            font-size: 0.7rem;
-            color: rgba(255, 215, 0, 0.2);
-            letter-spacing: 5px;
-            font-weight: 300;
-            margin-bottom: 4px;
-        }
-
         /* ===== 金色分隔线 ===== */
         .card-royal .card-divider {
             height: 2px;
             background: linear-gradient(90deg, transparent, #ffd700, #ffed4a, #ffd700, transparent);
-            margin: 12px 0 16px;
+            margin: 10px 0 16px;
             border-radius: 2px;
             opacity: 0.4;
         }
@@ -305,7 +271,7 @@
             letter-spacing: 1px;
         }
 
-        /* ===== Description - 直接显示内容，大字体 ===== */
+        /* ===== Description ===== */
         .card-royal .card-info .desc-row {
             display: flex;
             justify-content: flex-start;
@@ -955,11 +921,8 @@
             .card-royal .card-title {
                 font-size: 1.3rem;
             }
-            .card-royal .card-logo-placeholder,
             .card-royal .card-logo {
-                width: 70px;
-                height: 70px;
-                font-size: 2.2rem;
+                width: 110px;
             }
             .card-royal .card-info .info-row .label {
                 font-size: 0.85rem;
@@ -1133,18 +1096,19 @@
 
             var html = '';
             items.forEach(function(item) {
+                // Logo - 直接用原图，放大
                 var logoHTML = '';
                 if (item.logo_url && item.logo_url.startsWith('http')) {
-                    logoHTML = `<img src="${item.logo_url}" alt="${item.title}" class="card-logo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`;
+                    logoHTML = `<img src="${item.logo_url}" alt="${item.title}" class="card-logo">`;
+                } else {
+                    logoHTML = `<div style="font-size:4rem; color:#ffd700; margin-bottom:8px;"><i class="fas fa-crown"></i></div>`;
                 }
 
                 html += `
                     <div class="card-royal">
                         ${logoHTML}
-                        <div class="card-logo-placeholder" ${item.logo_url ? 'style="display:none;"' : ''}><i class="fas fa-crown"></i></div>
 
                         <div class="card-title">${item.title || 'VISION711'}</div>
-                        <div class="card-subtitle">✦ PARTNER PROGRAM ✦</div>
                         <div class="card-divider"></div>
 
                         <div class="card-info">
