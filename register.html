@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>VISION711 · Register</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
@@ -118,6 +119,9 @@
         .auth-card .error-msg.success {
             color: #4cd9a0;
         }
+        .auth-card .error-msg.loading {
+            color: #ffd700;
+        }
         .auth-card .auth-links {
             text-align: center;
             font-size: 0.8rem;
@@ -201,15 +205,11 @@
             <!-- 错误/成功信息 -->
             <div class="error-msg hidden" id="registerError"></div>
 
-            <!-- 注册表单 -->
+            <!-- 注册表单 - 字段顺序: Full Name, Phone Number, Username, Password, Confirm Password -->
             <form id="registerForm" autocomplete="off">
                 <div class="input-group-metal">
                     <i class="fas fa-user"></i>
                     <input type="text" id="regFullName" data-i18n-placeholder="register.fullName" placeholder="Full Name" required>
-                </div>
-                <div class="input-group-metal">
-                    <i class="fas fa-envelope"></i>
-                    <input type="email" id="regEmail" data-i18n-placeholder="register.email" placeholder="Email Address" required>
                 </div>
                 <div class="input-group-metal">
                     <i class="fas fa-phone"></i>
@@ -234,7 +234,7 @@
                     <a href="#" data-i18n="register.terms">Terms & Conditions</a>
                 </label>
 
-                <button type="submit" class="btn-metal-primary">
+                <button type="submit" class="btn-metal-primary" id="registerBtn">
                     <i class="fas fa-user-plus"></i> <span data-i18n="btn.submit">Submit</span>
                 </button>
             </form>
@@ -256,7 +256,16 @@
 
     <script src="js/main.js"></script>
     <script>
-        // ===== Register Logo 流光效果 =====
+        // ============================================================
+        // Supabase 配置
+        // ============================================================
+        var SUPABASE_URL = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co';
+        var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImprYnBiamhyZ2JuemV4dmp2eGd0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM3NzA3MjEsImV4cCI6MjA5OTM0NjcyMX0.8wPz8Qp08EBHS2WfR_79eHSmhXfTZ6F0-BzOT7_vPC4';
+        var supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // ============================================================
+        // Register Logo 流光效果
+        // ============================================================
         (function initRegisterLogo() {
             const canvas = document.getElementById('registerLogoCanvas');
             if (!canvas) return;
@@ -266,8 +275,7 @@
             img.src = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/hero-background/logo.png';
 
             let logoData = null;
-            let w = 0,
-                h = 0;
+            let w = 0, h = 0;
             let startTime = performance.now();
 
             img.onload = function() {
@@ -284,9 +292,7 @@
             function drawFrame(timestamp) {
                 if (!logoData) return;
                 const elapsed = (timestamp - startTime) / 1000;
-                const waitTime = 1.0,
-                    scanDuration = 1.2,
-                    totalTime = waitTime + scanDuration;
+                const waitTime = 1.0, scanDuration = 1.2, totalTime = waitTime + scanDuration;
                 let timeInCycle = elapsed % totalTime;
                 let progress;
                 if (timeInCycle < waitTime) {
@@ -320,19 +326,21 @@
             }
         })();
 
-        // ===== Register 表单处理 =====
+        // ============================================================
+        // Register 表单处理 - Supabase 版本
+        // ============================================================
         (function initRegisterForm() {
             const form = document.getElementById('registerForm');
             const errorEl = document.getElementById('registerError');
+            const registerBtn = document.getElementById('registerBtn');
 
             if (!form) return;
 
-            form.addEventListener('submit', function(e) {
+            form.addEventListener('submit', async function(e) {
                 e.preventDefault();
 
-                // 获取所有字段
+                // 获取所有字段 (顺序: Full Name, Phone, Username, Password, Confirm)
                 const fullName = document.getElementById('regFullName').value.trim();
-                const email = document.getElementById('regEmail').value.trim();
                 const phone = document.getElementById('regPhone').value.trim();
                 const username = document.getElementById('regUsername').value.trim();
                 const password = document.getElementById('regPassword').value;
@@ -340,8 +348,16 @@
                 const agree = document.getElementById('agreeTerms').checked;
 
                 // 验证必填
-                if (!fullName || !email || !phone || !username || !password || !confirm) {
-                    errorEl.textContent = t('register.error.required');
+                if (!fullName || !phone || !username || !password || !confirm) {
+                    errorEl.textContent = 'Please fill in all fields!';
+                    errorEl.className = 'error-msg';
+                    errorEl.style.display = 'block';
+                    return;
+                }
+
+                // 验证手机号 (简单验证)
+                if (phone.length < 5) {
+                    errorEl.textContent = 'Please enter a valid phone number!';
                     errorEl.className = 'error-msg';
                     errorEl.style.display = 'block';
                     return;
@@ -349,7 +365,7 @@
 
                 // 验证密码长度
                 if (password.length < 6) {
-                    errorEl.textContent = t('register.error.min');
+                    errorEl.textContent = 'Password must be at least 6 characters!';
                     errorEl.className = 'error-msg';
                     errorEl.style.display = 'block';
                     return;
@@ -357,15 +373,7 @@
 
                 // 验证密码匹配
                 if (password !== confirm) {
-                    errorEl.textContent = t('register.error.match');
-                    errorEl.className = 'error-msg';
-                    errorEl.style.display = 'block';
-                    return;
-                }
-
-                // 验证用户名是否已被占用（演示：player 和 admin 已被占用）
-                if (username.toLowerCase() === 'player' || username.toLowerCase() === 'admin') {
-                    errorEl.textContent = t('register.usernameTaken');
+                    errorEl.textContent = 'Passwords do not match!';
                     errorEl.className = 'error-msg';
                     errorEl.style.display = 'block';
                     return;
@@ -379,30 +387,115 @@
                     return;
                 }
 
-                // 注册成功 - 保存用户信息
-                const users = JSON.parse(localStorage.getItem('registered_users') || '[]');
-                users.push({
-                    fullName,
-                    email,
-                    phone,
-                    username,
-                    password,
-                    registeredAt: new Date().toISOString()
-                });
-                localStorage.setItem('registered_users', JSON.stringify(users));
-
-                // 显示成功消息
-                errorEl.textContent = t('register.success');
-                errorEl.className = 'error-msg success';
+                // 显示加载状态
+                errorEl.textContent = '⏳ Creating account...';
+                errorEl.className = 'error-msg loading';
                 errorEl.style.display = 'block';
+                registerBtn.disabled = true;
+                registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
 
-                // 清空表单
-                form.reset();
+                try {
+                    // 检查用户名是否已存在 (只检查 username，因为 email 已移除)
+                    const { data: existingUser, error: checkError } = await supabase
+                        .from('users')
+                        .select('username, phone')
+                        .or(`username.eq.${username},phone.eq.${phone}`);
 
-                // 跳转到登录页
-                setTimeout(() => {
-                    window.location.href = '/login';
-                }, 1500);
+                    if (checkError) {
+                        console.error('❌ 检查用户错误:', checkError);
+                        errorEl.textContent = '❌ Error: ' + checkError.message;
+                        errorEl.className = 'error-msg';
+                        errorEl.style.display = 'block';
+                        registerBtn.disabled = false;
+                        registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> <span data-i18n="btn.submit">Submit</span>';
+                        return;
+                    }
+
+                    if (existingUser && existingUser.length > 0) {
+                        const exists = existingUser.find(u => u.username === username);
+                        if (exists) {
+                            errorEl.textContent = '❌ Username already taken! Please choose another.';
+                            errorEl.className = 'error-msg';
+                            errorEl.style.display = 'block';
+                            registerBtn.disabled = false;
+                            registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> <span data-i18n="btn.submit">Submit</span>';
+                            return;
+                        }
+                        const phoneExists = existingUser.find(u => u.phone === phone);
+                        if (phoneExists) {
+                            errorEl.textContent = '❌ Phone number already registered! Please use another.';
+                            errorEl.className = 'error-msg';
+                            errorEl.style.display = 'block';
+                            registerBtn.disabled = false;
+                            registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> <span data-i18n="btn.submit">Submit</span>';
+                            return;
+                        }
+                    }
+
+                    // 生成随机颜色
+                    const colors = [
+                        ['#2f3e7a', '#4a7cff'],
+                        ['#7a3e2f', '#ff6b4a'],
+                        ['#3e2f7a', '#8a6bff'],
+                        ['#2f7a3e', '#4aff8a'],
+                        ['#7a2f6a', '#ff4ac0'],
+                        ['#2f6a7a', '#4ad4ff'],
+                        ['#6a2f3e', '#ff4a6a'],
+                        ['#3e6a2f', '#8aff4a']
+                    ];
+                    const colorPair = colors[Math.floor(Math.random() * colors.length)];
+
+                    // 插入新用户到 Supabase (移除了 email 字段)
+                    const { data: newUser, error: insertError } = await supabase
+                        .from('users')
+                        .insert({
+                            username: username,
+                            full_name: fullName,
+                            phone: phone,
+                            password_hash: password,  // 生产环境应用 bcrypt
+                            balance: 0,
+                            status: 'active',
+                            vip_level: 0,
+                            color: colorPair[0],
+                            color2: colorPair[1],
+                            registered_at: new Date().toISOString()
+                        })
+                        .select()
+                        .single();
+
+                    if (insertError) {
+                        console.error('❌ 注册错误:', insertError);
+                        errorEl.textContent = '❌ Registration failed: ' + insertError.message;
+                        errorEl.className = 'error-msg';
+                        errorEl.style.display = 'block';
+                        registerBtn.disabled = false;
+                        registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> <span data-i18n="btn.submit">Submit</span>';
+                        return;
+                    }
+
+                    console.log('✅ 注册成功:', newUser);
+
+                    // ✅ 显示成功消息
+                    errorEl.textContent = '✅ Registration successful! Redirecting to login...';
+                    errorEl.className = 'error-msg success';
+                    errorEl.style.display = 'block';
+
+                    // 清空表单
+                    form.reset();
+
+                    // 跳转到登录页
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 1500);
+
+                } catch (err) {
+                    console.error('❌ 注册异常:', err);
+                    errorEl.textContent = '❌ Error: ' + err.message;
+                    errorEl.className = 'error-msg';
+                    errorEl.style.display = 'block';
+                    registerBtn.disabled = false;
+                    registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> <span data-i18n="btn.submit">Submit</span>';
+                }
             });
 
             // 输入时隐藏错误
@@ -410,6 +503,10 @@
                 input.addEventListener('input', function() {
                     errorEl.className = 'error-msg hidden';
                     errorEl.style.display = 'none';
+                    if (registerBtn.disabled) {
+                        registerBtn.disabled = false;
+                        registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> <span data-i18n="btn.submit">Submit</span>';
+                    }
                 });
             });
         })();
