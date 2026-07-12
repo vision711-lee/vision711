@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     <style>
         /* ============================================================
-           顶部循环横幅 - 直接嵌入
+           顶部循环横幅 - 直接覆盖，不挤占内容
            ============================================================ */
         .top-banner-wrapper {
             position: fixed;
@@ -123,12 +123,10 @@
         }
 
         /* ============================================================
-           手机版顶部导航 - 适配横幅，增加上边距
+           移除手机版顶部额外边距 - 横幅直接覆盖
            ============================================================ */
-        @media (max-width: 767px) {
-            .app-container {
-                padding-top: 60px !important;
-            }
+        .app-container {
+            padding-top: 0 !important;
         }
     </style>
 </head>
@@ -137,7 +135,7 @@
 <div class="app-container">
 
     <!-- ============================================================
-    顶部循环横幅
+    顶部循环横幅 - 覆盖模式
     ============================================================ -->
     <div class="top-banner-wrapper">
         <div class="top-banner" id="topBanner">
