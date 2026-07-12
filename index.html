@@ -9,138 +9,137 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     <style>
         /* ============================================================
-           手机版：顶部循环横幅 - 完全不透明，覆盖一切
+           手机版：顶部循环横幅
            ============================================================ */
-        @media (max-width: 767px) {
-            .top-banner-wrapper {
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                z-index: 9999;
-                height: 0;
-                overflow: visible;
-                pointer-events: none;
-            }
+        .top-banner-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 9999;
+            height: 0;
+            overflow: visible;
+            pointer-events: none;
+        }
 
+        .top-banner {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%) translateY(-120%);
+            width: calc(100% - 24px);
+            max-width: 480px;
+            padding: 18px 22px;
+            border-radius: 20px;
+            background: linear-gradient(160deg, #0a1a3a, #0d2048);
+            border: 1px solid rgba(0, 180, 255, 0.2);
+            box-shadow: 0 12px 50px rgba(0, 0, 0, 0.8), 0 0 80px rgba(0, 100, 255, 0.06);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: transform 0.5s cubic-bezier(0.34, 1.2, 0.64, 1);
+            pointer-events: auto;
+        }
+
+        .top-banner::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(0, 180, 255, 0.3), rgba(0, 200, 255, 0.5), rgba(0, 180, 255, 0.3), transparent);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .top-banner .banner-icon {
+            flex-shrink: 0;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(0, 180, 255, 0.08);
+            border: 1px solid rgba(0, 180, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #4dc8ff;
+        }
+
+        .top-banner .banner-text {
+            flex: 1;
+            min-width: 0;
+        }
+        .top-banner .banner-text .title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #4dc8ff;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        .top-banner .banner-text .desc {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.35);
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .top-banner .banner-close {
+            flex-shrink: 0;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.15);
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .top-banner .banner-close:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .top-banner.show {
+            transform: translateX(-50%) translateY(16px);
+        }
+
+        @media (max-width: 480px) {
             .top-banner {
-                position: absolute;
-                top: 0;
-                left: 50%;
-                transform: translateX(-50%) translateY(-120%);
-                width: calc(100% - 24px);
-                max-width: 480px;
-                padding: 18px 22px;
-                border-radius: 20px;
-                background: linear-gradient(160deg, #0a1a3a, #0d2048);
-                border: 1px solid rgba(0, 180, 255, 0.2);
-                box-shadow: 0 12px 50px rgba(0, 0, 0, 0.8), 0 0 80px rgba(0, 100, 255, 0.06);
-                display: flex;
-                align-items: center;
-                gap: 16px;
-                transition: transform 0.5s cubic-bezier(0.34, 1.2, 0.64, 1);
-                pointer-events: auto;
+                padding: 14px 16px;
+                width: calc(100% - 16px);
+                border-radius: 16px;
             }
+            .top-banner .banner-text .title { font-size: 0.75rem; }
+            .top-banner .banner-text .desc { font-size: 0.6rem; }
+            .top-banner .banner-icon { width: 36px; height: 36px; font-size: 1rem; }
+            .top-banner .banner-close { width: 26px; height: 26px; font-size: 0.6rem; }
+        }
 
-            .top-banner::after {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: 2px;
-                background: linear-gradient(90deg, transparent, rgba(0, 180, 255, 0.3), rgba(0, 200, 255, 0.5), rgba(0, 180, 255, 0.3), transparent);
-                border-radius: 20px 20px 0 0;
-            }
-
-            .top-banner .banner-icon {
-                flex-shrink: 0;
-                width: 44px;
-                height: 44px;
-                border-radius: 50%;
-                background: rgba(0, 180, 255, 0.08);
-                border: 1px solid rgba(0, 180, 255, 0.1);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 1.2rem;
-                color: #4dc8ff;
-            }
-
-            .top-banner .banner-text {
-                flex: 1;
-                min-width: 0;
-            }
-            .top-banner .banner-text .title {
-                font-size: 0.85rem;
-                font-weight: 700;
-                color: #4dc8ff;
-                letter-spacing: 0.5px;
-                margin-bottom: 4px;
-            }
-            .top-banner .banner-text .desc {
-                font-size: 0.7rem;
-                color: rgba(255, 255, 255, 0.35);
-                letter-spacing: 0.3px;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-
-            .top-banner .banner-close {
-                flex-shrink: 0;
-                width: 30px;
-                height: 30px;
-                border-radius: 50%;
-                background: rgba(255, 255, 255, 0.04);
-                border: 1px solid rgba(255, 255, 255, 0.04);
-                color: rgba(255, 255, 255, 0.15);
-                font-size: 0.7rem;
-                cursor: pointer;
-                transition: 0.3s;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            .top-banner .banner-close:hover {
-                background: rgba(255, 255, 255, 0.06);
-                color: rgba(255, 255, 255, 0.3);
-            }
-
-            .top-banner.show {
-                transform: translateX(-50%) translateY(16px);
-            }
-
-            @media (max-width: 480px) {
-                .top-banner {
-                    padding: 14px 16px;
-                    width: calc(100% - 16px);
-                    border-radius: 16px;
-                }
-                .top-banner .banner-text .title { font-size: 0.75rem; }
-                .top-banner .banner-text .desc { font-size: 0.6rem; }
-                .top-banner .banner-icon { width: 36px; height: 36px; font-size: 1rem; }
-                .top-banner .banner-close { width: 26px; height: 26px; font-size: 0.6rem; }
-            }
-
-            .app-container {
-                padding-top: 0 !important;
+        /* 手机版显示横幅，电脑版隐藏 */
+        @media (min-width: 768px) {
+            .top-banner-wrapper {
+                display: none !important;
             }
         }
 
         /* ============================================================
-           电脑版：卡片放在侧边栏和轮播图之间的缝隙
-           布局: [侧边栏] [卡片] [轮播图+主内容]
+           电脑版布局: [侧边栏] [卡片] [主内容]
+           卡片在侧边栏右侧
            ============================================================ */
         @media (min-width: 768px) {
-            /* 主内容区域使用 flex 布局 */
             .app-container {
                 display: flex !important;
                 padding: 0 !important;
                 min-height: 100vh;
             }
 
-            /* 侧边栏固定宽度 */
             .sidebar {
                 width: 220px !important;
                 flex-shrink: 0 !important;
@@ -157,11 +156,11 @@
                 z-index: 10 !important;
             }
 
-            /* 卡片容器 - 固定在侧边栏和主内容之间 */
+            /* 卡片 - 在侧边栏右侧 */
             .desktop-card-wrapper {
                 flex-shrink: 0;
                 width: 140px;
-                display: flex;
+                display: flex !important;
                 align-items: center;
                 justify-content: center;
                 padding: 0 16px;
@@ -186,6 +185,7 @@
                 overflow: hidden;
                 transition: all 0.3s ease;
                 flex-shrink: 0;
+                position: relative;
             }
 
             .desktop-banner-card:hover {
@@ -243,7 +243,6 @@
                 border-color: rgba(0, 180, 255, 0.2);
             }
 
-            /* 主内容 - 剩余宽度 */
             .main-content {
                 flex: 1 !important;
                 padding: 24px 30px 30px 0 !important;
@@ -252,20 +251,17 @@
                 overflow-x: hidden;
             }
 
-            /* 手机版隐藏电脑卡片 */
             .desktop-card-wrapper {
-                display: none;
+                display: flex !important;
             }
+        }
 
-            /* 电脑版隐藏手机横幅 */
-            .top-banner-wrapper {
+        @media (max-width: 767px) {
+            .desktop-card-wrapper {
                 display: none !important;
             }
         }
 
-        /* ============================================================
-           大屏幕适配
-           ============================================================ */
         @media (min-width: 1200px) {
             .sidebar {
                 width: 260px !important;
@@ -294,13 +290,8 @@
             }
         }
 
-        /* ============================================================
-           手机版隐藏电脑卡片
-           ============================================================ */
-        @media (max-width: 767px) {
-            .desktop-card-wrapper {
-                display: none !important;
-            }
+        .app-container {
+            padding-top: 0 !important;
         }
     </style>
 </head>
@@ -311,7 +302,7 @@
     <!-- ============================================================
     手机版：顶部循环横幅
     ============================================================ -->
-    <div class="top-banner-wrapper" id="topBannerWrapper">
+    <div class="top-banner-wrapper">
         <div class="top-banner" id="topBanner">
             <div class="banner-icon"><i class="fas fa-bullhorn"></i></div>
             <div class="banner-text">
@@ -323,10 +314,9 @@
     </div>
 
     <!-- ============================================================
-    电脑版：卡片放在侧边栏和轮播图之间
-    布局: [侧边栏] [卡片] [轮播图+主内容]
+    电脑版：卡片 - 在侧边栏右侧
     ============================================================ -->
-    <div class="desktop-card-wrapper" id="desktopCardWrapper">
+    <div class="desktop-card-wrapper">
         <div class="desktop-banner-card" id="desktopBannerCard">
             <div class="card-icon"><i class="fas fa-gift"></i></div>
             <div class="card-title">🎯 限时活动</div>
@@ -478,12 +468,10 @@ JavaScript
 ============================================================ -->
 <script>
     // ============================================================
-    // 手机版：顶部循环横幅 (仅手机执行)
+    // 手机版：顶部循环横幅
     // 显示3秒 → 隐藏 → 等待5秒
     // ============================================================
     (function() {
-        if (window.innerWidth >= 768) return;
-
         const banner = document.getElementById('topBanner');
         const closeBtn = document.getElementById('bannerCloseBtn');
         let isPaused = false;
@@ -533,7 +521,7 @@ JavaScript
     })();
 
     // ============================================================
-    // 电脑版：卡片点击事件
+    // 电脑版：卡片点击
     // ============================================================
     (function() {
         const cta = document.getElementById('desktopCta');
