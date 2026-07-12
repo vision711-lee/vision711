@@ -124,11 +124,11 @@
         }
 
         /* ============================================================
-           电脑版布局: [固定侧边栏] [限时活动卡片] [主内容]
+           电脑版布局: [固定侧边栏] [主内容]
            ============================================================ */
         @media (min-width: 768px) {
             .app-container {
-                display: flex !important;
+                display: block !important;
                 padding: 0 !important;
                 min-height: 100vh;
             }
@@ -151,60 +151,66 @@
                 z-index: 10 !important;
             }
 
-            /* 🔥 限时活动卡片 - 固定在侧边栏右侧 */
-            .desktop-card-wrapper {
-                flex-shrink: 0;
-                width: 220px;
-                display: flex !important;
-                align-items: flex-start;
-                justify-content: center;
-                padding: 0 12px;
-                padding-top: 20px;
-                margin-left: 220px;
-                position: sticky;
-                top: 0;
-                height: 100vh;
-            }
-
-            .desktop-card-wrapper a {
-                display: block;
-                width: 100%;
-            }
-
-            .desktop-card-wrapper img {
-                width: 100%;
-                height: auto;
-                display: block;
-                animation: breatheScale 3s ease-in-out infinite;
-            }
-
-            @keyframes breatheScale {
-                0%, 100% { transform: scale(1); }
-                50% { transform: scale(1.04); }
-            }
-
             /* 🔥 主内容 */
             .main-content {
-                flex: 1 !important;
-                padding: 24px 20px 30px 20px !important;
+                display: block !important;
+                padding: 24px 40px 30px 20px !important;
                 max-width: none !important;
                 min-height: 100vh;
                 overflow-x: hidden;
+                margin-left: 232px !important;
             }
 
-            /* 电脑版隐藏手机横幅 */
-            .top-banner-wrapper {
+            .main-content > *,
+            .main-content .card-metal,
+            .main-content .card-welcome,
+            .main-content .live-transaction,
+            .main-content .lucky-draw,
+            .main-content .admin-entry,
+            .main-content .input-group-metal,
+            .main-content .carousel-container {
+                max-width: 900px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            /* 🔥 电脑版横幅 - 在 Lucky Draw 上方 */
+            .banner-fixed-desktop {
+                max-width: 900px;
+                margin: 0 auto 16px;
+                display: block !important;
+                border-radius: 16px;
+                overflow: hidden;
+                position: relative;
+            }
+
+            .banner-fixed-desktop img {
+                width: 100%;
+                height: auto;
+                display: block;
+                border-radius: 16px;
+            }
+
+            .banner-fixed-desktop canvas {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                pointer-events: none;
+                border-radius: 16px;
+            }
+
+            /* 电脑版隐藏手机专用元素 */
+            .mobile-banner-fixed {
                 display: none !important;
             }
-            .mobile-banner-fixed {
+            .top-banner-wrapper {
                 display: none !important;
             }
         }
 
         @media (max-width: 767px) {
-            .desktop-card-wrapper {
-                display: none !important;
-            }
             .sidebar {
                 display: none !important;
             }
@@ -230,6 +236,10 @@
                 background-repeat: no-repeat;
                 background-color: #06060f;
             }
+            /* 电脑版横幅手机隐藏 */
+            .banner-fixed-desktop {
+                display: none !important;
+            }
         }
 
         @media (min-width: 768px) {
@@ -247,11 +257,20 @@
             .sidebar {
                 width: 260px !important;
             }
-            .desktop-card-wrapper {
-                width: 300px;
-                padding: 0 14px;
-                padding-top: 24px;
-                margin-left: 260px;
+            .main-content {
+                margin-left: 272px !important;
+                padding: 28px 50px 35px 24px !important;
+            }
+            .main-content > *,
+            .main-content .card-metal,
+            .main-content .card-welcome,
+            .main-content .live-transaction,
+            .main-content .lucky-draw,
+            .main-content .admin-entry,
+            .main-content .input-group-metal,
+            .main-content .carousel-container,
+            .banner-fixed-desktop {
+                max-width: 1100px;
             }
         }
 
@@ -259,22 +278,34 @@
             padding-top: 0 !important;
         }
 
-        /* 手机版固定横幅 - 左右缝隙更小，更长 */
+        /* 手机版固定横幅 */
         .mobile-banner-fixed {
             width: calc(100% - 4px);
             max-width: 100%;
             margin: -8px auto 8px !important;
             padding: 0 4px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 16px;
         }
 
         .mobile-banner-fixed img {
             width: 100%;
             height: auto;
             display: block;
-            border-radius: 0px;
+            border-radius: 16px;
         }
 
-        /* 手机版显示，电脑版隐藏 */
+        .mobile-banner-fixed canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            border-radius: 16px;
+        }
+
         @media (min-width: 768px) {
             .mobile-banner-fixed {
                 display: none !important;
@@ -365,23 +396,6 @@
         </div>
     </div>
 
-    <!-- ===== 电脑版限时活动卡片 - 跳转到 partnership.html ===== -->
-    <div class="desktop-card-wrapper">
-        <a href="partnership.html" style="display:block; text-decoration:none; cursor:pointer;">
-            <img 
-                src="https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/vision-partner/desktop-partner-badge.png" 
-                alt="限时活动"
-                style="
-                    width: 100%;
-                    height: auto;
-                    display: block;
-                    animation: breatheScale 3s ease-in-out infinite;
-                    border-radius: 16px;
-                "
-            >
-        </a>
-    </div>
-
     <!-- ===== MAIN CONTENT ===== -->
     <div class="main-content">
 
@@ -460,8 +474,108 @@
             </div>
         </div>
 
-        <!-- ===== 手机版固定横幅 - 跳转到 partnership.html ===== -->
-        <div class="mobile-banner-fixed" style="position: relative; overflow: hidden; border-radius: 16px;">
+        <!-- ===== 🔥 电脑版横幅 - 在 Lucky Draw 上方 ===== -->
+        <div class="banner-fixed-desktop">
+            <a href="partnership.html" style="display:block; text-decoration:none; cursor:pointer;">
+                <img 
+                    src="https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/vision-partner/desktop-partner-badge.png" 
+                    alt="限时活动"
+                    style="
+                        width: 100%;
+                        height: auto;
+                        display: block;
+                        border-radius: 16px;
+                    "
+                >
+            </a>
+            <canvas id="desktopBannerShimmerCanvas"></canvas>
+        </div>
+
+        <script>
+        (function initDesktopBannerShimmer() {
+            const canvas = document.getElementById('desktopBannerShimmerCanvas');
+            if (!canvas) return;
+            
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.src = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/vision-partner/desktop-partner-badge.png';
+            
+            let logoData = null;
+            let w = 0, h = 0;
+            let startTime = performance.now();
+            
+            img.onload = function() {
+                w = img.width;
+                h = img.height;
+                canvas.width = w;
+                canvas.height = h;
+                canvas.style.width = '100%';
+                canvas.style.height = '100%';
+                
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                logoData = ctx.getImageData(0, 0, w, h);
+                ctx.clearRect(0, 0, w, h);
+                requestAnimationFrame(drawFrame);
+            };
+            
+            function drawFrame(timestamp) {
+                if (!logoData) return;
+                
+                const ctx = canvas.getContext('2d');
+                const elapsed = (timestamp - startTime) / 1000;
+                const waitTime = 0.8;
+                const scanDuration = 1.0;
+                const totalTime = waitTime + scanDuration;
+                
+                let timeInCycle = elapsed % totalTime;
+                let progress;
+                if (timeInCycle < waitTime) {
+                    progress = -1;
+                } else {
+                    progress = 1 - (timeInCycle - waitTime) / scanDuration;
+                }
+                
+                ctx.clearRect(0, 0, w, h);
+                ctx.globalAlpha = 0.9;
+                ctx.drawImage(img, 0, 0);
+                ctx.globalAlpha = 1.0;
+                
+                const imageData = ctx.getImageData(0, 0, w, h);
+                const data = imageData.data;
+                
+                const barWidth = Math.max(30, (w + h) * 0.15);
+                const centerX = progress * (w + barWidth) - barWidth / 2;
+                const centerY = progress * (h + barWidth) - barWidth / 2;
+                
+                for (let y = 0; y < h; y++) {
+                    for (let x = 0; x < w; x++) {
+                        const idx = (y * w + x) * 4;
+                        if (logoData.data[idx + 3] < 128) continue;
+                        
+                        const dx = x - centerX;
+                        const dy = y - centerY;
+                        const dist = Math.abs(dx + dy) / Math.sqrt(2);
+                        
+                        if (dist > barWidth / 2) continue;
+                        
+                        const strength = 1 - (dist / (barWidth / 2));
+                        const alpha = strength * 0.8;
+                        
+                        data[idx] = Math.min(255, data[idx] + 220 * alpha);
+                        data[idx + 1] = Math.min(255, data[idx + 1] + 220 * alpha);
+                        data[idx + 2] = Math.min(255, data[idx + 2] + 180 * alpha);
+                    }
+                }
+                
+                ctx.putImageData(imageData, 0, 0);
+                requestAnimationFrame(drawFrame);
+            }
+        })();
+        </script>
+
+        <!-- ===== 手机版固定横幅 ===== -->
+        <div class="mobile-banner-fixed">
             <a href="partnership.html" style="display:block; text-decoration:none; cursor:pointer;">
                 <img 
                     src="https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/vision-partner/mobile-partner-badge.png" 
@@ -474,20 +588,12 @@
                     "
                 >
             </a>
-            <canvas id="bannerShimmerCanvas" style="
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                pointer-events: none;
-                border-radius: 16px;
-            "></canvas>
+            <canvas id="mobileBannerShimmerCanvas"></canvas>
         </div>
 
         <script>
-        (function initBannerShimmer() {
-            const canvas = document.getElementById('bannerShimmerCanvas');
+        (function initMobileBannerShimmer() {
+            const canvas = document.getElementById('mobileBannerShimmerCanvas');
             if (!canvas) return;
             
             const img = new Image();
