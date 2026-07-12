@@ -303,6 +303,11 @@
         .app-container {
             padding-top: 0 !important;
         }
+
+@keyframes breatheScale {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.04); }
+}
     </style>
 </head>
 <body>
@@ -361,15 +366,11 @@
     <img 
         src="https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/vision-partner/desktop-partner-badge.png" 
         alt="限时活动"
-        id="desktopBannerCard"
         style="
             width: 220px;
             height: auto;
             display: block;
-            border: none;
-            border-radius: 0;
-            box-shadow: none;
-            background: none;
+            animation: breatheScale 3s ease-in-out infinite;
         "
     >
 </div>
