@@ -506,7 +506,6 @@ if (isLoggedIn) {
     setTimeout(function() {
         const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true' || false;
         
-        // 直接操作 DOM
         const authButtons = document.querySelector('.header-auth-buttons');
         const slogan = document.querySelector('.mobile-header-slogan');
         
@@ -518,13 +517,31 @@ if (isLoggedIn) {
         
         if (authButtons && slogan) {
             if (isLoggedIn) {
-                authButtons.style.display = 'none';
-                slogan.style.display = 'inline-block';
+                // 隐藏按钮
+                authButtons.style.cssText = 'display: none !important';
+                
+                // 显示 slogan，应用冰川蓝渐变+流光样式
+                slogan.style.cssText = `
+                    display: inline-block !important;
+                    font-family: 'Montserrat', sans-serif !important;
+                    font-weight: 800 !important;
+                    font-style: italic !important;
+                    font-size: 1.0rem !important;
+                    letter-spacing: 3px !important;
+                    white-space: nowrap !important;
+                    background: linear-gradient(120deg, #a0e9ff 0%, #4db8ff 20%, #ffffff 45%, #6fcbff 70%, #a0e9ff 100%) !important;
+                    background-size: 300% auto !important;
+                    -webkit-background-clip: text !important;
+                    -webkit-text-fill-color: transparent !important;
+                    background-clip: text !important;
+                    animation: shimmerGlacier 5s linear infinite !important;
+                    text-shadow: none !important;
+                `;
                 slogan.textContent = 'Play Safe, Win Safe';
-                console.log('✅ 已切换到登录状态');
+                console.log('✅ 已切换到登录状态（带样式）');
             } else {
-                authButtons.style.display = 'flex';
-                slogan.style.display = 'none';
+                authButtons.style.cssText = 'display: flex !important';
+                slogan.style.cssText = 'display: none !important';
                 console.log('✅ 已切换到未登录状态');
             }
         } else {
@@ -536,20 +553,36 @@ if (isLoggedIn) {
 // ===== 页面切换时重新检测登录状态 =====
 document.addEventListener('visibilitychange', function() {
     if (!document.hidden) {
-        // 页面重新可见时刷新登录状态
-        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-        const slogan = document.getElementById('headerSlogan');
-        const authButtons = document.getElementById('headerAuthButtons');
+        setTimeout(function() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const authButtons = document.querySelector('.header-auth-buttons');
+            const slogan = document.querySelector('.mobile-header-slogan');
 
-        if (slogan && authButtons) {
-            if (isLoggedIn) {
-                slogan.style.display = 'inline-block';
-                slogan.textContent = 'Play Safe, Win Safe';
-                authButtons.style.display = 'none';
-            } else {
-                slogan.style.display = 'none';
-                authButtons.style.display = 'flex';
+            if (authButtons && slogan) {
+                if (isLoggedIn) {
+                    authButtons.style.cssText = 'display: none !important';
+                    slogan.style.cssText = `
+                        display: inline-block !important;
+                        font-family: 'Montserrat', sans-serif !important;
+                        font-weight: 800 !important;
+                        font-style: italic !important;
+                        font-size: 1.0rem !important;
+                        letter-spacing: 3px !important;
+                        white-space: nowrap !important;
+                        background: linear-gradient(120deg, #a0e9ff 0%, #4db8ff 20%, #ffffff 45%, #6fcbff 70%, #a0e9ff 100%) !important;
+                        background-size: 300% auto !important;
+                        -webkit-background-clip: text !important;
+                        -webkit-text-fill-color: transparent !important;
+                        background-clip: text !important;
+                        animation: shimmerGlacier 5s linear infinite !important;
+                        text-shadow: none !important;
+                    `;
+                    slogan.textContent = 'Play Safe, Win Safe';
+                } else {
+                    authButtons.style.cssText = 'display: flex !important';
+                    slogan.style.cssText = 'display: none !important';
+                }
             }
-        }
+        }, 100);
     }
 });
