@@ -180,7 +180,7 @@
 
     <script>
         // ============================================================
-        // 登录处理 - 使用输入框的值
+        // 登录处理 - 完全使用 Supabase 查询，没有任何硬编码
         // ============================================================
         (function() {
             'use strict';
@@ -272,7 +272,7 @@
             }
 
             function handleLogin() {
-                // 🔥 使用输入框的值
+                // 🔥 完全使用输入框的值，没有任何硬编码
                 var username = usernameInput.value.trim();
                 var password = passwordInput.value;
                 var gaCode = gaInput.value.trim();
@@ -305,6 +305,7 @@
                 loginBtn.disabled = true;
                 loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
 
+                // 直接从 Supabase 查询
                 sb.from('admin_users')
                     .select('*')
                     .eq('username', username)
@@ -325,7 +326,7 @@
                         }
 
                         if (!data || data.length === 0) {
-                            messageBox.textContent = '❌ Admin user not found. Username: ' + username;
+                            messageBox.textContent = '❌ Admin user not found: ' + username;
                             messageBox.className = 'error-message';
                             statusText.textContent = '❌ User not found';
                             loginBtn.disabled = false;
@@ -335,7 +336,6 @@
 
                         var admin = data[0];
                         console.log('✅ 找到管理员:', admin);
-                        console.log('✅ ga_secret:', admin.ga_secret);
                         statusText.textContent = '✅ Found: ' + admin.username;
 
                         if (admin.password_hash !== password) {
@@ -349,12 +349,9 @@
 
                         statusText.textContent = '✅ Password OK, verifying GA...';
 
-                        var expectedCode = generateTOTP(admin.ga_secret, 0);
-                        console.log('🔑 预期的 GA 码:', expectedCode);
-                        console.log('📱 您输入的 GA 码:', gaCode);
-
                         if (!verifyGA(admin.ga_secret, gaCode)) {
-                            messageBox.textContent = '❌ Invalid GA code. Expected: ' + expectedCode;
+                            var expected = generateTOTP(admin.ga_secret, 0);
+                            messageBox.textContent = '❌ Invalid GA code. Expected: ' + expected;
                             messageBox.className = 'error-message';
                             statusText.textContent = '❌ GA code invalid';
                             loginBtn.disabled = false;
@@ -408,7 +405,7 @@
                 if (res.error) {
                     statusText.textContent = '⚠️ DB error';
                 } else if (res.data && res.data.length > 0) {
-                    statusText.textContent = '✅ Database ready - ' + res.data.length + ' user(s) found';
+                    statusText.textContent = '✅ Database ready - ' + res.data.length + ' user(s)';
                 } else {
                     statusText.textContent = '⚠️ No data found';
                 }
