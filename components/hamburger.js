@@ -176,18 +176,22 @@ if (isLoggedIn) {
     }
 
     function openMenu() {
-        menu.classList.add('open');
-        overlay.classList.add('open');
-        toggleBtn.classList.add('menu-open');
-        document.body.style.overflow = 'hidden';
-    }
+    menu.classList.add('open');
+    overlay.classList.add('open');
+    toggleBtn.classList.add('menu-open');
+    document.body.style.overflow = 'hidden';
+    document.body.style.overflowX = 'hidden';
+    document.documentElement.style.overflowX = 'hidden';
+}
 
-    function closeMenu() {
-        menu.classList.remove('open');
-        overlay.classList.remove('open');
-        toggleBtn.classList.remove('menu-open');
-        document.body.style.overflow = '';
-    }
+function closeMenu() {
+    menu.classList.remove('open');
+    overlay.classList.remove('open');
+    toggleBtn.classList.remove('menu-open');
+    document.body.style.overflow = '';
+    document.body.style.overflowX = '';
+    document.documentElement.style.overflowX = '';
+}
 
     function toggleMenu() {
         if (menu.classList.contains('open')) {
