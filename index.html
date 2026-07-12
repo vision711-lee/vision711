@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     <style>
         /* ============================================================
-           顶部循环横幅 - 完全不透明，覆盖一切
+           手机版：顶部循环横幅 - 完全不透明，覆盖一切
            ============================================================ */
         .top-banner-wrapper {
             position: fixed;
@@ -31,7 +31,6 @@
             max-width: 480px;
             padding: 18px 22px;
             border-radius: 20px;
-            /* 完全不透明 - 深蓝实心背景 */
             background: linear-gradient(160deg, #0a1a3a, #0d2048);
             border: 1px solid rgba(0, 180, 255, 0.2);
             box-shadow: 0 12px 50px rgba(0, 0, 0, 0.8), 0 0 80px rgba(0, 100, 255, 0.06);
@@ -42,7 +41,6 @@
             pointer-events: auto;
         }
 
-        /* 顶部荧光高光线 */
         .top-banner::after {
             content: '';
             position: absolute;
@@ -124,11 +122,99 @@
             .top-banner .banner-close { width: 26px; height: 26px; font-size: 0.6rem; }
         }
 
-        /* ============================================================
-           移除所有额外边距
-           ============================================================ */
         .app-container {
             padding-top: 0 !important;
+        }
+
+        /* ============================================================
+           电脑版：固定正方形活动卡片 - 放在侧边栏和轮播图之间
+           ============================================================ */
+        @media (min-width: 768px) {
+            .desktop-banner-card {
+                display: block !important;
+                position: absolute;
+                top: 20px;
+                right: -20px;
+                width: 180px;
+                height: 180px;
+                border-radius: 20px;
+                background: linear-gradient(160deg, #0a1a3a, #0d2048);
+                border: 1px solid rgba(0, 180, 255, 0.15);
+                box-shadow: 0 12px 50px rgba(0, 0, 0, 0.6), 0 0 60px rgba(0, 100, 255, 0.04);
+                padding: 20px 18px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                text-align: center;
+                z-index: 10;
+                overflow: hidden;
+            }
+
+            .desktop-banner-card::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 2px;
+                background: linear-gradient(90deg, transparent, rgba(0, 180, 255, 0.3), rgba(0, 200, 255, 0.5), rgba(0, 180, 255, 0.3), transparent);
+            }
+
+            .desktop-banner-card .card-icon {
+                font-size: 2.2rem;
+                color: #4dc8ff;
+                margin-bottom: 8px;
+            }
+
+            .desktop-banner-card .card-title {
+                font-size: 0.85rem;
+                font-weight: 700;
+                color: #4dc8ff;
+                letter-spacing: 0.5px;
+                margin-bottom: 4px;
+            }
+
+            .desktop-banner-card .card-desc {
+                font-size: 0.6rem;
+                color: rgba(255, 255, 255, 0.3);
+                letter-spacing: 0.3px;
+                line-height: 1.5;
+            }
+
+            .desktop-banner-card .card-cta {
+                margin-top: 10px;
+                font-size: 0.6rem;
+                font-weight: 600;
+                color: #4dc8ff;
+                border: 1px solid rgba(0, 180, 255, 0.1);
+                padding: 4px 16px;
+                border-radius: 30px;
+                cursor: pointer;
+                transition: 0.3s;
+            }
+
+            .desktop-banner-card .card-cta:hover {
+                background: rgba(0, 180, 255, 0.06);
+                border-color: rgba(0, 180, 255, 0.2);
+            }
+
+            /* 轮播图容器需要相对定位，让卡片可以绝对定位 */
+            .carousel-container {
+                position: relative;
+            }
+
+            /* 手机版隐藏电脑卡片 */
+            .desktop-banner-card {
+                display: none;
+            }
+        }
+
+        /* 电脑版主内容区域需要相对定位，让卡片可以绝对定位在轮播图右侧 */
+        @media (min-width: 768px) {
+            .main-content {
+                position: relative;
+            }
         }
     </style>
 </head>
@@ -137,7 +223,7 @@
 <div class="app-container">
 
     <!-- ============================================================
-    顶部循环横幅 - 完全不透明
+    手机版：顶部循环横幅
     ============================================================ -->
     <div class="top-banner-wrapper">
         <div class="top-banner" id="topBanner">
@@ -150,7 +236,7 @@
         </div>
     </div>
 
-    <!-- ===== SIDEBAR (电脑显示，手机隐藏) ===== -->
+    <!-- ===== SIDEBAR ===== -->
     <div class="sidebar">
         <div class="sidebar-logo-wrapper">
             <a href="/" class="logo-metal">
@@ -184,8 +270,15 @@
     <!-- ===== MAIN CONTENT ===== -->
     <div class="main-content">
 
-        <!-- 手机顶部导航 - JS 自动注入 -->
         <div class="mobile-header"></div>
+
+        <!-- ===== 电脑版：固定正方形活动卡片（放在轮播图右侧缝隙） ===== -->
+        <div class="desktop-banner-card" id="desktopBannerCard">
+            <div class="card-icon"><i class="fas fa-gift"></i></div>
+            <div class="card-title">🎯 限时活动</div>
+            <div class="card-desc">首存 RM20<br>送 100% 红利</div>
+            <div class="card-cta" id="desktopCta">立即参与 →</div>
+        </div>
 
         <!-- ===== 轮播图 ===== -->
         <div class="carousel-container">
@@ -290,10 +383,10 @@
 </div><!-- /app-container -->
 
 <!-- ============================================================
-JavaScript: 顶部横幅循环 + 原有功能
+JavaScript
 ============================================================ -->
 <script>
-    // ===== 顶部循环横幅 =====
+    // ===== 手机版：顶部循环横幅 (显示3秒 → 隐藏 → 等待5秒) =====
     (function() {
         const banner = document.getElementById('topBanner');
         const closeBtn = document.getElementById('bannerCloseBtn');
@@ -310,7 +403,7 @@ JavaScript: 顶部横幅循环 + 原有功能
                 banner.classList.remove('show');
                 cycleTimer = setTimeout(function() {
                     startCycle();
-                }, 3000);
+                }, 5000);
             }, 3000);
         }
 
@@ -341,6 +434,23 @@ JavaScript: 顶部横幅循环 + 原有功能
                 setTimeout(startCycle, 300);
             }
         });
+    })();
+
+    // ===== 电脑版：正方形卡片点击事件 =====
+    (function() {
+        const cta = document.getElementById('desktopCta');
+        if (cta) {
+            cta.addEventListener('click', function() {
+                alert('🎯 跳转到活动页面');
+            });
+        }
+        const card = document.getElementById('desktopBannerCard');
+        if (card) {
+            card.addEventListener('click', function(e) {
+                if (e.target.closest('.card-cta')) return;
+                alert('🎯 跳转到活动页面');
+            });
+        }
     })();
 </script>
 
