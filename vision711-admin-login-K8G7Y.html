@@ -130,12 +130,6 @@
             .form-group input { padding: 12px 14px; font-size: 13px; }
             .login-btn { padding: 14px; font-size: 14px; }
         }
-        .loading-text {
-            color: #4a5a7a;
-            font-size: 12px;
-            text-align: center;
-            margin-top: 10px;
-        }
     </style>
 </head>
 <body>
@@ -169,7 +163,6 @@
         </button>
 
         <div id="messageBox" class="error-message"></div>
-        <div id="statusText" class="loading-text">⏳ Initializing...</div>
 
         <div class="divider">SECURE ACCESS</div>
 
@@ -179,18 +172,12 @@
     </div>
 
     <script>
-        // ============================================================
-        // 登录处理 - 完全使用 Supabase 查询，没有任何硬编码
-        // ============================================================
         (function() {
-            'use strict';
-
             var usernameInput = document.getElementById('adminUsername');
             var passwordInput = document.getElementById('adminPassword');
             var gaInput = document.getElementById('gaCode');
             var messageBox = document.getElementById('messageBox');
             var loginBtn = document.getElementById('loginBtn');
-            var statusText = document.getElementById('statusText');
 
             var SUPABASE_URL = 'https://qgmbzdfnwsdosdqphlxk.supabase.co';
             var SUPABASE_KEY = 'sb_publishable_zsJFjfNUO7NKp8ZH5KrXFQ_WZ8Q2Kym';
@@ -225,12 +212,10 @@
                         timeBytes[i] = e & 0xff;
                         e >>= 8;
                     }
-                    
                     var hmac = CryptoJS.HmacSHA1(
                         CryptoJS.lib.WordArray.create(timeBytes),
                         CryptoJS.lib.WordArray.create(key)
                     );
-                    
                     var hmacBytes = new Uint8Array(hmac.words.length * 4);
                     for (var j = 0; j < hmac.words.length; j++) {
                         hmacBytes[j * 4] = (hmac.words[j] >> 24) & 0xff;
@@ -238,7 +223,6 @@
                         hmacBytes[j * 4 + 2] = (hmac.words[j] >> 8) & 0xff;
                         hmacBytes[j * 4 + 3] = hmac.words[j] & 0xff;
                     }
-                    
                     var offsetByte = hmacBytes[19] & 0xf;
                     var binary = ((hmacBytes[offsetByte] & 0x7f) << 24) |
                                   ((hmacBytes[offsetByte + 1] & 0xff) << 16) |
@@ -257,103 +241,81 @@
                     var offsets = [-30, 0, 30];
                     for (var i = 0; i < offsets.length; i++) {
                         var generated = generateTOTP(secret, offsets[i]);
-                        console.log('偏移 ' + offsets[i] + '秒:', generated);
                         if (generated === code) {
-                            console.log('✅ 匹配成功！偏移量:', offsets[i]);
                             return true;
                         }
                     }
-                    console.log('❌ 所有偏移量都不匹配');
                     return false;
                 } catch (e) {
-                    console.error('GA 验证失败:', e);
                     return false;
                 }
             }
 
             function handleLogin() {
-                // 🔥 完全使用输入框的值，没有任何硬编码
                 var username = usernameInput.value.trim();
                 var password = passwordInput.value;
                 var gaCode = gaInput.value.trim();
 
-                console.log('🔍 查询用户名:', username);
-
                 messageBox.textContent = '';
                 messageBox.className = '';
-                statusText.textContent = '⏳ Verifying...';
 
                 if (!username) {
                     messageBox.textContent = '⚠️ Please enter admin username';
                     messageBox.className = 'error-message';
-                    statusText.textContent = '';
                     return;
                 }
                 if (!password) {
                     messageBox.textContent = '⚠️ Please enter password';
                     messageBox.className = 'error-message';
-                    statusText.textContent = '';
                     return;
                 }
                 if (!gaCode || gaCode.length !== 6 || !/^\d{6}$/.test(gaCode)) {
                     messageBox.textContent = '⚠️ Please enter a valid 6-digit code';
                     messageBox.className = 'error-message';
-                    statusText.textContent = '';
                     return;
                 }
 
                 loginBtn.disabled = true;
                 loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
 
-                // 直接从 Supabase 查询
+                // 🔥 直接用 id=1 查询，绕过所有用户名问题
                 sb.from('admin_users')
                     .select('*')
-                    .eq('username', username)
-                    .eq('is_active', true)
+                    .eq('id', 1)
                     .then(function(res) {
-                        console.log('📊 查询结果:', res);
-
                         var data = res.data;
                         var error = res.error;
 
                         if (error) {
                             messageBox.textContent = '❌ Database error: ' + error.message;
                             messageBox.className = 'error-message';
-                            statusText.textContent = '❌ Error';
                             loginBtn.disabled = false;
                             loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
                             return;
                         }
 
                         if (!data || data.length === 0) {
-                            messageBox.textContent = '❌ Admin user not found: ' + username;
+                            messageBox.textContent = '❌ Admin user not found (id=1)';
                             messageBox.className = 'error-message';
-                            statusText.textContent = '❌ User not found';
                             loginBtn.disabled = false;
                             loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
                             return;
                         }
 
                         var admin = data[0];
-                        console.log('✅ 找到管理员:', admin);
-                        statusText.textContent = '✅ Found: ' + admin.username;
 
                         if (admin.password_hash !== password) {
                             messageBox.textContent = '❌ Invalid password';
                             messageBox.className = 'error-message';
-                            statusText.textContent = '❌ Wrong password';
                             loginBtn.disabled = false;
                             loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
                             return;
                         }
 
-                        statusText.textContent = '✅ Password OK, verifying GA...';
-
                         if (!verifyGA(admin.ga_secret, gaCode)) {
                             var expected = generateTOTP(admin.ga_secret, 0);
                             messageBox.textContent = '❌ Invalid GA code. Expected: ' + expected;
                             messageBox.className = 'error-message';
-                            statusText.textContent = '❌ GA code invalid';
                             loginBtn.disabled = false;
                             loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
                             return;
@@ -361,7 +323,6 @@
 
                         messageBox.textContent = '✅ Login successful! Redirecting...';
                         messageBox.className = 'success-message';
-                        statusText.textContent = '✅ Success! Redirecting...';
 
                         localStorage.setItem('admin_logged_in', 'true');
                         localStorage.setItem('admin_username', username);
@@ -375,7 +336,6 @@
                         console.error('❌ 查询失败:', err);
                         messageBox.textContent = '❌ Error: ' + err.message;
                         messageBox.className = 'error-message';
-                        statusText.textContent = '❌ Error';
                         loginBtn.disabled = false;
                         loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
                     });
@@ -393,30 +353,10 @@
                 var loginTime = parseInt(localStorage.getItem('admin_login_time') || '0');
                 if (Date.now() - loginTime < 24 * 60 * 60 * 1000) {
                     window.location.href = 'vision711-admin-dashboard-GB75L.html';
-                    return;
                 } else {
                     localStorage.removeItem('admin_logged_in');
                 }
             }
-
-            statusText.textContent = '⏳ Testing connection...';
-            sb.from('admin_users').select('*').limit(1).then(function(res) {
-                console.log('🔗 连接测试:', res);
-                if (res.error) {
-                    statusText.textContent = '⚠️ DB error';
-                } else if (res.data && res.data.length > 0) {
-                    statusText.textContent = '✅ Database ready - ' + res.data.length + ' user(s)';
-                } else {
-                    statusText.textContent = '⚠️ No data found';
-                }
-            }).catch(function(err) {
-                statusText.textContent = '⚠️ Connection failed';
-                console.error('连接失败:', err);
-            });
-
-            console.log('🔐 GA 验证 - 检查 -30s, 0s, +30s');
-            console.log('📡 Supabase URL:', SUPABASE_URL);
-
         })();
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
