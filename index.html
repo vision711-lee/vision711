@@ -9,14 +9,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     <style>
         /* ============================================================
-           顶部循环横幅 - 直接覆盖，不挤占内容
+           顶部循环横幅 - 完全不透明，覆盖一切
            ============================================================ */
         .top-banner-wrapper {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            z-index: 999;
+            z-index: 9999;
             height: 0;
             overflow: visible;
             pointer-events: none;
@@ -27,44 +27,44 @@
             top: 0;
             left: 50%;
             transform: translateX(-50%) translateY(-120%);
-            width: calc(100% - 32px);
-            max-width: 440px;
-            padding: 12px 16px;
-            border-radius: 16px;
-            background: linear-gradient(160deg, rgba(8, 18, 50, 0.96), rgba(12, 28, 70, 0.92));
-            backdrop-filter: blur(20px) saturate(1.6);
-            -webkit-backdrop-filter: blur(20px) saturate(1.6);
-            border: 1px solid rgba(0, 180, 255, 0.12);
-            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(0, 180, 255, 0.06);
+            width: calc(100% - 24px);
+            max-width: 480px;
+            padding: 18px 22px;
+            border-radius: 20px;
+            /* 完全不透明 - 深蓝实心背景 */
+            background: linear-gradient(160deg, #0a1a3a, #0d2048);
+            border: 1px solid rgba(0, 180, 255, 0.2);
+            box-shadow: 0 12px 50px rgba(0, 0, 0, 0.8), 0 0 80px rgba(0, 100, 255, 0.06);
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 16px;
             transition: transform 0.5s cubic-bezier(0.34, 1.2, 0.64, 1);
             pointer-events: auto;
         }
 
+        /* 顶部荧光高光线 */
         .top-banner::after {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            height: 1.5px;
-            background: linear-gradient(90deg, transparent, rgba(0, 180, 255, 0.2), rgba(0, 200, 255, 0.35), rgba(0, 180, 255, 0.2), transparent);
-            border-radius: 16px 16px 0 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(0, 180, 255, 0.3), rgba(0, 200, 255, 0.5), rgba(0, 180, 255, 0.3), transparent);
+            border-radius: 20px 20px 0 0;
         }
 
         .top-banner .banner-icon {
             flex-shrink: 0;
-            width: 32px;
-            height: 32px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
-            background: rgba(0, 180, 255, 0.06);
-            border: 1px solid rgba(0, 180, 255, 0.06);
+            background: rgba(0, 180, 255, 0.08);
+            border: 1px solid rgba(0, 180, 255, 0.1);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.9rem;
+            font-size: 1.2rem;
             color: #4dc8ff;
         }
 
@@ -73,15 +73,15 @@
             min-width: 0;
         }
         .top-banner .banner-text .title {
-            font-size: 0.7rem;
-            font-weight: 600;
+            font-size: 0.85rem;
+            font-weight: 700;
             color: #4dc8ff;
             letter-spacing: 0.5px;
-            margin-bottom: 1px;
+            margin-bottom: 4px;
         }
         .top-banner .banner-text .desc {
-            font-size: 0.6rem;
-            color: rgba(255, 255, 255, 0.25);
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.35);
             letter-spacing: 0.3px;
             white-space: nowrap;
             overflow: hidden;
@@ -90,13 +90,13 @@
 
         .top-banner .banner-close {
             flex-shrink: 0;
-            width: 22px;
-            height: 22px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.02);
-            border: none;
-            color: rgba(255, 255, 255, 0.08);
-            font-size: 0.55rem;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.15);
+            font-size: 0.7rem;
             cursor: pointer;
             transition: 0.3s;
             display: flex;
@@ -104,26 +104,28 @@
             justify-content: center;
         }
         .top-banner .banner-close:hover {
-            background: rgba(255, 255, 255, 0.04);
-            color: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.06);
+            color: rgba(255, 255, 255, 0.3);
         }
 
         .top-banner.show {
-            transform: translateX(-50%) translateY(12px);
+            transform: translateX(-50%) translateY(16px);
         }
 
         @media (max-width: 480px) {
             .top-banner {
-                padding: 10px 12px;
-                width: calc(100% - 20px);
+                padding: 14px 16px;
+                width: calc(100% - 16px);
+                border-radius: 16px;
             }
-            .top-banner .banner-text .title { font-size: 0.6rem; }
-            .top-banner .banner-text .desc { font-size: 0.55rem; }
-            .top-banner .banner-icon { width: 28px; height: 28px; font-size: 0.75rem; }
+            .top-banner .banner-text .title { font-size: 0.75rem; }
+            .top-banner .banner-text .desc { font-size: 0.6rem; }
+            .top-banner .banner-icon { width: 36px; height: 36px; font-size: 1rem; }
+            .top-banner .banner-close { width: 26px; height: 26px; font-size: 0.6rem; }
         }
 
         /* ============================================================
-           移除手机版顶部额外边距 - 横幅直接覆盖
+           移除所有额外边距
            ============================================================ */
         .app-container {
             padding-top: 0 !important;
@@ -135,7 +137,7 @@
 <div class="app-container">
 
     <!-- ============================================================
-    顶部循环横幅 - 覆盖模式
+    顶部循环横幅 - 完全不透明
     ============================================================ -->
     <div class="top-banner-wrapper">
         <div class="top-banner" id="topBanner">
