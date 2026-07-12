@@ -173,14 +173,18 @@
 
     <script>
         (function() {
+            // ============================================================
+            // 🔥 VISION711 Supabase 配置（已更新）
+            // ============================================================
+            var SUPABASE_URL = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co';
+            var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImprYnBiamhyZ2JuemV4dmp2eGd0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM3NzA3MjEsImV4cCI6MjA5OTM0NjcyMX0.YJYx0X1uddWSQfD4w9AzPBHUnLKI0_k0QNeN_PH5JgM';
+            var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
             var usernameInput = document.getElementById('adminUsername');
             var passwordInput = document.getElementById('adminPassword');
             var gaInput = document.getElementById('gaCode');
             var messageBox = document.getElementById('messageBox');
             var loginBtn = document.getElementById('loginBtn');
-
-            var SUPABASE_URL = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co';
-var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImprYnBiamhyZ2JuemV4dmp2eGd0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM3NzA3MjEsImV4cCI6MjA5OTM0NjcyMX0.YJYx0X1uddWSQfD4w9AzPBHUnLKI0_k0QNeN_PH5JgM';
 
             function base32Decode(encoded) {
                 var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
@@ -277,10 +281,11 @@ var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSI
                 loginBtn.disabled = true;
                 loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
 
-                // 🔥 直接用 id=1 查询，绕过所有用户名问题
+                // 🔥 直接用 eq('username', username) 查询
                 sb.from('admin_users')
                     .select('*')
-                    .eq('id', 1)
+                    .eq('username', username)
+                    .eq('is_active', true)
                     .then(function(res) {
                         var data = res.data;
                         var error = res.error;
@@ -294,7 +299,7 @@ var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSI
                         }
 
                         if (!data || data.length === 0) {
-                            messageBox.textContent = '❌ Admin user not found (id=1)';
+                            messageBox.textContent = '❌ Admin user not found: ' + username;
                             messageBox.className = 'error-message';
                             loginBtn.disabled = false;
                             loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
@@ -302,6 +307,7 @@ var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSI
                         }
 
                         var admin = data[0];
+                        console.log('✅ 找到管理员:', admin);
 
                         if (admin.password_hash !== password) {
                             messageBox.textContent = '❌ Invalid password';
@@ -356,6 +362,8 @@ var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSI
                     localStorage.removeItem('admin_logged_in');
                 }
             }
+
+            console.log('🔐 使用 VISION711 Supabase:', SUPABASE_URL);
         })();
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
