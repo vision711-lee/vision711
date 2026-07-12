@@ -1,6 +1,6 @@
 // ============================================================
 // admin-partnership.js - Partnership 管理模块
-// 在 Admin Dashboard 中加载
+// 支持图片上传到 Supabase Storage
 // ============================================================
 
 (function() {
@@ -13,6 +13,8 @@
 
     var currentItems = [];
     var isSupabaseAvailable = false;
+    var selectedFile = null;
+    var uploadedLogoUrl = '';
 
     try {
         if (typeof supabase !== 'undefined') {
@@ -181,12 +183,10 @@
         try {
             var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-            // 先清空旧数据
             sb.from('partnership_items')
                 .delete()
                 .neq('id', '')
                 .then(function() {
-                    // 插入所有数据
                     if (currentItems.length === 0) {
                         if (callback) callback();
                         return;
@@ -213,6 +213,61 @@
 
     function saveToLocalStorage() {
         localStorage.setItem('partnership_items', JSON.stringify(currentItems));
+    }
+
+    // ============================================================
+    // 上传图片到 Supabase Storage
+    // ============================================================
+    function uploadImage(file) {
+        return new Promise(function(resolve, reject) {
+            if (!file) {
+                resolve('');
+                return;
+            }
+
+            if (!isSupabaseAvailable) {
+                // 如果没有 Supabase，将图片转为 base64 存储
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    resolve(e.target.result);
+                };
+                reader.onerror = function() {
+                    reject('Failed to read file');
+                };
+                reader.readAsDataURL(file);
+                return;
+            }
+
+            var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            var fileExt = file.name.split('.').pop();
+            var fileName = 'partnership_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6) + '.' + fileExt;
+            var filePath = 'partnership-logos/' + fileName;
+
+            sb.storage
+                .from('vision-partner')
+                .upload(filePath, file, {
+                    cacheControl: '3600',
+                    upsert: false
+                })
+                .then(function(uploadRes) {
+                    if (uploadRes.error) {
+                        console.error('上传失败:', uploadRes.error);
+                        reject(uploadRes.error.message);
+                        return;
+                    }
+
+                    // 获取公开 URL
+                    var publicUrl = sb.storage
+                        .from('vision-partner')
+                        .getPublicUrl(filePath);
+
+                    resolve(publicUrl.data.publicUrl);
+                })
+                .catch(function(err) {
+                    console.error('上传异常:', err);
+                    reject(err.message);
+                });
+        });
     }
 
     // ============================================================
@@ -289,26 +344,49 @@
     }
 
     // ============================================================
-    // Modal - 添加 Partnership
+    // Modal - 添加 Partnership（带图片上传）
     // ============================================================
     function openAddModal() {
+        selectedFile = null;
+        uploadedLogoUrl = '';
+
         var bodyHTML = `
             <div class="form-group">
                 <label style="display:block;font-size:12px;color:#5a6388;margin-bottom:4px;font-weight:600;">
-                    <i class="fas fa-image"></i> Upload Image (Logo URL)
+                    <i class="fas fa-image"></i> Upload Logo
                 </label>
-                <input type="text" id="formLogoUrl" placeholder="https://example.com/logo.png" value="" style="
-                    width:100%;
+                <div style="
+                    display:flex;
+                    align-items:center;
+                    gap:12px;
                     background:rgba(10,14,26,0.8);
-                    border:1px solid #2a3560;
+                    border:1px dashed #2a3560;
                     border-radius:12px;
-                    padding:12px 16px;
-                    color:#fff;
-                    font-size:14px;
-                    outline:none;
-                    box-sizing:border-box;
-                ">
-                <div style="font-size:0.6rem;color:#4a5a7a;margin-top:4px;">Enter image URL or leave empty for default icon</div>
+                    padding:16px;
+                    cursor:pointer;
+                    transition:0.3s;
+                " id="uploadArea" onmouseover="this.style.borderColor='rgba(74,124,255,0.4)'" onmouseout="this.style.borderColor='#2a3560'">
+                    <div style="
+                        width:60px;
+                        height:60px;
+                        border-radius:50%;
+                        background:rgba(0,180,255,0.05);
+                        display:flex;
+                        align-items:center;
+                        justify-content:center;
+                        font-size:1.5rem;
+                        color:#4a5a7a;
+                        flex-shrink:0;
+                        overflow:hidden;
+                    " id="logoPreview">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <div style="flex:1;">
+                        <div style="font-size:0.8rem;color:#5a6388;" id="fileNameText">Click or drag to upload image</div>
+                        <div style="font-size:0.6rem;color:#2a3560;">PNG, JPG, GIF up to 2MB</div>
+                    </div>
+                    <input type="file" id="fileInput" accept="image/*" style="display:none;">
+                </div>
             </div>
             <div class="form-group">
                 <label style="display:block;font-size:12px;color:#5a6388;margin-bottom:4px;font-weight:600;">
@@ -398,36 +476,134 @@
                 'Create a new partnership program item',
                 bodyHTML,
                 function() {
-                    var logo_url = document.getElementById('formLogoUrl').value.trim();
-                    var title = document.getElementById('formTitle').value.trim() || 'Partnership';
-                    var welcome_bonus = document.getElementById('formWelcomeBonus').value.trim() || 'RM 0';
-                    var daily_rebate = document.getElementById('formDailyRebate').value.trim() || '0%';
-                    var weekly_bonus = document.getElementById('formWeeklyBonus').value.trim() || 'RM 0';
-                    var description = document.getElementById('formDescription').value.trim() || '';
+                    // 如果有文件正在上传，先上传
+                    if (selectedFile) {
+                        // 显示上传状态
+                        var saveBtn = document.querySelector('#modalSaveBtn');
+                        if (saveBtn) {
+                            saveBtn.disabled = true;
+                            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+                        }
 
-                    // 验证 URL 格式
-                    if (logo_url && !logo_url.startsWith('http://') && !logo_url.startsWith('https://')) {
-                        alert('Please enter a valid image URL (starts with http:// or https://)');
-                        return;
-                    }
-
-                    addItem({
-                        logo_url: logo_url,
-                        title: title,
-                        welcome_bonus: welcome_bonus,
-                        daily_rebate: daily_rebate,
-                        weekly_bonus: weekly_bonus,
-                        description: description
-                    });
-
-                    if (typeof closeModal === 'function') {
-                        closeModal();
+                        uploadImage(selectedFile)
+                            .then(function(url) {
+                                uploadedLogoUrl = url;
+                                saveItem();
+                            })
+                            .catch(function(err) {
+                                alert('Image upload failed: ' + err);
+                                if (saveBtn) {
+                                    saveBtn.disabled = false;
+                                    saveBtn.innerHTML = 'Save';
+                                }
+                            });
+                    } else {
+                        saveItem();
                     }
                 }
             );
+
+            // 绑定文件上传事件
+            setTimeout(function() {
+                var fileInput = document.getElementById('fileInput');
+                var uploadArea = document.getElementById('uploadArea');
+                var logoPreview = document.getElementById('logoPreview');
+                var fileNameText = document.getElementById('fileNameText');
+
+                if (!fileInput || !uploadArea) return;
+
+                uploadArea.addEventListener('click', function() {
+                    fileInput.click();
+                });
+
+                fileInput.addEventListener('change', function() {
+                    var file = this.files[0];
+                    if (!file) return;
+
+                    if (file.size > 2 * 1024 * 1024) {
+                        alert('File too large! Maximum 2MB.');
+                        this.value = '';
+                        return;
+                    }
+
+                    selectedFile = file;
+                    fileNameText.textContent = file.name;
+
+                    // 预览图片
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        logoPreview.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;">`;
+                    };
+                    reader.readAsDataURL(file);
+                });
+
+                // 拖拽支持
+                uploadArea.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    this.style.borderColor = 'rgba(74,124,255,0.6)';
+                    this.style.background = 'rgba(74,124,255,0.05)';
+                });
+
+                uploadArea.addEventListener('dragleave', function(e) {
+                    e.preventDefault();
+                    this.style.borderColor = '#2a3560';
+                    this.style.background = 'transparent';
+                });
+
+                uploadArea.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    this.style.borderColor = '#2a3560';
+                    this.style.background = 'transparent';
+
+                    var file = e.dataTransfer.files[0];
+                    if (!file) return;
+
+                    if (file.size > 2 * 1024 * 1024) {
+                        alert('File too large! Maximum 2MB.');
+                        return;
+                    }
+
+                    selectedFile = file;
+                    fileNameText.textContent = file.name;
+
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        logoPreview.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;">`;
+                    };
+                    reader.readAsDataURL(file);
+
+                    fileInput.files = e.dataTransfer.files;
+                });
+
+            }, 100);
         } else {
             console.warn('openModal function not available');
         }
+    }
+
+    function saveItem() {
+        var title = document.getElementById('formTitle').value.trim() || 'Partnership';
+        var welcome_bonus = document.getElementById('formWelcomeBonus').value.trim() || 'RM 0';
+        var daily_rebate = document.getElementById('formDailyRebate').value.trim() || '0%';
+        var weekly_bonus = document.getElementById('formWeeklyBonus').value.trim() || 'RM 0';
+        var description = document.getElementById('formDescription').value.trim() || '';
+
+        addItem({
+            logo_url: uploadedLogoUrl,
+            title: title,
+            welcome_bonus: welcome_bonus,
+            daily_rebate: daily_rebate,
+            weekly_bonus: weekly_bonus,
+            description: description
+        });
+
+        if (typeof closeModal === 'function') {
+            closeModal();
+        }
+
+        // 重置
+        selectedFile = null;
+        uploadedLogoUrl = '';
     }
 
     // ============================================================
