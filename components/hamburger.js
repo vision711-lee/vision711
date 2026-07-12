@@ -502,21 +502,35 @@ if (isLoggedIn) {
 
 // ===== 手机顶部登录状态控制 =====
 (function initHeaderAuth() {
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true' || false;
-
-    const slogan = document.getElementById('headerSlogan');
-    const authButtons = document.getElementById('headerAuthButtons');
-
-    if (slogan && authButtons) {
-        if (isLoggedIn) {
-            slogan.style.display = 'inline-block';
-            slogan.textContent = 'Play Safe, Win Safe';
-            authButtons.style.display = 'none';
+    // 延迟执行，确保元素已加载
+    setTimeout(function() {
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true' || false;
+        
+        // 直接操作 DOM
+        const authButtons = document.querySelector('.header-auth-buttons');
+        const slogan = document.querySelector('.mobile-header-slogan');
+        
+        console.log('🔍 查找元素:', {
+            authButtons: authButtons,
+            slogan: slogan,
+            isLoggedIn: isLoggedIn
+        });
+        
+        if (authButtons && slogan) {
+            if (isLoggedIn) {
+                authButtons.style.display = 'none';
+                slogan.style.display = 'inline-block';
+                slogan.textContent = 'Play Safe, Win Safe';
+                console.log('✅ 已切换到登录状态');
+            } else {
+                authButtons.style.display = 'flex';
+                slogan.style.display = 'none';
+                console.log('✅ 已切换到未登录状态');
+            }
         } else {
-            slogan.style.display = 'none';
-            authButtons.style.display = 'flex';
+            console.warn('⚠️ 找不到元素');
         }
-    }
+    }, 200);
 })();
 
 // ===== 页面切换时重新检测登录状态 =====
