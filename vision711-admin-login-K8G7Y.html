@@ -319,7 +319,7 @@
 
                     if (!verifyGA(admin.ga_secret, gaCode)) {
                         var expected = generateTOTP(admin.ga_secret, 0);
-                        messageBox.textContent = '❌ Invalid GA code. Expected: ' + expected;
+                        messageBox.textContent = '❌ Invalid Google Authenticator code';
                         messageBox.className = 'error-message';
                         loginBtn.disabled = false;
                         loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
