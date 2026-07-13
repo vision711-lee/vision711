@@ -1049,7 +1049,7 @@
 
 <script>
 // ============================================================
-// 加载轮播图数据 (最终暴力修复版)
+// 加载轮播图数据 (按5个优先级修复)
 // ============================================================
 (function loadCarousel() {
     var SUPABASE_URL = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co';
@@ -1068,12 +1068,15 @@
     var progressTimer = null;
     var AUTO_PLAY_DELAY = 4000;
     var isAnimating = false;
+    var isPaused = false;
+    var lastSlideData = ''; // 用于检测数据是否变化
 
     function getTotalSlides() {
         return document.querySelectorAll('.carousel-slide').length;
     }
 
-    function renderSlides() {
+    // ✅ Priority 5: 只有数据变化时才重建DOM
+    function renderSlides(forceRebuild) {
         if (!slides || slides.length === 0) {
             track.innerHTML = `
                 <div class="carousel-slide" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#0a0a25,#181845);">
@@ -1086,6 +1089,14 @@
 
         var activeSlides = slides.filter(function(s) { return s.active !== false; });
         if (activeSlides.length === 0) activeSlides = slides;
+
+        // 检查数据是否变化
+        var currentData = JSON.stringify(activeSlides.map(function(s) { return s.image_url; }));
+        if (!forceRebuild && currentData === lastSlideData && document.querySelectorAll('.carousel-slide').length > 0) {
+            // 数据没变，不重建
+            return;
+        }
+        lastSlideData = currentData;
 
         var slidesHTML = '';
         var dotsHTML = '';
@@ -1118,9 +1129,25 @@
             });
         });
 
-        currentIndex = 0;
+        // ✅ Priority 1: 只在首次渲染或强制重建时重置索引
+        if (forceRebuild || currentIndex === 0) {
+            currentIndex = 0;
+        } else {
+            // 保持当前索引，但确保不超出范围
+            var total = getTotalSlides();
+            if (currentIndex >= total) {
+                currentIndex = total - 1;
+            }
+        }
         updateTrack();
-        startAutoPlay();
+        
+        // ✅ Priority 4: 重建后延迟重启自动播放
+        stopAutoPlay();
+        setTimeout(function() {
+            if (!isPaused) {
+                startAutoPlay();
+            }
+        }, 1000);
     }
 
     function updateTrack() {
@@ -1142,10 +1169,19 @@
         currentIndex = index;
         updateTrack();
         
+        // ✅ Priority 4: 手动导航后暂停自动播放2.5秒
         stopAutoPlay();
+        isPaused = true;
+        
         setTimeout(function() {
             isAnimating = false;
-            startAutoPlay();
+            // ✅ Priority 4: 2.5秒后恢复自动播放
+            setTimeout(function() {
+                isPaused = false;
+                if (!isAnimating) {
+                    startAutoPlay();
+                }
+            }, 2500);
         }, 650);
     }
 
@@ -1163,23 +1199,37 @@
         goToSlide((currentIndex - 1 + total) % total);
     }
 
+    // ✅ Priority 2: 确保只有一个定时器
     function startAutoPlay() {
-        stopAutoPlay();
+        // 先清除所有定时器
+        if (progressTimer) {
+            clearInterval(progressTimer);
+            progressTimer = null;
+        }
+        
         var total = getTotalSlides();
         if (total <= 1) return;
+        if (isPaused) return;
+        if (isAnimating) return;
         
         var progressValue = 0;
         progressBar.style.width = '0%';
         var step = 100 / (AUTO_PLAY_DELAY / 30);
         
         progressTimer = setInterval(function() {
-            if (isAnimating) return;
+            if (isAnimating || isPaused) {
+                return;
+            }
             
             progressValue += step;
             if (progressValue >= 100) {
                 progressValue = 100;
                 progressBar.style.width = '100%';
-                stopAutoPlay();
+                // ✅ Priority 2: 清除当前定时器
+                if (progressTimer) {
+                    clearInterval(progressTimer);
+                    progressTimer = null;
+                }
                 
                 var totalSlidesNow = getTotalSlides();
                 if (!isAnimating && totalSlidesNow > 0) {
@@ -1190,7 +1240,10 @@
                     
                     setTimeout(function() {
                         isAnimating = false;
-                        startAutoPlay();
+                        // ✅ 重启自动播放
+                        if (!isPaused) {
+                            startAutoPlay();
+                        }
                     }, 650);
                 }
             } else {
@@ -1207,6 +1260,7 @@
         progressBar.style.width = '0%';
     }
 
+    // 箭头事件
     if (prevBtn) {
         prevBtn.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -1225,6 +1279,7 @@
         });
     }
 
+    // 触摸滑动
     var touchStartX = 0;
     var touchEndX = 0;
     var container = document.querySelector('.carousel-container');
@@ -1248,17 +1303,27 @@
         }, { passive: true });
 
         container.addEventListener('mouseenter', function() {
+            isPaused = true;
             stopAutoPlay();
         });
 
         container.addEventListener('mouseleave', function() {
-            if (!isAnimating) {
+            isPaused = false;
+            if (!isAnimating && progressTimer === null) {
                 startAutoPlay();
             }
         });
     }
 
+    // ✅ Priority 3: 停止不必要的Supabase重载
+    var hasLoaded = false;
+
     function loadFromSupabase() {
+        if (hasLoaded) {
+            console.log('📢 已加载，跳过重复请求');
+            return;
+        }
+
         if (typeof supabase === 'undefined') {
             console.warn('⚠️ supabase not loaded');
             loadFromLocalStorage();
@@ -1283,7 +1348,8 @@
                     slides = [];
                     console.log('📢 没有轮播图数据');
                 }
-                renderSlides();
+                hasLoaded = true;
+                renderSlides(true); // 强制重建
             })
             .catch(function(err) {
                 console.error('异常:', err);
@@ -1292,23 +1358,34 @@
     }
 
     function loadFromLocalStorage() {
+        if (hasLoaded) return;
         var saved = localStorage.getItem('carousel_items');
         if (saved) {
             try {
                 slides = JSON.parse(saved);
-                renderSlides();
+                hasLoaded = true;
+                renderSlides(true);
                 return;
             } catch (e) {}
         }
         slides = [];
-        renderSlides();
+        hasLoaded = true;
+        renderSlides(true);
     }
 
     loadFromSupabase();
 
-    window.carousel = { goToSlide, nextSlide, prevSlide, refresh: loadFromSupabase };
+    window.carousel = { 
+        goToSlide: goToSlide, 
+        nextSlide: nextSlide, 
+        prevSlide: prevSlide, 
+        refresh: function() {
+            hasLoaded = false;
+            loadFromSupabase();
+        }
+    };
 
-    console.log('✅ Carousel loaded (最终暴力修复版)');
+    console.log('✅ Carousel loaded (5个优先级修复版)');
 })();
 
 // ============================================================
