@@ -25,45 +25,6 @@
     } catch (e) {}
 
     // ============================================================
-    // 默认轮播图数据 (当数据库为空时使用)
-    // ============================================================
-    var defaultSlides = [
-        {
-            id: 'default_1',
-            image_url: 'https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/hero-background/slide-1.jpg',
-            title: 'RM888 存款奖励',
-            description: '首次存款可获得 100% 额外红利',
-            badge: '🔥 热门',
-            cta_text: '立即领取 →',
-            cta_link: '/deposit',
-            order: 1,
-            active: true
-        },
-        {
-            id: 'default_2',
-            image_url: 'https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/hero-background/slide-2.jpg',
-            title: '幸运抽奖进行中',
-            description: '存款 RM20 获得幸运号码，赢取大奖',
-            badge: '🎰 活动',
-            cta_text: '参与抽奖 →',
-            cta_link: '/',
-            order: 2,
-            active: true
-        },
-        {
-            id: 'default_3',
-            image_url: 'https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/hero-background/slide-3.jpg',
-            title: 'MEGA888 全新上线',
-            description: '体验最新老虎机游戏，赢取丰厚奖金',
-            badge: '🆕 新游戏',
-            cta_text: '立即游玩 →',
-            cta_link: '/',
-            order: 3,
-            active: true
-        }
-    ];
-
-    // ============================================================
     // 渲染轮播图管理页面
     // ============================================================
     function renderCarouselPage() {
@@ -226,57 +187,53 @@
     // 加载数据
     // ============================================================
     function loadData() {
-        console.log('📥 Loading carousel items...');
+    console.log('📥 Loading carousel items...');
 
-        if (!isSupabaseAvailable) {
-            loadFromLocalStorage();
-            return;
-        }
-
-        try {
-            var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-            sb.from('carousel_items')
-                .select('*')
-                .order('order', { ascending: true })
-                .then(function(res) {
-                    if (res.error) {
-                        console.error('加载失败:', res.error);
-                        loadFromLocalStorage();
-                        return;
-                    }
-                    if (res.data && res.data.length > 0) {
-                        currentItems = res.data;
-                    } else {
-                        // 数据库为空，使用默认数据
-                        currentItems = JSON.parse(JSON.stringify(defaultSlides));
-                        saveToSupabase();
-                    }
-                    console.log('✅ 加载成功:', currentItems.length, 'items');
-                    renderCarouselPage();
-                })
-                .catch(function(err) {
-                    console.error('异常:', err);
-                    loadFromLocalStorage();
-                });
-        } catch (e) {
-            console.error('错误:', e);
-            loadFromLocalStorage();
-        }
+    if (!isSupabaseAvailable) {
+        loadFromLocalStorage();
+        return;
     }
+
+    try {
+        var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        sb.from('carousel_items')
+            .select('*')
+            .order('order', { ascending: true })
+            .then(function(res) {
+                if (res.error) {
+                    console.error('加载失败:', res.error);
+                    loadFromLocalStorage();
+                    return;
+                }
+                // 🔥 直接使用数据库数据，没有数据就设为空数组
+                currentItems = res.data || [];
+                console.log('✅ 加载成功:', currentItems.length, 'items');
+                renderCarouselPage();
+            })
+            .catch(function(err) {
+                console.error('异常:', err);
+                loadFromLocalStorage();
+            });
+    } catch (e) {
+        console.error('错误:', e);
+        loadFromLocalStorage();
+    }
+}
 
     function loadFromLocalStorage() {
-        var saved = localStorage.getItem('carousel_items');
-        if (saved) {
-            try {
-                currentItems = JSON.parse(saved);
-                renderCarouselPage();
-                return;
-            } catch (e) {}
-        }
-        currentItems = JSON.parse(JSON.stringify(defaultSlides));
-        renderCarouselPage();
+    var saved = localStorage.getItem('carousel_items');
+    if (saved) {
+        try {
+            currentItems = JSON.parse(saved);
+            renderCarouselPage();
+            return;
+        } catch (e) {}
     }
+    // 🔥 没有数据就设为空数组
+    currentItems = [];
+    renderCarouselPage();
+}
 
     // ============================================================
     // 保存数据到 Supabase
@@ -841,7 +798,6 @@
         openAddModal: openAddModal,
         openEditModal: openEditModal,
         getItems: function() { return currentItems; },
-        getDefaultSlides: function() { return defaultSlides; }
     };
 
     console.log('✅ admin-carousel.js loaded successfully');
