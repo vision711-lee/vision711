@@ -314,7 +314,7 @@
         }
 
         /* ============================================================
-           轮播图样式 - 16:9 统一比例
+           轮播图样式 - 电脑版 21:9 (更矮) / 手机版 16:9
            ============================================================ */
         .carousel-container {
             position: relative;
@@ -330,18 +330,29 @@
             will-change: transform;
         }
 
-        /* 所有轮播 Slide 统一 16:9 比例 */
         .carousel-slide {
             width: 100%;
             flex-shrink: 0;
-            padding-bottom: 56.25% !important; /* 16:9 = 9/16 = 0.5625 */
             position: relative;
             overflow: hidden;
             border-radius: 20px;
             background: #0a0a20;
         }
 
-        /* 图片绝对定位填满容器 */
+        /* 电脑版 - 21:9 (更矮，适合横幅) */
+        @media (min-width: 768px) {
+            .carousel-slide {
+                padding-bottom: 42.85% !important; /* 9/21 = 42.85% */
+            }
+        }
+
+        /* 手机版 - 16:9 */
+        @media (max-width: 767px) {
+            .carousel-slide {
+                padding-bottom: 56.25% !important; /* 9/16 = 56.25% */
+            }
+        }
+
         .carousel-slide img {
             position: absolute;
             top: 0;
@@ -352,13 +363,35 @@
             border-radius: 20px;
         }
 
+        /* ===== 进度条 ===== */
+        .carousel-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            z-index: 20;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 0 0 20px 20px;
+            overflow: hidden;
+        }
+
+        .carousel-progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #00b4ff, #4dc8ff, #00d4ff);
+            border-radius: 0 0 20px 20px;
+            transition: width 0.1s linear;
+            box-shadow: 0 0 20px rgba(0, 180, 255, 0.3);
+        }
+
         /* 圆点浮在图片上层 */
         .carousel-dots {
             position: absolute;
             bottom: 16px;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 20;
+            z-index: 15;
             display: flex;
             gap: 8px;
             padding: 6px 14px;
@@ -445,6 +478,10 @@
             }
             .carousel-btn-right {
                 right: 6px;
+            }
+
+            .carousel-progress {
+                height: 2px;
             }
         }
     </style>
@@ -546,6 +583,10 @@
             <button class="carousel-btn carousel-btn-right" id="carouselNext"><i class="fas fa-chevron-right"></i></button>
             <div class="carousel-dots" id="carouselDots">
                 <!-- 由 JS 动态生成 -->
+            </div>
+            <!-- 进度条 -->
+            <div class="carousel-progress" id="carouselProgress">
+                <div class="carousel-progress-bar" id="carouselProgressBar"></div>
             </div>
         </div>
 
@@ -826,13 +867,16 @@
     var dotsContainer = document.getElementById('carouselDots');
     var prevBtn = document.getElementById('carouselPrev');
     var nextBtn = document.getElementById('carouselNext');
+    var progressBar = document.getElementById('carouselProgressBar');
 
     if (!track) return;
 
     var slides = [];
     var currentIndex = 0;
     var autoPlayInterval = null;
+    var progressInterval = null;
     var AUTO_PLAY_DELAY = 4000;
+    var progressValue = 0;
 
     function renderSlides() {
         if (!slides || slides.length === 0) {
@@ -880,6 +924,7 @@
 
         currentIndex = 0;
         updateTrack();
+        resetProgress();
     }
 
     function updateTrack() {
@@ -899,6 +944,7 @@
         if (index >= total) index = 0;
         currentIndex = index;
         updateTrack();
+        resetProgress();
     }
 
     function nextSlide() {
@@ -913,20 +959,63 @@
         goToSlide(currentIndex - 1);
     }
 
+    // ===== 进度条控制 =====
+    function startProgress() {
+        if (progressInterval) clearInterval(progressInterval);
+        progressValue = 0;
+        progressBar.style.width = '0%';
+        
+        var step = 100 / (AUTO_PLAY_DELAY / 30); // 每30ms更新一次
+        
+        progressInterval = setInterval(function() {
+            progressValue += step;
+            if (progressValue >= 100) {
+                progressValue = 100;
+                progressBar.style.width = '100%';
+                clearInterval(progressInterval);
+                progressInterval = null;
+                // 自动换下一张
+                setTimeout(function() {
+                    nextSlide();
+                    resetProgress();
+                }, 100);
+            } else {
+                progressBar.style.width = progressValue + '%';
+            }
+        }, 30);
+    }
+
+    function resetProgress() {
+        if (progressInterval) {
+            clearInterval(progressInterval);
+            progressInterval = null;
+        }
+        progressValue = 0;
+        progressBar.style.width = '0%';
+        if (document.querySelectorAll('.carousel-slide').length > 1) {
+            startProgress();
+        }
+    }
+
+    function stopProgress() {
+        if (progressInterval) {
+            clearInterval(progressInterval);
+            progressInterval = null;
+        }
+    }
+
     function startAutoPlay() {
         if (autoPlayInterval) clearInterval(autoPlayInterval);
         var total = document.querySelectorAll('.carousel-slide').length;
         if (total > 1) {
-            autoPlayInterval = setInterval(nextSlide, AUTO_PLAY_DELAY);
+            // 进度条由 progressInterval 控制，不需要额外的 autoPlayInterval
+            resetProgress();
         }
     }
 
     function resetAutoPlay() {
-        if (autoPlayInterval) {
-            clearInterval(autoPlayInterval);
-            autoPlayInterval = null;
-        }
-        startAutoPlay();
+        stopProgress();
+        resetProgress();
     }
 
     if (prevBtn) {
@@ -968,6 +1057,7 @@
         }, { passive: true });
 
         container.addEventListener('mouseenter', function() {
+            stopProgress();
             if (autoPlayInterval) {
                 clearInterval(autoPlayInterval);
                 autoPlayInterval = null;
@@ -975,7 +1065,9 @@
         });
 
         container.addEventListener('mouseleave', function() {
-            startAutoPlay();
+            if (document.querySelectorAll('.carousel-slide').length > 1) {
+                resetProgress();
+            }
         });
     }
 
