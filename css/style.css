@@ -2289,16 +2289,29 @@ html, body {
     flex: 1 !important;
     max-width: 76px !important;
     min-height: 52px !important;
-    padding-top: 6px !important;  /* ← 向下移动 */
     position: relative !important;
     overflow: visible !important;
 }
 
-/* GAMES 文字 - 金属流光 + Rajdhani 字体 */
+/* 🔥 保留 GIF 背景 */
+.bottom-nav .nav-games-center::before {
+    content: '' !important;
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 50% !important;
+    transform: translateX(-47.5%) !important;
+    width: 120px !important;
+    height: 120px !important;
+    background: url('https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/animated-button/slot-button.gif') no-repeat center / contain !important;
+    pointer-events: none !important;
+    z-index: 0 !important;
+}
+
+/* GAMES 文字 - 在 GIF 上方 */
 .bottom-nav .games-metal-rajdhani {
     font-family: 'Rajdhani', sans-serif !important;
     font-weight: 700 !important;
-    font-size: 1.05rem !important;
+    font-size: 1.0rem !important;
     letter-spacing: 4px !important;
     background: linear-gradient(135deg, #00b4ff 0%, #4dc8ff 30%, #ffffff 50%, #00d4ff 70%, #0088ff 100%) !important;
     background-size: 300% auto !important;
@@ -2309,7 +2322,9 @@ html, body {
     text-shadow: 0 0 30px rgba(0, 180, 255, 0.15) !important;
     display: inline-block !important;
     line-height: 1.2 !important;
-    padding-bottom: 2px !important;
+    position: relative !important;
+    z-index: 1 !important;
+    padding-bottom: 18px !important;  /* ← 向上偏移，让 GIF 在下方 */
 }
 
 @keyframes gamesShimmerFlow {
@@ -2322,10 +2337,14 @@ html, body {
     .bottom-nav .nav-games-center {
         max-width: 64px !important;
         min-height: 44px !important;
-        padding-top: 4px !important;
     }
     .bottom-nav .games-metal-rajdhani {
-        font-size: 0.85rem !important;
+        font-size: 0.8rem !important;
         letter-spacing: 3px !important;
+        padding-bottom: 14px !important;
+    }
+    .bottom-nav .nav-games-center::before {
+        width: 100px !important;
+        height: 100px !important;
     }
 }
