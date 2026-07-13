@@ -701,14 +701,16 @@
     function renderSlides() {
         if (!slides || slides.length === 0) {
             track.innerHTML = `
-                <div class="carousel-slide">
-                    <div class="carousel-content">
-                        <div class="carousel-badge">📢 欢迎</div>
-                        <div class="carousel-title">VISION711</div>
-                        <div class="carousel-desc">Play Safe, Win Safe</div>
-                        <span class="carousel-cta">了解更多 →</span>
+                <div class="carousel-slide" style="position:relative;min-height:200px;overflow:hidden;border-radius:20px;background:linear-gradient(145deg,#0a0a25,#181845);">
+                    <div style="position:relative;z-index:1;padding:24px 28px;display:flex;align-items:center;justify-content:space-between;width:100%;min-height:200px;">
+                        <div class="carousel-content">
+                            <div class="carousel-badge">📢 欢迎</div>
+                            <div class="carousel-title">VISION711</div>
+                            <div class="carousel-desc">Play Safe, Win Safe</div>
+                            <span class="carousel-cta">了解更多 →</span>
+                        </div>
+                        <div class="carousel-image"><i class="fas fa-crown"></i></div>
                     </div>
-                    <div class="carousel-image"><i class="fas fa-crown"></i></div>
                 </div>
             `;
             dotsContainer.innerHTML = '';
@@ -722,20 +724,25 @@
         var dotsHTML = '';
 
         activeSlides.forEach(function(slide, index) {
-            var imageHTML = slide.image_url && slide.image_url.startsWith('http')
-                ? `<img src="${slide.image_url}" alt="${slide.title}" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;border-radius:20px;">`
-                : `<div class="carousel-image"><i class="fas fa-image"></i></div>`;
+            // 🔥 修复：图片用 background-image 方式，更稳定
+            var bgStyle = '';
+            if (slide.image_url && slide.image_url.startsWith('http')) {
+                bgStyle = 'background-image:url(' + slide.image_url + ');background-size:cover;background-position:center;';
+            } else {
+                bgStyle = 'background:linear-gradient(145deg,#0a0a25,#181845);';
+            }
 
             slidesHTML += `
-                <div class="carousel-slide" style="position:relative;min-height:200px;overflow:hidden;border-radius:20px;">
-                    ${imageHTML}
-                    <div style="position:relative;z-index:1;padding:24px 28px;display:flex;align-items:center;justify-content:space-between;width:100%;min-height:200px;background:linear-gradient(90deg,rgba(6,6,15,0.7) 40%,transparent 100%);">
-                        <div class="carousel-content">
-                            ${slide.badge ? `<div class="carousel-badge">${slide.badge}</div>` : ''}
-                            <div class="carousel-title">${slide.title || 'VISION711'}</div>
-                            <div class="carousel-desc">${slide.description || 'Play Safe, Win Safe'}</div>
-                            ${slide.cta_text ? `<a href="${slide.cta_link || '/'}" class="carousel-cta" style="text-decoration:none;">${slide.cta_text}</a>` : ''}
+                <div class="carousel-slide" style="position:relative;min-height:220px;overflow:hidden;border-radius:20px;${bgStyle}">
+                    <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(90deg,rgba(6,6,15,0.75) 35%,rgba(6,6,15,0.3) 70%,transparent 100%);"></div>
+                    <div style="position:relative;z-index:1;padding:28px 32px;display:flex;align-items:center;justify-content:space-between;width:100%;min-height:220px;">
+                        <div class="carousel-content" style="max-width:70%;">
+                            ${slide.badge ? `<div class="carousel-badge" style="display:inline-block;background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.2);color:#ffd700;font-size:0.65rem;font-weight:700;padding:4px 14px;border-radius:30px;margin-bottom:10px;">${slide.badge}</div>` : ''}
+                            <div class="carousel-title" style="font-size:1.3rem;font-weight:700;color:#fff;margin-bottom:4px;line-height:1.3;">${slide.title || 'VISION711'}</div>
+                            <div class="carousel-desc" style="font-size:0.85rem;color:rgba(255,255,255,0.5);margin-bottom:10px;">${slide.description || 'Play Safe, Win Safe'}</div>
+                            ${slide.cta_text ? `<a href="${slide.cta_link || '/'}" class="carousel-cta" style="display:inline-block;font-size:0.8rem;font-weight:600;color:#00b4ff;cursor:pointer;transition:0.3s;padding:4px 0;border-bottom:2px solid rgba(0,180,255,0.2);text-decoration:none;">${slide.cta_text}</a>` : ''}
                         </div>
+                        ${!slide.image_url || !slide.image_url.startsWith('http') ? `<div class="carousel-image" style="flex-shrink:0;width:60px;height:60px;display:flex;align-items:center;justify-content:center;font-size:2.8rem;background:rgba(0,180,255,0.06);border-radius:16px;border:1px solid rgba(0,180,255,0.08);color:#00d4ff;"><i class="fas fa-image"></i></div>` : ''}
                     </div>
                 </div>
             `;
@@ -874,8 +881,10 @@
                 }
                 if (res.data && res.data.length > 0) {
                     slides = res.data;
+                    console.log('✅ 加载到', slides.length, '张轮播图');
                 } else {
                     slides = [];
+                    console.log('📢 没有轮播图数据');
                 }
                 renderSlides();
                 startAutoPlay();
