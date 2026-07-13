@@ -237,7 +237,7 @@ body {
     border: 1px solid rgba(204, 184, 159, 0.06);
 }
 
-/* ===== 页面容器 ===== */
+/* ===== 🔥 页面容器 - 正常文档流 ===== */
 .page {
     display: none;
 }
@@ -495,6 +495,7 @@ body {
     color: #8a9aaa;
 }
 
+/* ===== 响应式 ===== */
 @media (max-width: 768px) {
     .sidebar {
         transform: translateX(-100%);
