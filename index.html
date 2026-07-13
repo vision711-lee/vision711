@@ -1049,7 +1049,7 @@
 
 <script>
 // ============================================================
-// 加载轮播图数据 (修复版)
+// 加载轮播图数据
 // ============================================================
 (function loadCarousel() {
     var SUPABASE_URL = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co';
@@ -1065,10 +1065,10 @@
 
     var slides = [];
     var currentIndex = 0;
+    var autoPlayInterval = null;
     var progressInterval = null;
     var AUTO_PLAY_DELAY = 4000;
     var progressValue = 0;
-    var isTransitioning = false;
 
     function renderSlides() {
         if (!slides || slides.length === 0) {
@@ -1108,7 +1108,6 @@
 
         document.querySelectorAll('.dot').forEach(function(dot) {
             dot.addEventListener('click', function() {
-                if (isTransitioning) return;
                 var index = parseInt(this.dataset.index);
                 goToSlide(index);
                 resetAutoPlay();
@@ -1117,7 +1116,7 @@
 
         currentIndex = 0;
         updateTrack();
-        startProgress();
+        resetProgress();
     }
 
     function updateTrack() {
@@ -1131,20 +1130,13 @@
     }
 
     function goToSlide(index) {
-        if (isTransitioning) return;
         var total = document.querySelectorAll('.carousel-slide').length;
         if (total === 0) return;
         if (index < 0) index = total - 1;
         if (index >= total) index = 0;
-        if (currentIndex === index) return;
-        
-        isTransitioning = true;
         currentIndex = index;
         updateTrack();
-        
-        setTimeout(function() {
-            isTransitioning = false;
-        }, 500);
+        resetProgress();
     }
 
     function nextSlide() {
@@ -1159,75 +1151,71 @@
         goToSlide(currentIndex - 1);
     }
 
-    // ✅ 核心修复：进度条逻辑
     function startProgress() {
+    if (progressInterval) {
+        clearInterval(progressInterval);
+        progressInterval = null;
+    }
+    progressValue = 0;
+    progressBar.style.width = '0%';
+    
+    var step = 100 / (AUTO_PLAY_DELAY / 30);
+    
+    progressInterval = setInterval(function() {
+        progressValue += step;
+        if (progressValue >= 100) {
+            progressValue = 100;
+            progressBar.style.width = '100%';
+            clearInterval(progressInterval);
+            progressInterval = null;
+            // ✅ 先跳转，再重置进度
+            nextSlide();
+            // ✅ 延迟一点点重置进度，避免冲突
+            setTimeout(function() {
+                resetProgress();
+            }, 50);
+        } else {
+            progressBar.style.width = progressValue + '%';
+        }
+    }, 30);
+}
+
+function resetProgress() {
+    if (progressInterval) {
+        clearInterval(progressInterval);
+        progressInterval = null;
+    }
+    progressValue = 0;
+    progressBar.style.width = '0%';
+    var total = document.querySelectorAll('.carousel-slide').length;
+    if (total > 1) {
+        startProgress();
+    }
+}
+
+    function stopProgress() {
         if (progressInterval) {
             clearInterval(progressInterval);
             progressInterval = null;
         }
-        var total = document.querySelectorAll('.carousel-slide').length;
-        if (total <= 1) return;
-        
-        progressValue = 0;
-        progressBar.style.width = '0%';
-        
-        var step = 100 / (AUTO_PLAY_DELAY / 30);
-        
-        progressInterval = setInterval(function() {
-            progressValue += step;
-            if (progressValue >= 100) {
-                progressValue = 100;
-                progressBar.style.width = '100%';
-                clearInterval(progressInterval);
-                progressInterval = null;
-                
-                // ✅ 跳转到下一张（不在这里重置进度，让 goToSlide 完成后重置）
-                if (!isTransitioning) {
-                    nextSlide();
-                }
-            } else {
-                progressBar.style.width = progressValue + '%';
-            }
-        }, 30);
     }
 
-    // ✅ 重置进度（先停止，再重启）
-    function resetProgress() {
-        if (progressInterval) {
-            clearInterval(progressInterval);
-            progressInterval = null;
-        }
-        progressValue = 0;
-        progressBar.style.width = '0%';
+    function startAutoPlay() {
+        if (autoPlayInterval) clearInterval(autoPlayInterval);
         var total = document.querySelectorAll('.carousel-slide').length;
-        if (total > 1 && !isTransitioning) {
-            // 延迟一点点启动，确保过渡动画已完成
-            setTimeout(function() {
-                if (!isTransitioning) {
-                    startProgress();
-                }
-            }, 100);
+        if (total > 1) {
+            resetProgress();
         }
     }
 
     function resetAutoPlay() {
-        // 停止当前进度
-        if (progressInterval) {
-            clearInterval(progressInterval);
-            progressInterval = null;
-        }
-        progressValue = 0;
-        progressBar.style.width = '0%';
-        // 重新开始
-        setTimeout(function() {
-            startProgress();
-        }, 100);
+        stopProgress();
+        resetProgress();
     }
 
     if (prevBtn) {
         prevBtn.addEventListener('click', function(e) {
             e.stopPropagation();
-            if (isTransitioning) return;
             prevSlide();
             resetAutoPlay();
         });
@@ -1236,7 +1224,6 @@
     if (nextBtn) {
         nextBtn.addEventListener('click', function(e) {
             e.stopPropagation();
-            if (isTransitioning) return;
             nextSlide();
             resetAutoPlay();
         });
@@ -1252,7 +1239,6 @@
         }, { passive: true });
 
         container.addEventListener('touchend', function(e) {
-            if (isTransitioning) return;
             touchEndX = e.changedTouches[0].screenX;
             var diff = touchStartX - touchEndX;
             if (Math.abs(diff) > 30) {
@@ -1266,15 +1252,16 @@
         }, { passive: true });
 
         container.addEventListener('mouseenter', function() {
-            if (progressInterval) {
-                clearInterval(progressInterval);
-                progressInterval = null;
+            stopProgress();
+            if (autoPlayInterval) {
+                clearInterval(autoPlayInterval);
+                autoPlayInterval = null;
             }
         });
 
         container.addEventListener('mouseleave', function() {
-            if (!isTransitioning) {
-                startProgress();
+            if (document.querySelectorAll('.carousel-slide').length > 1) {
+                resetProgress();
             }
         });
     }
@@ -1305,6 +1292,7 @@
                     console.log('📢 没有轮播图数据');
                 }
                 renderSlides();
+                startAutoPlay();
             })
             .catch(function(err) {
                 console.error('异常:', err);
@@ -1318,18 +1306,20 @@
             try {
                 slides = JSON.parse(saved);
                 renderSlides();
+                startAutoPlay();
                 return;
             } catch (e) {}
         }
         slides = [];
         renderSlides();
+        startAutoPlay();
     }
 
     loadFromSupabase();
 
     window.carousel = { goToSlide, nextSlide, prevSlide, refresh: loadFromSupabase };
 
-    console.log('✅ Carousel loaded (修复版)');
+    console.log('✅ Carousel loaded');
 })();
 
 // ============================================================
