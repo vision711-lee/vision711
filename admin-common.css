@@ -586,3 +586,61 @@ body {
     background: rgba(255, 255, 255, 0.06) !important;
     border-color: rgba(204, 184, 159, 0.2) !important;
 }
+
+/* ============================================================
+   Tab Bar - 发光边框 · 科技感 (样式4)
+   ============================================================ */
+
+#tabBarContainer .tab-item {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 0 14px !important;
+    height: 36px !important;
+    border-radius: 6px !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    color: rgba(255,255,255,0.35) !important;
+    cursor: pointer !important;
+    transition: all 0.25s ease !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    font-family: 'Inter', sans-serif !important;
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    position: relative !important;
+    user-select: none !important;
+}
+
+#tabBarContainer .tab-item i {
+    font-size: 13px !important;
+    color: rgba(255,255,255,0.15) !important;
+    transition: 0.25s !important;
+}
+
+#tabBarContainer .tab-item:hover {
+    color: rgba(255,255,255,0.6) !important;
+    background: rgba(255,255,255,0.03) !important;
+}
+#tabBarContainer .tab-item:hover i {
+    color: rgba(255,255,255,0.3) !important;
+}
+
+#tabBarContainer .tab-item.active {
+    color: #4a7cff !important;
+    background: rgba(74, 124, 255, 0.06) !important;
+    border: 1px solid rgba(74, 124, 255, 0.2) !important;
+    border-radius: 6px !important;
+    box-shadow: 0 0 20px rgba(74, 124, 255, 0.06) !important;
+}
+#tabBarContainer .tab-item.active i {
+    color: #4a7cff !important;
+}
+
+/* 移除之前可能存在的下划线或光条 */
+#tabBarContainer .tab-item.active::after {
+    display: none !important;
+}
+#tabBarContainer .tab-item.active::before {
+    display: none !important;
+}
