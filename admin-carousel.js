@@ -28,9 +28,10 @@
     // 渲染轮播图管理页面
     // ============================================================
     function renderCarouselPage() {
-        var container = document.getElementById('page_carousel');
+        // 🔥 改为渲染到 panel_carousel
+        var container = document.getElementById('panel_carousel');
         if (!container) {
-            console.warn('⚠️ #page_carousel not found');
+            console.warn('⚠️ #panel_carousel not found');
             return;
         }
 
@@ -137,22 +138,22 @@
         }
 
         var html = `
-            <div style="margin-bottom: 20px;">
+            <div style="margin-bottom: 16px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
                     <div>
-                        <div style="font-size:22px; font-weight:700; color:#fff;">
-                            <i class="fas fa-images" style="color:#4a7cff;"></i> Carousel Management
+                        <div style="font-size:18px; font-weight:600; color:#fff;">
+                            <i class="fas fa-images" style="color:#4a7cff;"></i> Carousel Slides
                         </div>
-                        <div style="font-size:13px; color:#5a6388;">Manage homepage slideshow / carousel items</div>
+                        <div style="font-size:12px; color:#5a6388;">Manage homepage carousel / slideshow items</div>
                     </div>
                     <button onclick="window._adminCarousel.openAddModal()" style="
                         background: linear-gradient(135deg, #4a7cff, #2f3e7a);
                         border: none;
-                        padding: 12px 28px;
+                        padding: 10px 24px;
                         border-radius: 40px;
                         color: #fff;
                         font-weight: 600;
-                        font-size: 14px;
+                        font-size: 13px;
                         cursor: pointer;
                         transition: 0.3s;
                         display: flex;
@@ -165,20 +166,19 @@
             </div>
 
             <div style="
-                background: rgba(10, 14, 26, 0.6);
-                backdrop-filter: blur(12px);
+                background: rgba(10, 14, 26, 0.4);
                 border-radius: 16px;
                 border: 1px solid rgba(255,255,255,0.04);
-                padding: 20px;
+                padding: 16px;
             ">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;font-size:12px;color:#5a6388;font-weight:600;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:11px;color:#5a6388;font-weight:600;">
                     <span><i class="fas fa-list"></i> ${items.length} slide(s)</span>
                     <span style="color:#2a3560;">${isSupabaseAvailable ? '✅ Supabase' : '💾 Local'}</span>
                 </div>
-                <div style="display:flex;flex-direction:column;gap:10px;">
+                <div style="display:flex;flex-direction:column;gap:8px;">
                     ${itemsHTML}
                 </div>
-                <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.04);font-size:0.65rem;color:#2a3560;text-align:center;">
+                <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.04);font-size:0.6rem;color:#2a3560;text-align:center;">
                     <i class="fas fa-info-circle"></i> Recommended image size: 1600 x 900px (16:9 ratio)
                 </div>
             </div>
@@ -445,7 +445,8 @@
     // 显示保存结果
     // ============================================================
     function showSaveResult(success, message) {
-        var container = document.getElementById('page_carousel');
+        // 🔥 改为 panel_carousel
+        var container = document.getElementById('panel_carousel');
         if (!container) return;
 
         var existing = container.querySelector('.save-result');
@@ -455,9 +456,9 @@
         div.className = 'save-result';
         div.style.cssText = `
             margin-top: 12px;
-            padding: 12px 20px;
+            padding: 10px 18px;
             border-radius: 12px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             ${success ? 'background: rgba(76, 217, 160, 0.1); border: 1px solid rgba(76, 217, 160, 0.2); color: #4cd9a0;' : 'background: rgba(255, 107, 107, 0.1); border: 1px solid rgba(255, 107, 107, 0.2); color: #ff6b6b;'}
         `;
