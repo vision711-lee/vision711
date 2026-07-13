@@ -134,7 +134,6 @@
                 min-height: 100vh;
             }
 
-            /* Sidebar 固定 */
             .sidebar {
                 width: 220px !important;
                 flex-shrink: 0 !important;
@@ -152,7 +151,6 @@
                 z-index: 10 !important;
             }
 
-            /* 主内容 */
             .main-content {
                 display: block !important;
                 padding: 24px 40px 30px 20px !important;
@@ -176,7 +174,6 @@
                 margin-right: auto;
             }
 
-            /* 电脑版横幅 - 在 Lucky Draw 上方 */
             .banner-fixed-desktop {
                 max-width: 900px;
                 margin: 0 auto 16px;
@@ -203,7 +200,6 @@
                 border-radius: 16px;
             }
 
-            /* 电脑版隐藏手机专用元素 */
             .mobile-banner-fixed {
                 display: none !important;
             }
@@ -238,7 +234,6 @@
                 background-repeat: no-repeat;
                 background-color: #06060f;
             }
-            /* 电脑版横幅手机隐藏 */
             .banner-fixed-desktop {
                 display: none !important;
             }
@@ -316,7 +311,7 @@
         }
 
         /* ============================================================
-           轮播图样式 - 电脑版 21:9 (更矮) / 手机版 16:9
+           轮播图样式 - 电脑版 21:9 / 手机版 16:9
            ============================================================ */
         .carousel-container {
             position: relative;
@@ -341,17 +336,15 @@
             background: #0a0a20;
         }
 
-        /* 电脑版 - 21:9 (更矮，适合横幅) */
         @media (min-width: 768px) {
             .carousel-slide {
-                padding-bottom: 42.85% !important; /* 9/21 = 42.85% */
+                padding-bottom: 42.85% !important;
             }
         }
 
-        /* 手机版 - 16:9 */
         @media (max-width: 767px) {
             .carousel-slide {
-                padding-bottom: 56.25% !important; /* 9/16 = 56.25% */
+                padding-bottom: 56.25% !important;
             }
         }
 
@@ -365,7 +358,6 @@
             border-radius: 20px;
         }
 
-        /* ===== 进度条 ===== */
         .carousel-progress {
             position: absolute;
             bottom: 0;
@@ -387,7 +379,6 @@
             box-shadow: 0 0 20px rgba(0, 180, 255, 0.3);
         }
 
-        /* 圆点浮在图片上层 */
         .carousel-dots {
             position: absolute;
             bottom: 16px;
@@ -419,7 +410,6 @@
             box-shadow: 0 0 16px rgba(0, 180, 255, 0.4);
         }
 
-        /* 左右箭头 */
         .carousel-btn {
             position: absolute;
             top: 50%;
@@ -460,16 +450,13 @@
                 padding: 4px 10px;
                 gap: 6px;
             }
-            
             .carousel-dots .dot {
                 width: 6px;
                 height: 6px;
             }
-            
             .carousel-dots .dot.active {
                 width: 18px;
             }
-
             .carousel-btn {
                 width: 28px;
                 height: 28px;
@@ -481,7 +468,6 @@
             .carousel-btn-right {
                 right: 6px;
             }
-
             .carousel-progress {
                 height: 2px;
             }
@@ -628,6 +614,54 @@
                 padding: 1px 10px;
             }
         }
+
+        /* ============================================================
+           Live 徽章 - 脉冲光晕 (样式2)
+           ============================================================ */
+        .live-badge-pulse {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 3px 14px 3px 10px;
+            border-radius: 30px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+            color: #fff;
+            background: #ff5a5a;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 12px rgba(255, 90, 90, 0.2);
+            animation: pulse-glow 1.5s ease-in-out infinite;
+        }
+        .live-badge-pulse .dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #fff;
+            flex-shrink: 0;
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 2px 12px rgba(255, 90, 90, 0.2); }
+            50% { box-shadow: 0 2px 24px rgba(255, 90, 90, 0.5); }
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* 保留旧样式以防回退 */
+        .live-badge {
+            background: linear-gradient(135deg, #00a0e8, #0066b0);
+            color: #fff;
+            padding: 3px 14px;
+            border-radius: 30px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            box-shadow: 0 0 25px rgba(0, 180, 255, 0.2);
+        }
     </style>
 </head>
 <body>
@@ -728,15 +762,12 @@
             <div class="carousel-dots" id="carouselDots">
                 <!-- 由 JS 动态生成 -->
             </div>
-            <!-- 进度条 -->
             <div class="carousel-progress" id="carouselProgress">
                 <div class="carousel-progress-bar" id="carouselProgressBar"></div>
             </div>
         </div>
 
-        <!-- ============================================================
-        霓虹蓝光 · 滚动公告栏 (轮播图和余额卡片之间)
-        ============================================================ -->
+        <!-- ===== 霓虹蓝光 · 滚动公告栏 ===== -->
         <div class="announcement-wrapper" id="announcementWrapper">
             <div class="horn-icon"><i class="fas fa-bullhorn"></i></div>
             <div class="scroll-container">
@@ -769,7 +800,7 @@
                 <span style="color:rgba(255,255,255,0.35);font-size:0.75rem;font-weight:600;">
                     <i class="fas fa-sync-alt" style="color:#00b4ff;"></i> <span data-i18n="home.liveTransaction">LIVE TRANSACTION</span>
                 </span>
-                <span class="live-badge"><i class="fas fa-circle" style="font-size:6px;"></i> <span data-i18n="home.live">LIVE</span></span>
+                <span class="live-badge-pulse"><span class="dot"></span> <span data-i18n="home.live">LIVE</span></span>
             </div>
             <div class="transaction-item"><span class="user"><i class="fas fa-user-circle"></i> 60****484</span><span class="amount deposit">+ RM35.00</span><span class="game-tag">MEGA888</span></div>
             <div class="transaction-item"><span class="user"><i class="fas fa-user-circle"></i> 60****713</span><span class="amount withdraw">- RM130.00</span><span class="game-tag">PRAGMATIC</span></div>
@@ -781,7 +812,7 @@
             </div>
         </div>
 
-        <!-- ===== 电脑版横幅 - 在 Lucky Draw 上方 ===== -->
+        <!-- ===== 电脑版横幅 ===== -->
         <div class="banner-fixed-desktop">
             <a href="partnership.html" style="display:block; text-decoration:none; cursor:pointer;">
                 <img 
@@ -1117,7 +1148,6 @@
         goToSlide(currentIndex - 1);
     }
 
-    // ===== 进度条控制 =====
     function startProgress() {
         if (progressInterval) clearInterval(progressInterval);
         progressValue = 0;
@@ -1300,7 +1330,6 @@
 
     var announcements = [];
 
-    // ===== 隐藏整个公告栏 =====
     function hideAnnouncement() {
         if (wrapper) {
             wrapper.style.display = 'none';
@@ -1308,27 +1337,22 @@
         console.log('📢 没有活跃公告，已隐藏公告栏');
     }
 
-    // ===== 显示公告栏 =====
     function showAnnouncement() {
         if (wrapper) {
             wrapper.style.display = 'flex';
         }
     }
 
-    // ===== 渲染公告 =====
     function renderAnnouncements() {
-        // 🔥 只取 status === 'active' 的公告
         var data = announcements.filter(function(item) {
             return item.status === 'active' || !item.status;
         });
 
-        // 🔥 如果没有活跃公告 → 隐藏整个公告栏
         if (data.length === 0) {
             hideAnnouncement();
             return;
         }
 
-        // 有数据 → 显示公告栏
         showAnnouncement();
 
         var html = '';
@@ -1350,11 +1374,9 @@
         console.log('📢 显示', data.length, '条活跃公告');
     }
 
-    // ===== 加载公告 =====
     function loadAnnouncements() {
         var loaded = false;
 
-        // 1️⃣ 从 localStorage 读取
         var saved = localStorage.getItem('announcements');
         if (saved) {
             try {
@@ -1378,12 +1400,10 @@
             }
         }
 
-        // 如果 localStorage 没数据，先隐藏
         if (!loaded) {
             hideAnnouncement();
         }
 
-        // 2️⃣ 从 Supabase 加载
         if (typeof supabase === 'undefined') {
             return;
         }
@@ -1416,7 +1436,6 @@
                         renderAnnouncements();
                         console.log('✅ 从 Supabase 加载了', announcements.length, '条公告');
                     } else {
-                        // Supabase 没有 active 数据 → 隐藏
                         hideAnnouncement();
                     }
                 })
