@@ -1,5 +1,5 @@
 /* ============================================================
-   admin-common.css - VISION711 后台统一样式
+   admin-common.css - 修复内容跑到底部问题
    ============================================================ */
 
 * {
@@ -181,11 +181,12 @@ body {
     color: #3a4a5a;
 }
 
-/* ===== 主内容 - 修复：让内容紧贴顶部 ===== */
+/* ===== 主内容 ===== */
 .main-content {
     margin-left: 240px;
     padding: 0 32px 40px 32px;
     min-height: 100vh;
+    position: relative;
 }
 
 /* ===== Header ===== */
@@ -201,6 +202,8 @@ body {
     border: 1px solid rgba(180, 180, 200, 0.05);
     margin: 20px 0 20px 0;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    position: relative;
+    z-index: 10;
 }
 .admin-header .left {
     display: flex;
@@ -259,10 +262,16 @@ body {
     border: 1px solid rgba(204, 184, 159, 0.06);
 }
 
-/* ===== 页面容器 ===== */
+/* ===== 🔥 页面容器 - 用绝对定位叠在一起 ===== */
 .page {
     display: none;
+    position: absolute;
+    top: 78px;  /* header 高度 + margin */
+    left: 0;
+    right: 0;
+    padding-right: 32px;
     animation: fadeIn 0.3s ease;
+    min-height: 500px;
 }
 .page.active {
     display: block;
@@ -583,7 +592,7 @@ body {
     .main-content {
         margin-left: 0;
         padding: 0 12px 80px 12px;
-        padding-top: 72px;
+        padding-top: 0;
     }
     .admin-header {
         margin-top: 0;
@@ -617,6 +626,12 @@ body {
         font-size: 12px;
         white-space: nowrap;
     }
+    /* 手机版页面叠放调整 */
+    .page {
+        top: 120px;
+        padding-right: 12px;
+        min-height: 400px;
+    }
 }
 @media (max-width: 480px) {
     .admin-header .right .user-badge .role {
@@ -628,5 +643,10 @@ body {
     }
     .content-tabs .tab-btn i {
         font-size: 12px;
+    }
+    .page {
+        top: 130px;
+        padding-right: 12px;
+        min-height: 350px;
     }
 }
