@@ -767,17 +767,16 @@
             </div>
         </div>
 
-        <!-- ===== 霓虹蓝光 · 滚动公告栏 ===== -->
-        <div class="announcement-wrapper" id="announcementWrapper">
-            <div class="horn-icon"><i class="fas fa-bullhorn"></i></div>
-            <div class="scroll-container">
-                <div class="scroll-track" id="announcementTrack">
-                    <!-- 由 JS 动态渲染 -->
-                </div>
-            </div>
-            <span class="badge-new" id="announcementBadge">HOT</span>
-            <a href="#" class="arrow-link" id="announcementMore"><i class="fas fa-chevron-right"></i></a>
+        <!-- ===== 极光呼吸 · 通告条 ===== -->
+<div id="announcementContainer" class="announcement-style-1 hidden">
+    <div class="horn-icon"><i class="fas fa-bullhorn"></i></div>
+    <div class="scroll-container">
+        <div class="scroll-track" id="announcementTrack">
+            <!-- 由 JavaScript 动态渲染 -->
         </div>
+    </div>
+    <span class="badge-new" id="announcementBadge">HOT</span>
+</div>
 
         <!-- ===== 欢迎卡片 ===== -->
         <div class="card-welcome">
@@ -1313,6 +1312,86 @@
     console.log('✅ Carousel loaded');
 })();
 
+// ============================================================
+// 极光呼吸 · 通告条 (加载后台公告)
+// ============================================================
+(function initAnnouncement() {
+    var container = document.getElementById('announcementContainer');
+    var track = document.getElementById('announcementTrack');
+    var badge = document.getElementById('announcementBadge');
+
+    if (!container || !track) return;
+
+    var SUPABASE_URL = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co';
+    var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImprYnBiamhyZ2JuemV4dmp2eGd0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4Mzc3MDcyMSwiZXhwIjoyMDk5MzQ2NzIxfQ.cZumC1R8_pGEfQv-BBfqJXAExCYOC7mdDj4OmkfdjRw';
+
+    function renderAnnouncements(items) {
+        var activeItems = items.filter(function(item) {
+            return item.status === 'active' || !item.status;
+        });
+
+        if (!activeItems || activeItems.length === 0) {
+            container.classList.add('hidden');
+            console.log('📢 没有活跃公告，已隐藏通告条');
+            return;
+        }
+
+        container.classList.remove('hidden');
+
+        var html = '';
+        for (var repeat = 0; repeat < 2; repeat++) {
+            activeItems.forEach(function(item) {
+                html += '<span class="text-item">' + (item.text || '') + ' <span class="time-tag">· ' + (item.time || '今日') + '</span></span>';
+            });
+        }
+        track.innerHTML = html;
+
+        if (badge && activeItems.length > 0) {
+            badge.textContent = activeItems[0].badge || 'HOT';
+        }
+
+        console.log('✅ 通告条已渲染，共 ' + activeItems.length + ' 条活跃公告');
+    }
+
+    function loadAnnouncements() {
+        // 1. 先从 localStorage 快速显示
+        var saved = localStorage.getItem('announcements');
+        if (saved) {
+            try {
+                var parsed = JSON.parse(saved);
+                if (parsed && parsed.length > 0) {
+                    renderAnnouncements(parsed);
+                }
+            } catch (e) {}
+        }
+
+        // 2. 再从 Supabase 拉取最新数据
+        if (typeof supabase === 'undefined') return;
+
+        try {
+            var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            sb.from('announcements')
+                .select('*')
+                .eq('status', 'active')
+                .order('created_at', { ascending: false })
+                .then(function(res) {
+                    if (res.error || !res.data || res.data.length === 0) return;
+                    renderAnnouncements(res.data);
+                    try {
+                        localStorage.setItem('announcements', JSON.stringify(res.data));
+                    } catch (e) {}
+                })
+                .catch(function(err) {
+                    console.warn('⚠️ Supabase 通告加载异常:', err);
+                });
+        } catch (e) {
+            console.warn('⚠️ 通告加载错误:', e);
+        }
+    }
+
+    loadAnnouncements();
+    console.log('✅ 极光呼吸通告条已加载 (无数据则隐藏)');
+})();
 
 // ============================================================
 // 霓虹蓝光 · 滚动公告栏 - 只显示 active 状态，无数据则留空
