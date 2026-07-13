@@ -484,7 +484,7 @@
                 canvas.style.width = '100%';
                 canvas.style.height = '100%';
                 
-                const ctx = canvas.getContext('2d');
+                const ctx = canvas.getContext('2d', { willReadFrequently: true });
                 ctx.drawImage(img, 0, 0);
                 logoData = ctx.getImageData(0, 0, w, h);
                 ctx.clearRect(0, 0, w, h);
@@ -494,7 +494,7 @@
             function drawFrame(timestamp) {
                 if (!logoData) return;
                 
-                const ctx = canvas.getContext('2d');
+                const ctx = canvas.getContext('2d', { willReadFrequently: true });
                 const elapsed = (timestamp - startTime) / 1000;
                 const waitTime = 0.8;
                 const scanDuration = 1.0;
