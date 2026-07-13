@@ -34,103 +34,109 @@
             return;
         }
 
-        var items = currentItems.length > 0 ? currentItems : defaultSlides;
+        var items = currentItems;
 
         var itemsHTML = '';
-        items.forEach(function(item, index) {
-            var imageDisplay = item.image_url && item.image_url.startsWith('http')
-                ? `<img src="${item.image_url}" style="width:120px;height:68px;border-radius:8px;object-fit:cover;border:1px solid rgba(255,255,255,0.06);">`
-                : `<div style="width:120px;height:68px;border-radius:8px;background:rgba(0,180,255,0.08);display:flex;align-items:center;justify-content:center;color:#4a5a7a;font-size:0.7rem;">No Image</div>`;
-
-            var statusBadge = item.active !== false
-                ? `<span style="background:rgba(76,217,160,0.1);color:#4cd9a0;padding:2px 12px;border-radius:30px;font-size:0.6rem;font-weight:600;border:1px solid rgba(76,217,160,0.1);">Active</span>`
-                : `<span style="background:rgba(255,107,107,0.1);color:#ff6b6b;padding:2px 12px;border-radius:30px;font-size:0.6rem;font-weight:600;border:1px solid rgba(255,107,107,0.1);">Inactive</span>`;
-
-            itemsHTML += `
-                <div style="
-                    display:flex;
-                    align-items:center;
-                    gap:16px;
-                    padding:12px 16px;
-                    background:rgba(255,255,255,0.02);
-                    border-radius:12px;
-                    border:1px solid rgba(255,255,255,0.04);
-                    transition:0.3s;
-                " onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='rgba(255,255,255,0.02)'">
-                    <!-- 排序序号 -->
-                    <div style="width:28px;text-align:center;color:#4a5a7a;font-size:0.7rem;font-weight:600;flex-shrink:0;">
-                        #${item.order || index + 1}
-                    </div>
-
-                    <!-- 图片 -->
-                    ${imageDisplay}
-
-                    <!-- 信息 -->
-                    <div style="flex:1;min-width:0;">
-                        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                            <span style="font-weight:600;color:#e5e9f0;font-size:0.9rem;">${item.title || 'Untitled'}</span>
-                            ${statusBadge}
-                            ${item.badge ? `<span style="background:rgba(255,215,0,0.08);color:#ffd700;padding:2px 10px;border-radius:30px;font-size:0.55rem;font-weight:600;border:1px solid rgba(255,215,0,0.08);">${item.badge}</span>` : ''}
-                        </div>
-                        <div style="color:#5a6388;font-size:0.75rem;margin-top:2px;">
-                            ${item.description || ''}
-                            <span style="color:#2a3560;margin-left:12px;">→ ${item.cta_text || 'View More'}</span>
-                        </div>
-                    </div>
-
-                    <!-- 操作按钮 -->
-                    <div style="display:flex;gap:6px;flex-shrink:0;">
-                        <button onclick="window._adminCarousel.openEditModal('${item.id}')" style="
-                            background:rgba(74,124,255,0.1);
-                            border:1px solid rgba(74,124,255,0.15);
-                            color:#4a7cff;
-                            padding:5px 12px;
-                            border-radius:6px;
-                            cursor:pointer;
-                            font-size:0.65rem;
-                            font-weight:600;
-                            transition:0.3s;
-                            display:flex;
-                            align-items:center;
-                            gap:4px;
-                        " onmouseover="this.style.background='rgba(74,124,255,0.2)'" onmouseout="this.style.background='rgba(74,124,255,0.1)'">
-                            <i class="fas fa-edit"></i> Edit
-                        </button>
-                        <button onclick="window._adminCarousel.deleteItem('${item.id}')" style="
-                            background:rgba(255,107,107,0.08);
-                            border:1px solid rgba(255,107,107,0.1);
-                            color:#ff6b6b;
-                            padding:5px 12px;
-                            border-radius:6px;
-                            cursor:pointer;
-                            font-size:0.65rem;
-                            font-weight:600;
-                            transition:0.3s;
-                            display:flex;
-                            align-items:center;
-                            gap:4px;
-                        " onmouseover="this.style.background='rgba(255,107,107,0.2)'" onmouseout="this.style.background='rgba(255,107,107,0.08)'">
-                            <i class="fas fa-trash"></i> Delete
-                        </button>
-                        <button onclick="window._adminCarousel.toggleActive('${item.id}')" style="
-                            background:rgba(255,255,255,0.03);
-                            border:1px solid rgba(255,255,255,0.05);
-                            color:#5a6388;
-                            padding:5px 10px;
-                            border-radius:6px;
-                            cursor:pointer;
-                            font-size:0.65rem;
-                            transition:0.3s;
-                            display:flex;
-                            align-items:center;
-                            gap:4px;
-                        " onmouseover="this.style.color='#8a9abb'" onmouseout="this.style.color='#5a6388'">
-                            <i class="fas fa-${item.active !== false ? 'eye' : 'eye-slash'}"></i>
-                        </button>
-                    </div>
+        if (items.length === 0) {
+            itemsHTML = `
+                <div style="text-align:center;padding:60px 20px;color:#4a5a7a;">
+                    <i class="fas fa-images" style="font-size:3rem;color:#2a3560;display:block;margin-bottom:16px;"></i>
+                    <div style="font-size:1rem;color:#5a6388;margin-bottom:8px;">No slides added yet</div>
+                    <div style="font-size:0.85rem;color:#3a4a6a;">Click "Add Slide" to create your first carousel item</div>
                 </div>
             `;
-        });
+        } else {
+            items.forEach(function(item, index) {
+                var imageDisplay = item.image_url && item.image_url.startsWith('http')
+                    ? `<img src="${item.image_url}" style="width:120px;height:68px;border-radius:8px;object-fit:cover;border:1px solid rgba(255,255,255,0.06);">`
+                    : `<div style="width:120px;height:68px;border-radius:8px;background:rgba(0,180,255,0.08);display:flex;align-items:center;justify-content:center;color:#4a5a7a;font-size:0.7rem;">No Image</div>`;
+
+                var statusBadge = item.active !== false
+                    ? `<span style="background:rgba(76,217,160,0.1);color:#4cd9a0;padding:2px 12px;border-radius:30px;font-size:0.6rem;font-weight:600;border:1px solid rgba(76,217,160,0.1);">Active</span>`
+                    : `<span style="background:rgba(255,107,107,0.1);color:#ff6b6b;padding:2px 12px;border-radius:30px;font-size:0.6rem;font-weight:600;border:1px solid rgba(255,107,107,0.1);">Inactive</span>`;
+
+                itemsHTML += `
+                    <div style="
+                        display:flex;
+                        align-items:center;
+                        gap:16px;
+                        padding:12px 16px;
+                        background:rgba(255,255,255,0.02);
+                        border-radius:12px;
+                        border:1px solid rgba(255,255,255,0.04);
+                        transition:0.3s;
+                    " onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='rgba(255,255,255,0.02)'">
+                        <div style="width:28px;text-align:center;color:#4a5a7a;font-size:0.7rem;font-weight:600;flex-shrink:0;">
+                            #${item.order || index + 1}
+                        </div>
+
+                        ${imageDisplay}
+
+                        <div style="flex:1;min-width:0;">
+                            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                                <span style="font-weight:600;color:#e5e9f0;font-size:0.9rem;">${item.title || 'Untitled'}</span>
+                                ${statusBadge}
+                                ${item.badge ? `<span style="background:rgba(255,215,0,0.08);color:#ffd700;padding:2px 10px;border-radius:30px;font-size:0.55rem;font-weight:600;border:1px solid rgba(255,215,0,0.08);">${item.badge}</span>` : ''}
+                            </div>
+                            <div style="color:#5a6388;font-size:0.75rem;margin-top:2px;">
+                                ${item.description || ''}
+                                <span style="color:#2a3560;margin-left:12px;">→ ${item.cta_text || 'View More'}</span>
+                            </div>
+                        </div>
+
+                        <div style="display:flex;gap:6px;flex-shrink:0;">
+                            <button onclick="window._adminCarousel.openEditModal('${item.id}')" style="
+                                background:rgba(74,124,255,0.1);
+                                border:1px solid rgba(74,124,255,0.15);
+                                color:#4a7cff;
+                                padding:5px 12px;
+                                border-radius:6px;
+                                cursor:pointer;
+                                font-size:0.65rem;
+                                font-weight:600;
+                                transition:0.3s;
+                                display:flex;
+                                align-items:center;
+                                gap:4px;
+                            " onmouseover="this.style.background='rgba(74,124,255,0.2)'" onmouseout="this.style.background='rgba(74,124,255,0.1)'">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button onclick="window._adminCarousel.deleteItem('${item.id}')" style="
+                                background:rgba(255,107,107,0.08);
+                                border:1px solid rgba(255,107,107,0.1);
+                                color:#ff6b6b;
+                                padding:5px 12px;
+                                border-radius:6px;
+                                cursor:pointer;
+                                font-size:0.65rem;
+                                font-weight:600;
+                                transition:0.3s;
+                                display:flex;
+                                align-items:center;
+                                gap:4px;
+                            " onmouseover="this.style.background='rgba(255,107,107,0.2)'" onmouseout="this.style.background='rgba(255,107,107,0.08)'">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                            <button onclick="window._adminCarousel.toggleActive('${item.id}')" style="
+                                background:rgba(255,255,255,0.03);
+                                border:1px solid rgba(255,255,255,0.05);
+                                color:#5a6388;
+                                padding:5px 10px;
+                                border-radius:6px;
+                                cursor:pointer;
+                                font-size:0.65rem;
+                                transition:0.3s;
+                                display:flex;
+                                align-items:center;
+                                gap:4px;
+                            " onmouseover="this.style.color='#8a9abb'" onmouseout="this.style.color='#5a6388'">
+                                <i class="fas fa-${item.active !== false ? 'eye' : 'eye-slash'}"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
 
         var html = `
             <div style="margin-bottom: 20px;">
@@ -187,53 +193,51 @@
     // 加载数据
     // ============================================================
     function loadData() {
-    console.log('📥 Loading carousel items...');
+        console.log('📥 Loading carousel items...');
 
-    if (!isSupabaseAvailable) {
-        loadFromLocalStorage();
-        return;
-    }
+        if (!isSupabaseAvailable) {
+            loadFromLocalStorage();
+            return;
+        }
 
-    try {
-        var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        try {
+            var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        sb.from('carousel_items')
-            .select('*')
-            .order('order', { ascending: true })
-            .then(function(res) {
-                if (res.error) {
-                    console.error('加载失败:', res.error);
+            sb.from('carousel_items')
+                .select('*')
+                .order('order', { ascending: true })
+                .then(function(res) {
+                    if (res.error) {
+                        console.error('加载失败:', res.error);
+                        loadFromLocalStorage();
+                        return;
+                    }
+                    currentItems = res.data || [];
+                    console.log('✅ 加载成功:', currentItems.length, 'items');
+                    renderCarouselPage();
+                })
+                .catch(function(err) {
+                    console.error('异常:', err);
                     loadFromLocalStorage();
-                    return;
-                }
-                // 🔥 直接使用数据库数据，没有数据就设为空数组
-                currentItems = res.data || [];
-                console.log('✅ 加载成功:', currentItems.length, 'items');
-                renderCarouselPage();
-            })
-            .catch(function(err) {
-                console.error('异常:', err);
-                loadFromLocalStorage();
-            });
-    } catch (e) {
-        console.error('错误:', e);
-        loadFromLocalStorage();
+                });
+        } catch (e) {
+            console.error('错误:', e);
+            loadFromLocalStorage();
+        }
     }
-}
 
     function loadFromLocalStorage() {
-    var saved = localStorage.getItem('carousel_items');
-    if (saved) {
-        try {
-            currentItems = JSON.parse(saved);
-            renderCarouselPage();
-            return;
-        } catch (e) {}
+        var saved = localStorage.getItem('carousel_items');
+        if (saved) {
+            try {
+                currentItems = JSON.parse(saved);
+                renderCarouselPage();
+                return;
+            } catch (e) {}
+        }
+        currentItems = [];
+        renderCarouselPage();
     }
-    // 🔥 没有数据就设为空数组
-    currentItems = [];
-    renderCarouselPage();
-}
 
     // ============================================================
     // 保存数据到 Supabase
@@ -545,7 +549,7 @@
                 <label style="display:block;font-size:12px;color:#5a6388;margin-bottom:4px;font-weight:600;">
                     <i class="fas fa-tag"></i> Badge
                 </label>
-                <input type="text" id="formBadge" placeholder="e.g. 🔥 热门" value="${isEdit ? (item.badge || '') : '🔥 热门'}" style="
+                <input type="text" id="formBadge" placeholder="e.g. 🔥 热门" value="${isEdit ? (item.badge || '') : ''}" style="
                     width:100%;
                     background:rgba(10,14,26,0.8);
                     border:1px solid #2a3560;
@@ -561,7 +565,7 @@
                 <label style="display:block;font-size:12px;color:#5a6388;margin-bottom:4px;font-weight:600;">
                     <i class="fas fa-heading"></i> Title
                 </label>
-                <input type="text" id="formTitle" placeholder="e.g. RM888 存款奖励" value="${isEdit ? (item.title || '') : 'RM888 存款奖励'}" style="
+                <input type="text" id="formTitle" placeholder="e.g. RM888 存款奖励" value="${isEdit ? (item.title || '') : ''}" style="
                     width:100%;
                     background:rgba(10,14,26,0.8);
                     border:1px solid #2a3560;
@@ -577,7 +581,7 @@
                 <label style="display:block;font-size:12px;color:#5a6388;margin-bottom:4px;font-weight:600;">
                     <i class="fas fa-align-left"></i> Description
                 </label>
-                <input type="text" id="formDescription" placeholder="e.g. 首次存款可获得 100% 额外红利" value="${isEdit ? (item.description || '') : '首次存款可获得 100% 额外红利'}" style="
+                <input type="text" id="formDescription" placeholder="e.g. 首次存款可获得 100% 额外红利" value="${isEdit ? (item.description || '') : ''}" style="
                     width:100%;
                     background:rgba(10,14,26,0.8);
                     border:1px solid #2a3560;
@@ -593,7 +597,7 @@
                 <label style="display:block;font-size:12px;color:#5a6388;margin-bottom:4px;font-weight:600;">
                     <i class="fas fa-link"></i> CTA Text
                 </label>
-                <input type="text" id="formCtaText" placeholder="e.g. 立即领取 →" value="${isEdit ? (item.cta_text || '') : '立即领取 →'}" style="
+                <input type="text" id="formCtaText" placeholder="e.g. 立即领取 →" value="${isEdit ? (item.cta_text || '') : ''}" style="
                     width:100%;
                     background:rgba(10,14,26,0.8);
                     border:1px solid #2a3560;
@@ -609,7 +613,7 @@
                 <label style="display:block;font-size:12px;color:#5a6388;margin-bottom:4px;font-weight:600;">
                     <i class="fas fa-external-link-alt"></i> CTA Link
                 </label>
-                <input type="text" id="formCtaLink" placeholder="e.g. /deposit" value="${isEdit ? (item.cta_link || '') : '/deposit'}" style="
+                <input type="text" id="formCtaLink" placeholder="e.g. /deposit" value="${isEdit ? (item.cta_link || '') : ''}" style="
                     width:100%;
                     background:rgba(10,14,26,0.8);
                     border:1px solid #2a3560;
@@ -797,7 +801,7 @@
         toggleActive: toggleActive,
         openAddModal: openAddModal,
         openEditModal: openEditModal,
-        getItems: function() { return currentItems; },
+        getItems: function() { return currentItems; }
     };
 
     console.log('✅ admin-carousel.js loaded successfully');
