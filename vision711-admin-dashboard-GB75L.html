@@ -591,6 +591,7 @@
     'withdrawals': 'Withdrawals',
     'transactions': 'Transactions',
     'partnership': 'Partnership',
+    'carousel': 'Carousel',
     'settings': 'Settings'
 };
                 document.getElementById('pageTitle').textContent = titleMap[page] || page;
@@ -601,6 +602,10 @@
 
 if (page === 'partnership' && typeof window._adminPartnership !== 'undefined') {
     window._adminPartnership.load();
+}
+
+if (page === 'carousel' && typeof window._adminCarousel !== 'undefined') {
+    window._adminCarousel.load();
 }
 
                 // 关闭手机菜单
