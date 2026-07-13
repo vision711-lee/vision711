@@ -1049,7 +1049,7 @@
 
 <script>
 // ============================================================
-// 加载轮播图数据 (彻底修复版)
+// 加载轮播图数据 (终极修复版)
 // ============================================================
 (function loadCarousel() {
     var SUPABASE_URL = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co';
@@ -1067,10 +1067,8 @@
     var currentIndex = 0;
     var totalSlides = 0;
     var progressTimer = null;
-    var progressValue = 0;
     var AUTO_PLAY_DELAY = 4000;
-    var isTransitioning = false;
-    var isPaused = false;
+    var isAnimating = false;
 
     function renderSlides() {
         if (!slides || slides.length === 0) {
@@ -1112,6 +1110,7 @@
 
         document.querySelectorAll('.dot').forEach(function(dot) {
             dot.addEventListener('click', function() {
+                if (isAnimating) return;
                 var index = parseInt(this.dataset.index);
                 goToSlide(index);
             });
@@ -1129,114 +1128,115 @@
         });
     }
 
+    // ✅ goToSlide：只负责切换，不碰进度条
     function goToSlide(index) {
-    if (isTransitioning) return;
-    if (totalSlides === 0) return;
-    if (index < 0) index = totalSlides - 1;
-    if (index >= totalSlides) index = 0;
-    if (currentIndex === index) return;
-    
-    isTransitioning = true;
-    currentIndex = index;
-    updateTrack();
-    
-    // ✅ 重置自动播放
-    stopAutoPlay();
-    setTimeout(function() {
-        isTransitioning = false;
-        if (!isPaused) {
-            startAutoPlay();
-        }
-    }, 650);
-}
-
-function nextSlide() {
-    if (isTransitioning) return;
-    if (totalSlides === 0) return;
-    goToSlide((currentIndex + 1) % totalSlides);
-}
-
-function prevSlide() {
-    if (isTransitioning) return;
-    if (totalSlides === 0) return;
-    goToSlide((currentIndex - 1 + totalSlides) % totalSlides);
-}
-
-// ✅ 自动播放：进度条 + 切换
-function startAutoPlay() {
-    stopAutoPlay();
-    if (totalSlides <= 1) return;
-    
-    progressValue = 0;
-    progressBar.style.width = '0%';
-    isPaused = false;
-    
-    var step = 100 / (AUTO_PLAY_DELAY / 30);
-    
-    progressTimer = setInterval(function() {
-        if (isTransitioning || isPaused) {
-            return;
-        }
+        if (isAnimating) return;
+        if (totalSlides === 0) return;
+        if (index < 0) index = totalSlides - 1;
+        if (index >= totalSlides) index = 0;
+        if (currentIndex === index) return;
         
-        progressValue += step;
-        if (progressValue >= 100) {
-            progressValue = 100;
-            progressBar.style.width = '100%';
-            stopAutoPlay();
-            
-            // ✅ 切换到下一张
-            if (!isTransitioning) {
-                var nextIndex = (currentIndex + 1) % totalSlides;
-                // 直接设置索引并更新，不走 goToSlide
-                currentIndex = nextIndex;
-                updateTrack();
-                
-                // ✅ 延迟重启进度条
-                setTimeout(function() {
-                    if (!isPaused) {
-                        startAutoPlay();
-                    }
-                }, 650);
+        isAnimating = true;
+        currentIndex = index;
+        updateTrack();
+        
+        // ✅ 切换完成后才解锁
+        setTimeout(function() {
+            isAnimating = false;
+        }, 650);
+    }
+
+    function nextSlide() {
+        if (isAnimating) return;
+        if (totalSlides === 0) return;
+        goToSlide((currentIndex + 1) % totalSlides);
+    }
+
+    function prevSlide() {
+        if (isAnimating) return;
+        if (totalSlides === 0) return;
+        goToSlide((currentIndex - 1 + totalSlides) % totalSlides);
+    }
+
+    // ✅ 进度条：独立运行，不干扰切换
+    function startAutoPlay() {
+        stopAutoPlay();
+        if (totalSlides <= 1) return;
+        
+        var progressValue = 0;
+        progressBar.style.width = '0%';
+        var step = 100 / (AUTO_PLAY_DELAY / 30);
+        
+        progressTimer = setInterval(function() {
+            // ✅ 动画中或暂停时，进度条不动
+            if (isAnimating) {
+                return;
             }
-        } else {
-            progressBar.style.width = progressValue + '%';
+            
+            progressValue += step;
+            if (progressValue >= 100) {
+                progressValue = 100;
+                progressBar.style.width = '100%';
+                stopAutoPlay();
+                
+                // ✅ 切换到下一张
+                if (!isAnimating && totalSlides > 0) {
+                    var nextIndex = (currentIndex + 1) % totalSlides;
+                    isAnimating = true;
+                    currentIndex = nextIndex;
+                    updateTrack();
+                    
+                    setTimeout(function() {
+                        isAnimating = false;
+                        // ✅ 切换完成后重启进度条
+                        if (progressTimer === null) {
+                            startAutoPlay();
+                        }
+                    }, 650);
+                }
+            } else {
+                progressBar.style.width = progressValue + '%';
+            }
+        }, 30);
+    }
+
+    function stopAutoPlay() {
+        if (progressTimer) {
+            clearInterval(progressTimer);
+            progressTimer = null;
         }
-    }, 30);
-}
-
-function stopAutoPlay() {
-    if (progressTimer) {
-        clearInterval(progressTimer);
-        progressTimer = null;
+        progressBar.style.width = '0%';
     }
-    progressValue = 0;
-    progressBar.style.width = '0%';
-}
-
-function pauseAutoPlay() {
-    isPaused = true;
-    stopAutoPlay();
-}
-
-function resumeAutoPlay() {
-    isPaused = false;
-    if (!progressTimer) {
-        startAutoPlay();
-    }
-}
 
     // 箭头事件
     if (prevBtn) {
         prevBtn.addEventListener('click', function(e) {
             e.stopPropagation();
-            prevSlide();
+            if (!isAnimating) {
+                prevSlide();
+                // ✅ 手动操作后重置进度条
+                stopAutoPlay();
+                setTimeout(function() {
+                    if (!isAnimating) {
+                        startAutoPlay();
+                    }
+                }, 100);
+            }
         });
     }
 
     if (nextBtn) {
         nextBtn.addEventListener('click', function(e) {
             e.stopPropagation();
-            nextSlide();
+            if (!isAnimating) {
+                nextSlide();
+                stopAutoPlay();
+                setTimeout(function() {
+                    if (!isAnimating) {
+                        startAutoPlay();
+                    }
+                }, 100);
+            }
         });
     }
 
@@ -1251,6 +1251,7 @@ function resumeAutoPlay() {
         }, { passive: true });
 
         container.addEventListener('touchend', function(e) {
+            if (isAnimating) return;
             touchEndX = e.changedTouches[0].screenX;
             var diff = touchStartX - touchEndX;
             if (Math.abs(diff) > 30) {
@@ -1259,16 +1260,23 @@ function resumeAutoPlay() {
                 } else {
                     prevSlide();
                 }
+                stopAutoPlay();
+                setTimeout(function() {
+                    if (!isAnimating) {
+                        startAutoPlay();
+                    }
+                }, 100);
             }
         }, { passive: true });
 
-        // 鼠标悬停暂停
         container.addEventListener('mouseenter', function() {
-            pauseAutoPlay();
+            stopAutoPlay();
         });
 
         container.addEventListener('mouseleave', function() {
-            resumeAutoPlay();
+            if (!isAnimating && progressTimer === null) {
+                startAutoPlay();
+            }
         });
     }
 
@@ -1322,7 +1330,7 @@ function resumeAutoPlay() {
 
     window.carousel = { goToSlide, nextSlide, prevSlide, refresh: loadFromSupabase };
 
-    console.log('✅ Carousel loaded (彻底修复版)');
+    console.log('✅ Carousel loaded (终极修复版)');
 })();
 
 // ============================================================
