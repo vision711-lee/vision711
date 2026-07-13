@@ -312,6 +312,141 @@
                 display: none !important;
             }
         }
+
+        /* ============================================================
+           轮播图样式 - 16:9 统一比例
+           ============================================================ */
+        .carousel-container {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            width: 100%;
+            background: #0a0a20;
+        }
+
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+            will-change: transform;
+        }
+
+        /* 所有轮播 Slide 统一 16:9 比例 */
+        .carousel-slide {
+            width: 100%;
+            flex-shrink: 0;
+            padding-bottom: 56.25% !important; /* 16:9 = 9/16 = 0.5625 */
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+            background: #0a0a20;
+        }
+
+        /* 图片绝对定位填满容器 */
+        .carousel-slide img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 20px;
+        }
+
+        /* 圆点浮在图片上层 */
+        .carousel-dots {
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+            display: flex;
+            gap: 8px;
+            padding: 6px 14px;
+            background: rgba(0, 0, 0, 0.35);
+            border-radius: 20px;
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+        }
+
+        .carousel-dots .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.25);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .carousel-dots .dot.active {
+            background: #00b4ff;
+            width: 24px;
+            border-radius: 4px;
+            box-shadow: 0 0 16px rgba(0, 180, 255, 0.4);
+        }
+
+        /* 左右箭头 */
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 15;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.5);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.3s;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .carousel-btn:hover {
+            background: rgba(0, 180, 255, 0.2);
+            color: #fff;
+            border-color: rgba(0, 180, 255, 0.2);
+        }
+
+        .carousel-btn-left {
+            left: 12px;
+        }
+
+        .carousel-btn-right {
+            right: 12px;
+        }
+
+        @media (max-width: 767px) {
+            .carousel-dots {
+                bottom: 10px;
+                padding: 4px 10px;
+                gap: 6px;
+            }
+            
+            .carousel-dots .dot {
+                width: 6px;
+                height: 6px;
+            }
+            
+            .carousel-dots .dot.active {
+                width: 18px;
+            }
+
+            .carousel-btn {
+                width: 28px;
+                height: 28px;
+                font-size: 0.7rem;
+            }
+            .carousel-btn-left {
+                left: 6px;
+            }
+            .carousel-btn-right {
+                right: 6px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -702,16 +837,8 @@
     function renderSlides() {
         if (!slides || slides.length === 0) {
             track.innerHTML = `
-                <div class="carousel-slide" style="position:relative;min-height:200px;overflow:hidden;border-radius:20px;background:linear-gradient(145deg,#0a0a25,#181845);">
-                    <div style="position:relative;z-index:1;padding:24px 28px;display:flex;align-items:center;justify-content:space-between;width:100%;min-height:200px;">
-                        <div class="carousel-content">
-                            <div class="carousel-badge">📢 欢迎</div>
-                            <div class="carousel-title">VISION711</div>
-                            <div class="carousel-desc">Play Safe, Win Safe</div>
-                            <span class="carousel-cta">了解更多 →</span>
-                        </div>
-                        <div class="carousel-image"><i class="fas fa-crown"></i></div>
-                    </div>
+                <div class="carousel-slide" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#0a0a25,#181845);">
+                    <i class="fas fa-crown" style="color:rgba(255,255,255,0.05);font-size:3rem;"></i>
                 </div>
             `;
             dotsContainer.innerHTML = '';
@@ -725,26 +852,15 @@
         var dotsHTML = '';
 
         activeSlides.forEach(function(slide, index) {
-            // 🔥 修复：图片用 background-image 方式，更稳定
-            var bgStyle = '';
-            if (slide.image_url && slide.image_url.startsWith('http')) {
-                bgStyle = 'background-image:url(' + slide.image_url + ');background-size:cover;background-position:center;';
-            } else {
-                bgStyle = 'background:linear-gradient(145deg,#0a0a25,#181845);';
-            }
-
+            var imgSrc = slide.image_url && slide.image_url.startsWith('http') ? slide.image_url : '';
+            
             slidesHTML += `
-                <div class="carousel-slide" style="position:relative;min-height:220px;overflow:hidden;border-radius:20px;${bgStyle}">
-                    <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(90deg,rgba(6,6,15,0.75) 35%,rgba(6,6,15,0.3) 70%,transparent 100%);"></div>
-                    <div style="position:relative;z-index:1;padding:28px 32px;display:flex;align-items:center;justify-content:space-between;width:100%;min-height:220px;">
-                        <div class="carousel-content" style="max-width:70%;">
-                            ${slide.badge ? `<div class="carousel-badge" style="display:inline-block;background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.2);color:#ffd700;font-size:0.65rem;font-weight:700;padding:4px 14px;border-radius:30px;margin-bottom:10px;">${slide.badge}</div>` : ''}
-                            <div class="carousel-title" style="font-size:1.3rem;font-weight:700;color:#fff;margin-bottom:4px;line-height:1.3;">${slide.title || 'VISION711'}</div>
-                            <div class="carousel-desc" style="font-size:0.85rem;color:rgba(255,255,255,0.5);margin-bottom:10px;">${slide.description || 'Play Safe, Win Safe'}</div>
-                            ${slide.cta_text ? `<a href="${slide.cta_link || '/'}" class="carousel-cta" style="display:inline-block;font-size:0.8rem;font-weight:600;color:#00b4ff;cursor:pointer;transition:0.3s;padding:4px 0;border-bottom:2px solid rgba(0,180,255,0.2);text-decoration:none;">${slide.cta_text}</a>` : ''}
+                <div class="carousel-slide">
+                    ${imgSrc ? `<img src="${imgSrc}" alt="">` : `
+                        <div style="position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.05);font-size:3rem;">
+                            <i class="fas fa-image"></i>
                         </div>
-                        ${!slide.image_url || !slide.image_url.startsWith('http') ? `<div class="carousel-image" style="flex-shrink:0;width:60px;height:60px;display:flex;align-items:center;justify-content:center;font-size:2.8rem;background:rgba(0,180,255,0.06);border-radius:16px;border:1px solid rgba(0,180,255,0.08);color:#00d4ff;"><i class="fas fa-image"></i></div>` : ''}
-                    </div>
+                    `}
                 </div>
             `;
 
@@ -865,6 +981,7 @@
 
     function loadFromSupabase() {
         if (typeof supabase === 'undefined') {
+            console.warn('⚠️ supabase not loaded');
             loadFromLocalStorage();
             return;
         }
