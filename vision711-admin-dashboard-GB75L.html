@@ -135,9 +135,7 @@
 
     </div>
 
-    <!-- ============================================================
-        Modal (通用)
-       ============================================================ -->
+    <!-- ===== Modal ===== -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal-card">
             <h3 id="modalTitle"><i class="fas fa-bullhorn"></i> Add Announcement</h3>
@@ -150,9 +148,7 @@
         </div>
     </div>
 
-    <!-- ============================================================
-        JavaScript
-       ============================================================ -->
+    <!-- ===== JavaScript ===== -->
     <script>
         function toggleSidebar() {
             var sidebar = document.getElementById('sidebar');
@@ -173,13 +169,33 @@
         }
 
         document.getElementById('currentDate').textContent = formatDate();
-
         var username = localStorage.getItem('admin_username') || 'admin';
         document.getElementById('adminName').textContent = username;
 
         if (localStorage.getItem('admin_logged_in') !== 'true') {
             window.location.href = 'vision711-admin-login-K8G7Y.html';
         }
+
+        // ===== 🔥 页面加载后自动刷新 Users =====
+        function waitForAdminUser(attempts) {
+            attempts = attempts || 0;
+            if (typeof window._adminUser !== 'undefined' && window._adminUser.refresh) {
+                console.log('🔄 adminUser 已加载，刷新...');
+                window._adminUser.refresh();
+                return;
+            }
+            if (attempts > 30) {
+                console.warn('⚠️ adminUser 加载超时');
+                return;
+            }
+            setTimeout(function() {
+                waitForAdminUser(attempts + 1);
+            }, 200);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            waitForAdminUser();
+        });
 
         // ===== 侧边栏导航 =====
         var navItems = document.querySelectorAll('.nav-item');
@@ -212,7 +228,9 @@
                 document.getElementById('pageTitle').textContent = titleMap[page] || page;
 
                 if (page === 'users' && typeof window._adminUser !== 'undefined') {
-                    window._adminUser.refresh();
+                    setTimeout(function() {
+                        window._adminUser.refresh();
+                    }, 50);
                 }
                 if (page === 'partnership' && typeof window._adminPartnership !== 'undefined') {
                     window._adminPartnership.load();
@@ -301,7 +319,6 @@
         if (modalCancelBtn) {
             modalCancelBtn.addEventListener('click', closeModal);
         }
-
         if (modalOverlay) {
             modalOverlay.addEventListener('click', function(e) {
                 if (e.target === this) closeModal();
@@ -316,9 +333,7 @@
         console.log('✅ VISION711 Admin Dashboard loaded');
     </script>
 
-    <!-- ============================================================
-        模块 JS
-       ============================================================ -->
+    <!-- ===== 模块 JS ===== -->
     <script src="admin-user.js"></script>
     <script src="admin-partnership.js"></script>
     <script src="admin-carousel.js"></script>
