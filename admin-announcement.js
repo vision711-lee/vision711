@@ -169,106 +169,94 @@
     }
 
     // ============================================================
-    // 保存数据到 Supabase (修复版 - 先删除再插入)
-    // ============================================================
-    function saveToSupabase(callback) {
-        if (!isSupabaseAvailable) {
-            saveToLocalStorage();
-            if (callback) callback();
-            return;
-        }
+// 保存数据到 Supabase (使用 upsert)
+// ============================================================
+function saveToSupabase(callback) {
+    if (!isSupabaseAvailable) {
+        saveToLocalStorage();
+        if (callback) callback();
+        return;
+    }
 
-        try {
-            var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    try {
+        var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-            if (currentItems.length === 0) {
-                sb.from('announcements')
-                    .delete()
-                    .neq('id', '')
-                    .then(function() {
-                        console.log('✅ 所有公告已删除');
-                        if (callback) callback();
-                    })
-                    .catch(function(err) {
-                        console.error('删除失败:', err);
-                        if (callback) callback();
-                    });
-                return;
-            }
-
-            // 🔥 先删除所有数据，再重新插入 (最可靠)
+        // 如果没有数据，则删除所有
+        if (currentItems.length === 0) {
             sb.from('announcements')
                 .delete()
-                .neq('id', '')
-                .then(function() {
-                    console.log('✅ 删除成功，正在插入 ' + currentItems.length + ' 条数据...');
-                    sb.from('announcements')
-                        .insert(currentItems)
-                        .then(function() {
-                            console.log('✅ 插入成功');
-                            if (callback) callback();
-                        })
-                        .catch(function(err) {
-                            console.error('插入失败:', err);
-                            // 尝试逐条插入
-                            insertOneByOne(callback);
-                        });
+                .neq('id', '') // 删除所有 id 不为空的行
+                .then(function(res) {
+                    console.log('✅ 所有公告已删除', res);
+                    if (callback) callback();
                 })
                 .catch(function(err) {
                     console.error('删除失败:', err);
-                    // 删除失败，尝试逐条插入
-                    insertOneByOne(callback);
+                    if (callback) callback();
                 });
-
-        } catch (e) {
-            console.error('保存异常:', e);
-            if (callback) callback();
-        }
-    }
-
-    // ============================================================
-    // 逐条插入 (备用方案)
-    // ============================================================
-    function insertOneByOne(callback) {
-        if (currentItems.length === 0) {
-            if (callback) callback();
             return;
         }
 
-        var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        var promises = [];
-
-        currentItems.forEach(function(item) {
-            // 先尝试插入
-            var p = sb.from('announcements').insert(item).then(function(res) {
+        // 使用 upsert：如果 id 存在则更新，不存在则插入
+        // 这是最稳健的方法
+        sb.from('announcements')
+            .upsert(currentItems, { onConflict: 'id' })
+            .then(function(res) {
                 if (res.error) {
-                    // 如果插入失败（可能已存在），尝试更新
-                    console.warn('逐条插入失败，尝试更新:', res.error.message);
-                    return sb.from('announcements')
-                        .update(item)
-                        .eq('id', item.id)
-                        .then(function(res2) {
-                            if (res2.error) {
-                                console.warn('逐条更新失败:', res2.error.message);
-                            }
-                            return res2;
-                        });
+                    console.error('Upsert 失败:', res.error);
+                    // 如果 upsert 失败，回退到逐条处理
+                    insertOneByOne(callback);
+                    return;
                 }
-                return res;
-            });
-            promises.push(p);
-        });
-
-        Promise.all(promises)
-            .then(function() {
-                console.log('✅ 逐条操作完成');
+                console.log('✅ 保存成功 (upsert):', res);
                 if (callback) callback();
             })
             .catch(function(err) {
-                console.error('逐条操作失败:', err);
-                if (callback) callback();
+                console.error('Upsert 异常:', err);
+                insertOneByOne(callback);
             });
+
+    } catch (e) {
+        console.error('保存异常:', e);
+        if (callback) callback();
     }
+}
+
+// ============================================================
+// 逐条插入或更新 (备用方案)
+// ============================================================
+function insertOneByOne(callback) {
+    if (currentItems.length === 0) {
+        if (callback) callback();
+        return;
+    }
+
+    var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    var promises = [];
+
+    currentItems.forEach(function(item) {
+        // 为每条记录独立执行 upsert
+        var p = sb.from('announcements')
+            .upsert(item, { onConflict: 'id' })
+            .then(function(res) {
+                if (res.error) {
+                    console.warn('单条 upsert 失败:', res.error);
+                }
+                return res;
+            });
+        promises.push(p);
+    });
+
+    Promise.all(promises)
+        .then(function() {
+            console.log('✅ 逐条 upsert 完成');
+            if (callback) callback();
+        })
+        .catch(function(err) {
+            console.error('逐条 upsert 失败:', err);
+            if (callback) callback();
+        });
+}
 
     function saveToLocalStorage() {
         localStorage.setItem('announcements', JSON.stringify(currentItems));
