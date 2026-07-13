@@ -1049,7 +1049,7 @@
 
 <script>
 // ============================================================
-// 加载轮播图数据 (修复版 v2)
+// 加载轮播图数据 (彻底修复版)
 // ============================================================
 (function loadCarousel() {
     var SUPABASE_URL = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co';
@@ -1065,10 +1065,12 @@
 
     var slides = [];
     var currentIndex = 0;
-    var progressInterval = null;
-    var AUTO_PLAY_DELAY = 4000;
+    var totalSlides = 0;
+    var progressTimer = null;
     var progressValue = 0;
+    var AUTO_PLAY_DELAY = 4000;
     var isTransitioning = false;
+    var isPaused = false;
 
     function renderSlides() {
         if (!slides || slides.length === 0) {
@@ -1083,6 +1085,7 @@
 
         var activeSlides = slides.filter(function(s) { return s.active !== false; });
         if (activeSlides.length === 0) activeSlides = slides;
+        totalSlides = activeSlides.length;
 
         var slidesHTML = '';
         var dotsHTML = '';
@@ -1104,112 +1107,96 @@
         });
 
         track.innerHTML = slidesHTML;
+        track.style.transition = 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
         dotsContainer.innerHTML = dotsHTML;
 
         document.querySelectorAll('.dot').forEach(function(dot) {
             dot.addEventListener('click', function() {
-                if (isTransitioning) return;
                 var index = parseInt(this.dataset.index);
                 goToSlide(index);
-                resetAutoPlay();
             });
         });
 
         currentIndex = 0;
         updateTrack();
-        startProgress();
+        startAutoPlay();
     }
 
     function updateTrack() {
-        var total = document.querySelectorAll('.carousel-slide').length;
-        if (total === 0) return;
-        track.style.transition = 'transform 0.5s ease-in-out';
         track.style.transform = 'translateX(-' + (currentIndex * 100) + '%)';
-
         document.querySelectorAll('.dot').forEach(function(dot, i) {
             dot.classList.toggle('active', i === currentIndex);
         });
     }
 
     function goToSlide(index) {
-    if (isTransitioning) return;
-    var total = document.querySelectorAll('.carousel-slide').length;
-    if (total === 0) return;
-    if (index < 0) index = total - 1;
-    if (index >= total) index = 0;
-    if (currentIndex === index) return;
-    
-    isTransitioning = true;
-    currentIndex = index;
-    updateTrack();
-    
-    // ✅ 手动切换后重置自动播放（进度条从0开始）
-    stopProgress();
-    setTimeout(function() {
-        if (!isTransitioning) {
-            startProgress();
-        }
-    }, 100);
-    
-    setTimeout(function() {
-        isTransitioning = false;
-    }, 550);
-}
+        if (isTransitioning) return;
+        if (totalSlides === 0) return;
+        if (index < 0) index = totalSlides - 1;
+        if (index >= totalSlides) index = 0;
+        if (currentIndex === index) return;
+        
+        isTransitioning = true;
+        currentIndex = index;
+        updateTrack();
+        
+        // 重置自动播放
+        stopAutoPlay();
+        setTimeout(function() {
+            isTransitioning = false;
+            if (!isPaused) {
+                startAutoPlay();
+            }
+        }, 650);
+    }
 
     function nextSlide() {
         if (isTransitioning) return;
-        var total = document.querySelectorAll('.carousel-slide').length;
-        if (total === 0) return;
-        goToSlide(currentIndex + 1);
+        if (totalSlides === 0) return;
+        goToSlide((currentIndex + 1) % totalSlides);
     }
 
     function prevSlide() {
         if (isTransitioning) return;
-        var total = document.querySelectorAll('.carousel-slide').length;
-        if (total === 0) return;
-        goToSlide(currentIndex - 1);
+        if (totalSlides === 0) return;
+        goToSlide((currentIndex - 1 + totalSlides) % totalSlides);
     }
 
-    // ✅ 进度条：独立运行，不调用其他函数
-    function startProgress() {
-        if (progressInterval) {
-            clearInterval(progressInterval);
-            progressInterval = null;
-        }
-        
-        var total = document.querySelectorAll('.carousel-slide').length;
-        if (total <= 1) return;
+    // ✅ 自动播放：进度条 + 切换
+    function startAutoPlay() {
+        stopAutoPlay();
+        if (totalSlides <= 1) return;
         
         progressValue = 0;
         progressBar.style.width = '0%';
+        isPaused = false;
         
         var step = 100 / (AUTO_PLAY_DELAY / 30);
         
-        progressInterval = setInterval(function() {
-            if (isTransitioning) {
-                return; // 过渡中暂停
+        progressTimer = setInterval(function() {
+            if (isTransitioning || isPaused) {
+                return;
             }
             
             progressValue += step;
             if (progressValue >= 100) {
                 progressValue = 100;
                 progressBar.style.width = '100%';
-                clearInterval(progressInterval);
-                progressInterval = null;
+                stopAutoPlay();
                 
+                // ✅ 切换到下一张
                 if (!isTransitioning) {
-                    var totalSlides = document.querySelectorAll('.carousel-slide').length;
-                    if (totalSlides > 1) {
-                        // ✅ 直接修改索引并更新，不通过 goToSlide
-                        currentIndex = (currentIndex + 1) % totalSlides;
-                        updateTrack();
-                        // ✅ 延迟重启进度条
-                        setTimeout(function() {
-                            if (!isTransitioning) {
-                                startProgress();
-                            }
-                        }, 600);
-                    }
+                    var nextIndex = (currentIndex + 1) % totalSlides;
+                    isTransitioning = true;
+                    currentIndex = nextIndex;
+                    updateTrack();
+                    
+                    setTimeout(function() {
+                        isTransitioning = false;
+                        if (!isPaused) {
+                            startAutoPlay();
+                        }
+                    }, 650);
                 }
             } else {
                 progressBar.style.width = progressValue + '%';
@@ -1217,40 +1204,43 @@
         }, 30);
     }
 
-    function stopProgress() {
-        if (progressInterval) {
-            clearInterval(progressInterval);
-            progressInterval = null;
+    function stopAutoPlay() {
+        if (progressTimer) {
+            clearInterval(progressTimer);
+            progressTimer = null;
         }
         progressValue = 0;
         progressBar.style.width = '0%';
     }
 
-    function resetAutoPlay() {
-        stopProgress();
-        setTimeout(function() {
-            startProgress();
-        }, 100);
+    function pauseAutoPlay() {
+        isPaused = true;
+        stopAutoPlay();
     }
 
+    function resumeAutoPlay() {
+        isPaused = false;
+        if (!progressTimer) {
+            startAutoPlay();
+        }
+    }
+
+    // 箭头事件
     if (prevBtn) {
         prevBtn.addEventListener('click', function(e) {
             e.stopPropagation();
-            if (isTransitioning) return;
             prevSlide();
-            resetAutoPlay();
         });
     }
 
     if (nextBtn) {
         nextBtn.addEventListener('click', function(e) {
             e.stopPropagation();
-            if (isTransitioning) return;
             nextSlide();
-            resetAutoPlay();
         });
     }
 
+    // 触摸滑动
     var touchStartX = 0;
     var touchEndX = 0;
     var container = document.querySelector('.carousel-container');
@@ -1261,7 +1251,6 @@
         }, { passive: true });
 
         container.addEventListener('touchend', function(e) {
-            if (isTransitioning) return;
             touchEndX = e.changedTouches[0].screenX;
             var diff = touchStartX - touchEndX;
             if (Math.abs(diff) > 30) {
@@ -1270,18 +1259,16 @@
                 } else {
                     prevSlide();
                 }
-                resetAutoPlay();
             }
         }, { passive: true });
 
+        // 鼠标悬停暂停
         container.addEventListener('mouseenter', function() {
-            stopProgress();
+            pauseAutoPlay();
         });
 
         container.addEventListener('mouseleave', function() {
-            if (!isTransitioning) {
-                startProgress();
-            }
+            resumeAutoPlay();
         });
     }
 
@@ -1335,7 +1322,7 @@
 
     window.carousel = { goToSlide, nextSlide, prevSlide, refresh: loadFromSupabase };
 
-    console.log('✅ Carousel loaded (修复版 v2)');
+    console.log('✅ Carousel loaded (彻底修复版)');
 })();
 
 // ============================================================
