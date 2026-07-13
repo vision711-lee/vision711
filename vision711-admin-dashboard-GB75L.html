@@ -8,6 +8,53 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="admin-common.css">
+    <style>
+        /* ✅ 额外修复 - 强制所有页面内容从顶部开始 */
+        .main-content {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: stretch !important;
+            justify-content: flex-start !important;
+        }
+
+        .page {
+            display: none !important;
+            width: 100% !important;
+            flex-shrink: 0 !important;
+        }
+        .page.active {
+            display: block !important;
+        }
+
+        /* 确保 admin-header 固定在顶部不浮动 */
+        .admin-header {
+            flex-shrink: 0 !important;
+        }
+
+        /* 内容区域不要有任何 margin-top: auto */
+        #page_users,
+        #page_deposits,
+        #page_withdrawals,
+        #page_transactions,
+        #page_partnership,
+        #page_content,
+        #page_settings {
+            margin-top: 0 !important;
+            padding-top: 0 !important;
+        }
+
+        /* 修复 Content 子标签页 */
+        .content-tabs {
+            flex-shrink: 0 !important;
+        }
+        .content-tab-panel {
+            display: none !important;
+            width: 100% !important;
+        }
+        .content-tab-panel.active {
+            display: block !important;
+        }
+    </style>
 </head>
 <body>
 
