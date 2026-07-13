@@ -9,94 +9,53 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="admin-common.css">
     <style>
-        /* ============================================================
-           终极修复 - 确保所有页面内容从顶部开始
-           ============================================================ */
-
-        /* 1. 主内容 - 使用正常 block 流 */
+        /* ===== 强制所有页面内容从顶部开始 ===== */
         .main-content {
             display: block !important;
             margin-left: 240px;
-            padding: 24px 32px 40px 32px;
+            padding: 0 32px 40px 32px !important;
             min-height: 100vh;
             width: auto;
             flex: none !important;
-            align-items: stretch !important;
-            justify-content: flex-start !important;
         }
 
-        /* 2. 所有页面容器 - 从顶部开始 */
         .page {
             display: none !important;
             position: static !important;
-            top: auto !important;
-            bottom: auto !important;
-            left: auto !important;
-            right: auto !important;
             margin-top: 0 !important;
-            margin-bottom: 0 !important;
             padding-top: 0 !important;
-            padding-bottom: 0 !important;
             min-height: auto !important;
             height: auto !important;
-            transform: none !important;
-            float: none !important;
-            clear: both !important;
         }
         .page.active {
             display: block !important;
         }
 
-        /* 3. 所有具体页面 - 强制从顶部开始 */
-        #page_users,
-        #page_deposits,
-        #page_withdrawals,
-        #page_transactions,
-        #page_partnership,
-        #page_content,
-        #page_settings {
+        #page_users, #page_deposits, #page_withdrawals, #page_transactions,
+        #page_partnership, #page_content, #page_settings {
             display: none !important;
             margin-top: 0 !important;
             padding-top: 0 !important;
-            min-height: auto !important;
-            height: auto !important;
-            position: static !important;
-            top: auto !important;
-            bottom: auto !important;
-            transform: none !important;
         }
-        #page_users.active,
-        #page_deposits.active,
-        #page_withdrawals.active,
-        #page_transactions.active,
-        #page_partnership.active,
-        #page_content.active,
+        #page_users.active, #page_deposits.active, #page_withdrawals.active,
+        #page_transactions.active, #page_partnership.active, #page_content.active,
         #page_settings.active {
             display: block !important;
         }
 
-        /* 4. 确保页面内部内容也从顶部开始 */
-        #page_partnership > *,
-        #page_users > *,
-        #page_deposits > *,
-        #page_withdrawals > *,
-        #page_transactions > *,
-        #page_content > *,
-        #page_settings > * {
-            margin-top: 0 !important;
-            padding-top: 0 !important;
-        }
-
-        /* 5. Admin Header 保持固定位置 */
         .admin-header {
             position: relative !important;
-            top: auto !important;
-            bottom: auto !important;
             flex-shrink: 0 !important;
-            margin-bottom: 20px !important;
+            margin-bottom: 0 !important;
+            border-radius: 0 !important;
+            border-left: none !important;
+            border-right: none !important;
+            border-top: none !important;
+            padding: 12px 24px !important;
+            background: rgba(10, 14, 26, 0.6) !important;
+            backdrop-filter: blur(12px) !important;
         }
 
-        /* 6. 侧边栏保持固定 */
         .sidebar {
             position: fixed !important;
             top: 0 !important;
@@ -105,27 +64,283 @@
             z-index: 100 !important;
         }
 
-        /* 7. Content 子标签页修复 */
         .content-tabs {
             flex-shrink: 0 !important;
             margin-bottom: 20px !important;
         }
         .content-tab-panel {
             display: none !important;
-            margin-top: 0 !important;
-            padding-top: 0 !important;
         }
         .content-tab-panel.active {
             display: block !important;
         }
 
-        /* 8. 响应式修复 */
+        /* Tab Bar 样式 */
+        #tabBarContainer {
+            display: flex !important;
+            align-items: center !important;
+            background: rgba(12, 16, 28, 0.92) !important;
+            border-bottom: 1px solid rgba(214, 178, 94, 0.08) !important;
+            padding: 0 16px !important;
+            height: 50px !important;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+            flex-shrink: 0 !important;
+            gap: 2px !important;
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 99 !important;
+            scrollbar-width: thin !important;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.3) !important;
+            margin: 0 -32px 0 -32px !important;
+            padding-left: 20px !important;
+            padding-right: 16px !important;
+            min-height: 50px !important;
+        }
+
+        #tabsWrapper {
+            display: flex !important;
+            align-items: center !important;
+            gap: 2px !important;
+            flex: 1 !important;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+            height: 100% !important;
+            scrollbar-width: thin !important;
+            min-width: 0 !important;
+        }
+
+        #tabBarRightWrapper {
+            display: flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            flex-shrink: 0 !important;
+            margin-left: auto !important;
+            padding-left: 12px !important;
+            height: 100% !important;
+            border-left: 1px solid rgba(255,255,255,0.04) !important;
+        }
+
+        .tab-item {
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            padding: 6px 14px !important;
+            border-radius: 8px 8px 0 0 !important;
+            background: rgba(255,255,255,0.02) !important;
+            color: rgba(255,255,255,0.45) !important;
+            font-size: 12px !important;
+            font-weight: 500 !important;
+            cursor: pointer !important;
+            transition: all 0.25s ease !important;
+            white-space: nowrap !important;
+            flex-shrink: 0 !important;
+            height: 42px !important;
+            border: none !important;
+            font-family: 'Inter', sans-serif !important;
+            position: relative !important;
+            user-select: none !important;
+            border-top: 1px solid transparent !important;
+            border-left: 1px solid transparent !important;
+            border-right: 1px solid transparent !important;
+        }
+        .tab-item i {
+            font-size: 13px !important;
+            color: rgba(255,255,255,0.2) !important;
+            transition: 0.25s !important;
+        }
+        .tab-item:hover {
+            background: rgba(255,255,255,0.05) !important;
+            color: rgba(255,255,255,0.6) !important;
+        }
+        .tab-item.active {
+            background: linear-gradient(180deg, rgba(214,178,94,0.08) 0%, rgba(214,178,94,0.02) 100%) !important;
+            color: #F3D38B !important;
+            border-top: 1px solid rgba(214,178,94,0.2) !important;
+            border-left: 1px solid rgba(214,178,94,0.06) !important;
+            border-right: 1px solid rgba(214,178,94,0.06) !important;
+            box-shadow: 0 -2px 16px rgba(214,178,94,0.04) !important;
+        }
+        .tab-item.active i {
+            color: #D6B25E !important;
+        }
+        .tab-item.active::after {
+            content: '' !important;
+            position: absolute !important;
+            bottom: 0 !important;
+            left: 15% !important;
+            width: 70% !important;
+            height: 2px !important;
+            background: linear-gradient(90deg, transparent, #D6B25E, #F3D38B, #D6B25E, transparent) !important;
+            border-radius: 2px !important;
+        }
+
+        .tab-close {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 18px !important;
+            height: 18px !important;
+            border-radius: 4px !important;
+            border: none !important;
+            background: transparent !important;
+            color: rgba(255,255,255,0.15) !important;
+            cursor: pointer !important;
+            font-size: 10px !important;
+            transition: 0.2s !important;
+            padding: 0 !important;
+            margin-left: 2px !important;
+        }
+        .tab-close:hover {
+            background: rgba(232,128,128,0.15) !important;
+            color: #e88080 !important;
+        }
+
+        .tab-badge {
+            background: #4a7cff !important;
+            color: #fff !important;
+            font-size: 9px !important;
+            font-weight: 700 !important;
+            min-width: 16px !important;
+            height: 16px !important;
+            padding: 0 5px !important;
+            border-radius: 40px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            line-height: 1 !important;
+            box-shadow: 0 0 12px rgba(74,124,255,0.3) !important;
+            margin-left: 2px !important;
+            flex-shrink: 0 !important;
+            border: 1px solid rgba(255,255,255,0.06) !important;
+        }
+
+        #globalNotificationContainer {
+            position: relative !important;
+            display: flex !important;
+            align-items: center !important;
+            height: 100% !important;
+        }
+
+        #globalNotificationBtn {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 34px !important;
+            height: 34px !important;
+            border-radius: 6px !important;
+            border: 1px solid rgba(255,255,255,0.06) !important;
+            background: rgba(255,255,255,0.02) !important;
+            color: rgba(255,255,255,0.2) !important;
+            cursor: pointer !important;
+            font-size: 16px !important;
+            transition: 0.25s !important;
+            flex-shrink: 0 !important;
+            font-family: 'Inter', sans-serif !important;
+            position: relative !important;
+        }
+        #globalNotificationBtn:hover {
+            border-color: rgba(214,178,94,0.2) !important;
+            color: #D6B25E !important;
+        }
+
+        #globalNotificationBadge {
+            position: absolute !important;
+            top: -4px !important;
+            right: -4px !important;
+            background: #e88080 !important;
+            color: #fff !important;
+            border-radius: 50% !important;
+            font-size: 9px !important;
+            font-weight: 700 !important;
+            min-width: 16px !important;
+            height: 16px !important;
+            display: none !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 0 4px !important;
+            border: 2px solid rgba(12, 16, 28, 0.8) !important;
+            font-family: 'Inter', sans-serif !important;
+            line-height: 1 !important;
+            z-index: 2 !important;
+        }
+
+        #globalNotificationDropdown {
+            display: none !important;
+            position: fixed !important;
+            top: 70px !important;
+            right: 20px !important;
+            width: 400px !important;
+            max-height: 500px !important;
+            background: rgba(16, 20, 34, 0.98) !important;
+            border-radius: 16px !important;
+            border: 1px solid rgba(255,255,255,0.06) !important;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8) !important;
+            overflow: hidden !important;
+            z-index: 99999 !important;
+            backdrop-filter: blur(20px) !important;
+            font-family: 'Inter', sans-serif !important;
+        }
+        #globalNotificationDropdown.show {
+            display: block !important;
+        }
+
+        #addTabBtn {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 34px !important;
+            height: 34px !important;
+            border-radius: 6px !important;
+            border: 1px solid rgba(255,255,255,0.06) !important;
+            background: rgba(255,255,255,0.02) !important;
+            color: rgba(255,255,255,0.2) !important;
+            cursor: pointer !important;
+            font-size: 14px !important;
+            transition: 0.25s !important;
+            flex-shrink: 0 !important;
+            font-family: 'Inter', sans-serif !important;
+        }
+        #addTabBtn:hover {
+            border-color: rgba(214,178,94,0.2) !important;
+            color: #D6B25E !important;
+        }
+
+        #tabBarContainer::-webkit-scrollbar { height: 2px; }
+        #tabBarContainer::-webkit-scrollbar-thumb { background: rgba(214,178,94,0.15); border-radius: 4px; }
+        #tabsWrapper::-webkit-scrollbar { height: 2px; }
+        #tabsWrapper::-webkit-scrollbar-thumb { background: rgba(214,178,94,0.15); border-radius: 4px; }
+        #globalNotificationDropdown::-webkit-scrollbar { width: 4px; }
+        #globalNotificationDropdown::-webkit-scrollbar-thumb { background: rgba(204,184,159,0.15); border-radius: 4px; }
+
         @media (max-width: 768px) {
             .main-content {
                 margin-left: 0 !important;
-                padding: 16px !important;
-                padding-top: 72px !important;
+                padding: 0 16px 40px 16px !important;
             }
+            .admin-header {
+                padding: 10px 16px !important;
+            }
+            .admin-header .left h3 { font-size: 14px !important; }
+            .admin-header .right .user-badge { padding: 4px 10px 4px 8px !important; }
+            .admin-header .right .user-badge .name { font-size: 11px !important; }
+            .admin-header .right .user-badge .role { font-size: 8px !important; padding: 1px 6px !important; }
+            .menu-toggle { top: 12px !important; left: 12px !important; padding: 8px 12px !important; font-size: 14px !important; }
+
+            #tabBarContainer {
+                margin: 0 -16px 0 -16px !important;
+                padding-left: 12px !important;
+                padding-right: 12px !important;
+                height: 44px !important;
+                min-height: 44px !important;
+            }
+            .tab-item { padding: 4px 10px !important; font-size: 11px !important; height: 36px !important; }
+            .tab-item i { font-size: 11px !important; }
+            .tab-close { width: 14px !important; height: 14px !important; font-size: 8px !important; }
+            #globalNotificationBtn { width: 28px !important; height: 28px !important; font-size: 13px !important; }
+            #addTabBtn { width: 28px !important; height: 28px !important; font-size: 12px !important; }
+            #globalNotificationDropdown { width: 320px !important; right: 10px !important; top: 60px !important; }
+            .modal-card { padding: 20px 16px !important; width: 95% !important; }
         }
     </style>
 </head>
@@ -174,6 +389,21 @@
             </div>
         </div>
 
+        <!-- ===== Tab Bar 容器 ===== -->
+        <div id="tabBarContainer">
+            <div id="tabsWrapper"></div>
+            <div id="tabBarRightWrapper">
+                <div id="globalNotificationContainer">
+                    <button id="globalNotificationBtn">
+                        <i class="fas fa-bell"></i>
+                        <span id="globalNotificationBadge"></span>
+                    </button>
+                </div>
+                <button id="addTabBtn"><i class="fas fa-plus"></i></button>
+            </div>
+        </div>
+
+        <!-- ===== 页面容器 ===== -->
         <div id="page_users" class="page active"></div>
         <div id="page_deposits" class="page"></div>
         <div id="page_withdrawals" class="page"></div>
@@ -193,6 +423,31 @@
 
     </div>
 
+    <!-- ===== 通知下拉菜单 ===== -->
+    <div id="globalNotificationDropdown">
+        <div style="padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.04); display: flex; justify-content: space-between; align-items: center;">
+            <h4 style="font-size: 14px; font-weight: 600; color: #d8e0f0; margin: 0;">
+                <i class="fas fa-bell" style="color: #8892a8; margin-right: 8px;"></i>
+                Notifications
+            </h4>
+            <span id="globalNotificationCount" style="font-size: 11px; color: #6a7a92;">0</span>
+        </div>
+        <div id="globalNotificationList" style="max-height: 350px; overflow-y: auto; padding: 8px 0;">
+            <div style="text-align: center; padding: 40px 20px; color: #6a7a92; font-size: 13px;">
+                <i class="fas fa-inbox" style="display: block; font-size: 28px; color: #4a5a72; margin-bottom: 10px;"></i>
+                No notifications
+            </div>
+        </div>
+        <div style="padding: 12px 20px; border-top: 1px solid rgba(255,255,255,0.04); display: flex; flex-direction: column; gap: 6px;">
+            <button id="markAllReadBtn" style="width: 100%; background: rgba(74, 124, 255, 0.06); border: 1px solid rgba(74, 124, 255, 0.08); border-radius: 30px; padding: 8px 0; color: #4a7cff; font-weight: 500; font-size: 12px; cursor: pointer; font-family: 'Inter', sans-serif;">
+                <i class="fas fa-check-double"></i> Mark All as Read
+            </button>
+            <button id="clearAllNotificationsBtn" style="width: 100%; background: rgba(232,128,128,0.06); border: 1px solid rgba(232,128,128,0.08); border-radius: 30px; padding: 8px 0; color: #e88080; font-weight: 500; font-size: 12px; cursor: pointer; font-family: 'Inter', sans-serif;">
+                <i class="fas fa-trash"></i> Clear All
+            </button>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal-card">
             <h3 id="modalTitle"><i class="fas fa-bullhorn"></i> Add Announcement</h3>
@@ -206,6 +461,10 @@
     </div>
 
     <script>
+        // ============================================================
+        // 基础功能
+        // ============================================================
+
         function toggleSidebar() {
             var sidebar = document.getElementById('sidebar');
             var overlay = document.getElementById('overlay');
@@ -232,69 +491,412 @@
             window.location.href = 'vision711-admin-login-K8G7Y.html';
         }
 
-        function loadPage(page) {
-            if (page === 'users' && typeof window._adminUser !== 'undefined') {
+        // ============================================================
+        // 页面导航
+        // ============================================================
+
+        var PAGE_DEFS = {
+            users: { id: 'users', label: 'Users Management', icon: 'fa-users' },
+            deposits: { id: 'deposits', label: 'Deposits', icon: 'fa-wallet' },
+            withdrawals: { id: 'withdrawals', label: 'Withdrawals', icon: 'fa-money-bill-wave' },
+            transactions: { id: 'transactions', label: 'Transactions', icon: 'fa-exchange-alt' },
+            partnership: { id: 'partnership', label: 'Partnership', icon: 'fa-handshake' },
+            content: { id: 'content', label: 'Content Management', icon: 'fa-newspaper' },
+            settings: { id: 'settings', label: 'Settings', icon: 'fa-cog' }
+        };
+
+        var tabs = [];
+        var activeTabId = null;
+        var tabIdCounter = 0;
+
+        function getModuleNotificationCount(pageId) { return 0; }
+        function isModuleRead(pageId) { return true; }
+        function markModuleRead(pageId) {}
+
+        // ============================================================
+        // Tab Bar 核心功能
+        // ============================================================
+
+        function renderTabBar() {
+            var container = document.getElementById('tabBarContainer');
+            if (!container) return;
+
+            var rightWrapper = document.getElementById('tabBarRightWrapper');
+            if (!rightWrapper) return;
+
+            var tabsWrapper = document.getElementById('tabsWrapper');
+            if (!tabsWrapper) return;
+
+            tabsWrapper.innerHTML = '';
+
+            if (tabs.length === 0) {
+                var empty = document.createElement('span');
+                empty.style.cssText = 'color:rgba(255,255,255,0.08);font-size:12px;padding:0 8px;';
+                empty.textContent = '点击侧边栏打开页面';
+                tabsWrapper.appendChild(empty);
+                return;
+            }
+
+            tabs.forEach(function(tab) {
+                var tabEl = document.createElement('button');
+                tabEl.className = 'tab-item';
+                tabEl.dataset.tabId = tab.id;
+                tabEl.dataset.pageId = tab.pageId;
+
+                var isActive = tab.id === activeTabId;
+                if (isActive) tabEl.classList.add('active');
+
+                var pageDef = PAGE_DEFS[tab.pageId];
+                var icon = pageDef ? pageDef.icon : 'fa-file';
+
+                tabEl.innerHTML = `
+                    <i class="fas ${icon}"></i>
+                    <span>${tab.label}</span>
+                    <button class="tab-close" data-tab-id="${tab.id}" title="关闭标签">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+
+                tabEl.addEventListener('click', function(e) {
+                    if (e.target.closest('.tab-close')) return;
+                    switchTab(tab.id);
+                });
+
+                var closeBtn = tabEl.querySelector('.tab-close');
+                closeBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    closeTab(tab.id);
+                });
+
+                tabsWrapper.appendChild(tabEl);
+            });
+
+            updatePageVisibility();
+        }
+
+        function updatePageVisibility() {
+            document.querySelectorAll('.page').forEach(function(p) {
+                p.classList.remove('active');
+            });
+
+            var activeTab = tabs.find(function(t) { return t.id === activeTabId; });
+            if (activeTab) {
+                var pageEl = document.getElementById('page_' + activeTab.pageId);
+                if (pageEl) {
+                    pageEl.classList.add('active');
+                    loadPageContent(activeTab.pageId);
+                }
+            }
+        }
+
+        function loadPageContent(pageId) {
+            // 更新标题
+            var titleMap = {
+                'users': 'Users Management',
+                'deposits': 'Deposits',
+                'withdrawals': 'Withdrawals',
+                'transactions': 'Transactions',
+                'partnership': 'Partnership',
+                'content': 'Content Management',
+                'settings': 'Settings'
+            };
+            document.getElementById('pageTitle').textContent = titleMap[pageId] || pageId;
+
+            // 加载对应页面内容
+            if (pageId === 'users' && typeof window._adminUser !== 'undefined') {
                 window._adminUser.refresh();
             }
-            if (page === 'partnership' && typeof window._adminPartnership !== 'undefined') {
+            if (pageId === 'partnership' && typeof window._adminPartnership !== 'undefined') {
                 window._adminPartnership.load();
             }
-            if (page === 'content') {
+            if (pageId === 'content') {
                 if (typeof window._adminCarousel !== 'undefined') window._adminCarousel.load();
                 if (typeof window._adminAnnouncement !== 'undefined') window._adminAnnouncement.load();
             }
         }
 
-        var navItems = document.querySelectorAll('.nav-item');
-        navItems.forEach(function(item) {
-            item.addEventListener('click', function() {
-                var page = this.dataset.page;
-                document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
-                this.classList.add('active');
-                document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
-                var target = document.getElementById('page_' + page);
-                if (target) target.classList.add('active');
+        function openTab(pageId) {
+            var existing = tabs.find(function(t) { return t.pageId === pageId; });
+            if (existing) {
+                switchTab(existing.id);
+                return;
+            }
 
-                var titleMap = {
-                    'users': 'Users Management',
-                    'deposits': 'Deposits',
-                    'withdrawals': 'Withdrawals',
-                    'transactions': 'Transactions',
-                    'partnership': 'Partnership',
-                    'content': 'Content Management',
-                    'settings': 'Settings'
-                };
-                document.getElementById('pageTitle').textContent = titleMap[page] || page;
-                loadPage(page);
-                if (window.innerWidth <= 768) toggleSidebar();
-            });
-        });
+            var pageDef = PAGE_DEFS[pageId];
+            if (!pageDef) return;
 
-        var tabBtns = document.querySelectorAll('.tab-btn');
-        tabBtns.forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                var tab = this.dataset.tab;
-                tabBtns.forEach(function(b) { b.classList.remove('active'); });
-                this.classList.add('active');
-                document.querySelectorAll('.content-tab-panel').forEach(function(p) { p.classList.remove('active'); });
-                var panel = document.getElementById('panel_' + tab);
-                if (panel) panel.classList.add('active');
-                if (tab === 'carousel' && typeof window._adminCarousel !== 'undefined') window._adminCarousel.load();
-                if (tab === 'announcement' && typeof window._adminAnnouncement !== 'undefined') window._adminAnnouncement.load();
-            });
-        });
+            var newTab = {
+                id: ++tabIdCounter,
+                pageId: pageId,
+                label: pageDef.label
+            };
 
-        var logoutBtn = document.getElementById('logoutBtn');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', function() {
-                if (confirm('Are you sure you want to logout?')) {
-                    localStorage.removeItem('admin_logged_in');
-                    localStorage.removeItem('admin_login_time');
-                    localStorage.removeItem('admin_username');
-                    window.location.href = 'vision711-admin-login-K8G7Y.html';
-                }
-            });
+            tabs.push(newTab);
+            activeTabId = newTab.id;
+            saveTabOrder();
+            renderTabBar();
         }
+
+        function switchTab(tabId) {
+            var tab = tabs.find(function(t) { return t.id === tabId; });
+            if (!tab) return;
+            if (activeTabId === tabId) return;
+            activeTabId = tabId;
+            renderTabBar();
+        }
+
+        function closeTab(tabId) {
+            var index = tabs.findIndex(function(t) { return t.id === tabId; });
+            if (index === -1) return;
+
+            tabs.splice(index, 1);
+
+            if (tabs.length === 0) {
+                activeTabId = null;
+            } else if (activeTabId === tabId) {
+                var newIndex = Math.min(index, tabs.length - 1);
+                activeTabId = tabs[newIndex].id;
+            }
+
+            saveTabOrder();
+            renderTabBar();
+        }
+
+        function saveTabOrder() {
+            try {
+                var tabOrder = tabs.map(function(tab) { return tab.pageId; });
+                localStorage.setItem('admin_tab_order', JSON.stringify(tabOrder));
+            } catch (e) {}
+        }
+
+        function loadTabOrderFromStorage() {
+            try {
+                var saved = localStorage.getItem('admin_tab_order');
+                if (saved) {
+                    var order = JSON.parse(saved);
+                    if (Array.isArray(order) && order.length > 0) {
+                        var validOrder = order.filter(function(pageId) {
+                            return PAGE_DEFS[pageId] !== undefined;
+                        });
+                        if (validOrder.length > 0) return validOrder;
+                    }
+                }
+            } catch (e) {}
+            return null;
+        }
+
+        function initTabBar() {
+            var savedOrder = loadTabOrderFromStorage();
+            tabs = [];
+            tabIdCounter = 0;
+
+            if (savedOrder && savedOrder.length > 0) {
+                savedOrder.forEach(function(pageId) {
+                    var pageDef = PAGE_DEFS[pageId];
+                    if (pageDef) {
+                        tabs.push({
+                            id: ++tabIdCounter,
+                            pageId: pageId,
+                            label: pageDef.label
+                        });
+                    }
+                });
+                // 确保 dashboard 在第一个
+                var hasDefault = tabs.some(function(t) { return t.pageId === 'users'; });
+                if (!hasDefault) {
+                    tabs.unshift({
+                        id: ++tabIdCounter,
+                        pageId: 'users',
+                        label: PAGE_DEFS.users.label
+                    });
+                }
+                activeTabId = tabs[0].id;
+            } else {
+                var defaultTab = {
+                    id: ++tabIdCounter,
+                    pageId: 'users',
+                    label: PAGE_DEFS.users.label
+                };
+                tabs.push(defaultTab);
+                activeTabId = defaultTab.id;
+            }
+
+            renderTabBar();
+            console.log('✅ Tab Bar 已初始化');
+        }
+
+        // ============================================================
+        // 通知功能（简化版）
+        // ============================================================
+
+        var notifications = [];
+        var notifiedIds = new Set();
+
+        function loadNotifications() {
+            try {
+                var saved = localStorage.getItem('admin_notifications');
+                if (saved) {
+                    var parsed = JSON.parse(saved);
+                    if (Array.isArray(parsed)) {
+                        notifications = parsed;
+                        notifiedIds = new Set(parsed.map(function(n) { return n.id; }));
+                        updateNotificationUI();
+                        return;
+                    }
+                }
+            } catch (e) {}
+            notifications = [];
+        }
+
+        function saveNotifications() {
+            try {
+                localStorage.setItem('admin_notifications', JSON.stringify(notifications));
+            } catch (e) {}
+        }
+
+        function addNotification(notification) {
+            if (notifiedIds.has(notification.id)) return;
+            notifications.unshift(notification);
+            notifiedIds.add(notification.id);
+            if (notifications.length > 500) notifications = notifications.slice(0, 500);
+            saveNotifications();
+            updateNotificationUI();
+            updateGlobalNotificationBadge();
+        }
+
+        function updateNotificationUI() {
+            var listEl = document.getElementById('globalNotificationList');
+            var countEl = document.getElementById('globalNotificationCount');
+            if (!listEl) return;
+
+            var unreadCount = notifications.filter(function(n) { return !n.read; }).length;
+
+            if (countEl) countEl.textContent = notifications.length + ' notifications';
+
+            if (notifications.length === 0) {
+                listEl.innerHTML = `
+                    <div style="text-align:center;padding:40px 20px;color:#6a7a92;font-size:13px;">
+                        <i class="fas fa-inbox" style="display:block;font-size:28px;color:#4a5a72;margin-bottom:10px;"></i>
+                        No notifications
+                    </div>
+                `;
+                return;
+            }
+
+            var html = '';
+            notifications.forEach(function(notif) {
+                var isRead = notif.read;
+                var bgColor = isRead ? 'rgba(255,255,255,0.02)' : 'rgba(200,176,144,0.06)';
+                var timeStr = notif.timestamp ? new Date(notif.timestamp).toLocaleString() : '刚刚';
+
+                html += `
+                    <div class="notification-item" style="padding:12px 16px;margin:0 8px 4px 8px;border-radius:10px;background:${bgColor};border-left:3px solid #ffb84d;cursor:pointer;transition:all 0.2s;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;border:1px solid rgba(255,255,255,0.03);" onclick="markNotificationRead('${notif.id}')">
+                        <div style="flex:1;min-width:0;">
+                            <div style="font-size:13px;font-weight:500;color:#d8e0f0;">${notif.title || '通知'}</div>
+                            <div style="font-size:12px;color:#8892a8;margin-top:2px;">${notif.message || ''}</div>
+                        </div>
+                        <div style="display:flex;flex-direction:column;align-items:flex-end;flex-shrink:0;min-width:60px;">
+                            <div style="font-size:10px;color:#5a6a82;">${timeStr}</div>
+                            ${!isRead ? '<div style="margin-top:4px;width:6px;height:6px;border-radius:50%;background:#4a7cff;"></div>' : ''}
+                        </div>
+                    </div>
+                `;
+            });
+
+            listEl.innerHTML = html;
+        }
+
+        function updateGlobalNotificationBadge() {
+            var badge = document.getElementById('globalNotificationBadge');
+            if (!badge) return;
+            var unreadCount = notifications.filter(function(n) { return !n.read; }).length;
+            if (unreadCount > 0) {
+                badge.style.display = 'flex';
+                badge.textContent = unreadCount > 99 ? '99+' : unreadCount;
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        function markNotificationRead(id) {
+            var notif = notifications.find(function(n) { return n.id === id; });
+            if (notif) {
+                notif.read = true;
+                saveNotifications();
+                updateNotificationUI();
+                updateGlobalNotificationBadge();
+            }
+        }
+
+        function markAllNotificationsRead() {
+            notifications.forEach(function(n) { n.read = true; });
+            saveNotifications();
+            updateNotificationUI();
+            updateGlobalNotificationBadge();
+            showToast('✅ All notifications marked as read', 'success');
+        }
+
+        function clearAllNotifications() {
+            notifications = [];
+            notifiedIds = new Set();
+            saveNotifications();
+            updateNotificationUI();
+            updateGlobalNotificationBadge();
+            showToast('All notifications cleared', 'success');
+        }
+
+        function toggleNotificationDropdown() {
+            var dropdown = document.getElementById('globalNotificationDropdown');
+            if (!dropdown) return;
+            dropdown.classList.toggle('show');
+            if (dropdown.classList.contains('show')) {
+                updateNotificationUI();
+            }
+        }
+
+        function closeNotificationDropdown() {
+            var dropdown = document.getElementById('globalNotificationDropdown');
+            if (dropdown) dropdown.classList.remove('show');
+        }
+
+        // ============================================================
+        // Toast 提示
+        // ============================================================
+
+        function showToast(message, type) {
+            type = type || 'success';
+            var existing = document.querySelector('.custom-toast');
+            if (existing) existing.remove();
+
+            var toast = document.createElement('div');
+            toast.className = 'custom-toast';
+            var bgColor = type === 'success' ? '#2ed15a' : type === 'error' ? '#ff5a5a' : '#ffb84d';
+            toast.style.cssText = `
+                position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);
+                background:rgba(15,20,35,0.95);backdrop-filter:blur(20px);
+                border-radius:50px;padding:12px 24px;display:flex;align-items:center;gap:12px;
+                z-index:10001;opacity:0;transition:all 0.3s ease;
+                box-shadow:0 10px 30px rgba(0,0,0,0.3);
+                border-left:3px solid ${bgColor};
+                font-family:'Inter',sans-serif;color:#fff;
+            `;
+            toast.innerHTML = `
+                <div><i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}" style="color:${bgColor};font-size:18px;"></i></div>
+                <div style="font-size:14px;">${message}</div>
+                <div style="position:absolute;bottom:0;left:0;height:3px;background:${bgColor};width:100%;border-radius:0 0 50px 50px;animation:toastProgress 3s linear forwards;"></div>
+            `;
+            document.body.appendChild(toast);
+            setTimeout(function() { toast.style.transform = 'translateX(-50%) translateY(0)'; toast.style.opacity = '1'; }, 10);
+            setTimeout(function() {
+                toast.style.transform = 'translateX(-50%) translateY(100px)';
+                toast.style.opacity = '0';
+                setTimeout(function() { toast.remove(); }, 300);
+            }, 3000);
+        }
+
+        // ============================================================
+        // Modal 功能
+        // ============================================================
 
         var modalOverlay = document.getElementById('modalOverlay');
         var modalCancelBtn = document.getElementById('modalCancelBtn');
@@ -323,12 +925,135 @@
 
         window._adminModal = { open: openModal, close: closeModal };
 
+        // ============================================================
+        // 侧边栏导航
+        // ============================================================
+
+        var navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(function(item) {
+            item.addEventListener('click', function() {
+                var page = this.dataset.page;
+                document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
+                this.classList.add('active');
+                openTab(page);
+                if (window.innerWidth <= 768) toggleSidebar();
+            });
+        });
+
+        // ============================================================
+        // Content 子标签页
+        // ============================================================
+
+        var tabBtns = document.querySelectorAll('.tab-btn');
+        tabBtns.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var tab = this.dataset.tab;
+                tabBtns.forEach(function(b) { b.classList.remove('active'); });
+                this.classList.add('active');
+                document.querySelectorAll('.content-tab-panel').forEach(function(p) { p.classList.remove('active'); });
+                var panel = document.getElementById('panel_' + tab);
+                if (panel) panel.classList.add('active');
+                if (tab === 'carousel' && typeof window._adminCarousel !== 'undefined') window._adminCarousel.load();
+                if (tab === 'announcement' && typeof window._adminAnnouncement !== 'undefined') window._adminAnnouncement.load();
+            });
+        });
+
+        // ============================================================
+        // Logout
+        // ============================================================
+
+        var logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to logout?')) {
+                    localStorage.removeItem('admin_logged_in');
+                    localStorage.removeItem('admin_login_time');
+                    localStorage.removeItem('admin_username');
+                    window.location.href = 'vision711-admin-login-K8G7Y.html';
+                }
+            });
+        }
+
+        // ============================================================
+        // 通知按钮事件
+        // ============================================================
+
+        document.getElementById('globalNotificationBtn').addEventListener('click', function(e) {
+            e.stopPropagation();
+            toggleNotificationDropdown();
+        });
+
+        document.addEventListener('click', function(e) {
+            var container = document.getElementById('globalNotificationContainer');
+            var dropdown = document.getElementById('globalNotificationDropdown');
+            if (container && dropdown && !container.contains(e.target) && !dropdown.contains(e.target)) {
+                closeNotificationDropdown();
+            }
+        });
+
+        document.getElementById('markAllReadBtn').addEventListener('click', function(e) {
+            e.stopPropagation();
+            markAllNotificationsRead();
+        });
+
+        document.getElementById('clearAllNotificationsBtn').addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (confirm('Are you sure you want to clear all notifications?')) {
+                clearAllNotifications();
+            }
+        });
+
+        // ============================================================
+        // 添加 Tab 按钮
+        // ============================================================
+
+        document.getElementById('addTabBtn').addEventListener('click', function() {
+            var pageIds = Object.keys(PAGE_DEFS);
+            var available = pageIds.filter(function(id) {
+                return !tabs.some(function(t) { return t.pageId === id; });
+            });
+            if (available.length === 0) {
+                showToast('All pages are already open!', 'info');
+                return;
+            }
+            openTab(available[0]);
+        });
+
+        // ============================================================
+        // 添加动画样式
+        // ============================================================
+
+        if (!document.getElementById('toast-animation-styles')) {
+            var style = document.createElement('style');
+            style.id = 'toast-animation-styles';
+            style.textContent = `
+                @keyframes toastProgress {
+                    0% { width: 100%; }
+                    100% { width: 0%; }
+                }
+                .modal-overlay.show { display: flex !important; }
+                .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); z-index: 200; align-items: center; justify-content: center; }
+                .modal-overlay.show { display: flex; }
+            `;
+            document.head.appendChild(style);
+        }
+
+        // ============================================================
+        // 初始化
+        // ============================================================
+
+        loadNotifications();
+        initTabBar();
+
         // 默认加载 Users
         setTimeout(function() {
-            loadPage('users');
+            if (tabs.length > 0) {
+                var firstTab = tabs[0];
+                loadPageContent(firstTab.pageId);
+            }
         }, 300);
 
-        console.log('✅ VISION711 Admin Dashboard loaded');
+        console.log('✅ VISION711 Admin Dashboard with Tab Bar loaded');
     </script>
 
     <script src="admin-user.js"></script>
