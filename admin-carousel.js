@@ -74,13 +74,11 @@
 
                         <div style="flex:1;min-width:0;">
                             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                                <span style="font-weight:600;color:#e5e9f0;font-size:0.9rem;">${item.title || 'Untitled'}</span>
+                                <span style="font-weight:600;color:#e5e9f0;font-size:0.85rem;">Slide ${index + 1}</span>
                                 ${statusBadge}
-                                ${item.badge ? `<span style="background:rgba(255,215,0,0.08);color:#ffd700;padding:2px 10px;border-radius:30px;font-size:0.55rem;font-weight:600;border:1px solid rgba(255,215,0,0.08);">${item.badge}</span>` : ''}
                             </div>
-                            <div style="color:#5a6388;font-size:0.75rem;margin-top:2px;">
-                                ${item.description || ''}
-                                <span style="color:#2a3560;margin-left:12px;">→ ${item.cta_text || 'View More'}</span>
+                            <div style="color:#5a6388;font-size:0.7rem;margin-top:2px;">
+                                <i class="fas fa-link"></i> ${item.cta_link || 'No link'}
                             </div>
                         </div>
 
@@ -181,7 +179,7 @@
                     ${itemsHTML}
                 </div>
                 <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.04);font-size:0.65rem;color:#2a3560;text-align:center;">
-                    <i class="fas fa-info-circle"></i> Recommended image size: 1600 x 600px (8:3 ratio)
+                    <i class="fas fa-info-circle"></i> Recommended image size: 1600 x 900px (16:9 ratio)
                 </div>
             </div>
         `;
@@ -253,7 +251,6 @@
             var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
             if (currentItems.length === 0) {
-                // 如果没数据，删除所有
                 sb.from('carousel_items')
                     .delete()
                     .neq('id', '')
@@ -268,7 +265,6 @@
                 return;
             }
 
-            // 🔥 使用 upsert：有则更新，无则插入
             sb.from('carousel_items')
                 .upsert(currentItems, { onConflict: 'id' })
                 .then(function(res) {
@@ -277,7 +273,6 @@
                 })
                 .catch(function(err) {
                     console.error('Upsert 失败，尝试先删除再插入:', err);
-                    // 如果 upsert 失败，尝试先删除再插入
                     sb.from('carousel_items')
                         .delete()
                         .neq('id', '')
@@ -373,13 +368,9 @@
         var newItem = {
             id: 'slide_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
             image_url: data.image_url || '',
-            title: data.title || 'New Slide',
-            description: data.description || '',
-            badge: data.badge || '',
-            cta_text: data.cta_text || 'View More →',
-            cta_link: data.cta_link || '/',
-            order: maxOrder + 1,
+            cta_link: data.cta_link || '',
             active: data.active !== false,
+            order: maxOrder + 1,
             created_at: new Date().toISOString()
         };
 
@@ -406,10 +397,6 @@
         currentItems[index] = {
             ...currentItems[index],
             image_url: data.image_url || currentItems[index].image_url,
-            title: data.title || currentItems[index].title,
-            description: data.description || currentItems[index].description,
-            badge: data.badge || currentItems[index].badge,
-            cta_text: data.cta_text || currentItems[index].cta_text,
             cta_link: data.cta_link || currentItems[index].cta_link,
             active: data.active !== undefined ? data.active : currentItems[index].active
         };
@@ -517,7 +504,7 @@
     }
 
     // ============================================================
-    // 通用表单 Modal
+    // 通用表单 Modal - 只显示 图片 + CTA Link + Active
     // ============================================================
     function openFormModal(title, subtitle, item) {
         var isEdit = !!item;
@@ -530,9 +517,10 @@
         }
 
         var bodyHTML = `
+            <!-- 图片上传 -->
             <div class="form-group">
                 <label style="display:block;font-size:12px;color:#5a6388;margin-bottom:4px;font-weight:600;">
-                    <i class="fas fa-image"></i> Slide Image (1600 x 600px recommended)
+                    <i class="fas fa-image"></i> Slide Image (1600 x 900px recommended)
                 </label>
                 <div style="
                     display:flex;
@@ -570,11 +558,13 @@
                     <input type="file" id="fileInput" accept="image/*" style="display:none;">
                 </div>
             </div>
+
+            <!-- CTA Link -->
             <div class="form-group">
                 <label style="display:block;font-size:12px;color:#5a6388;margin-bottom:4px;font-weight:600;">
-                    <i class="fas fa-tag"></i> Badge
+                    <i class="fas fa-link"></i> CTA Link (点击跳转)
                 </label>
-                <input type="text" id="formBadge" placeholder="e.g. 🔥 热门" value="${isEdit ? (item.badge || '') : ''}" style="
+                <input type="text" id="formCtaLink" placeholder="e.g. /deposit 或 https://xxx.com" value="${isEdit ? (item.cta_link || '') : ''}" style="
                     width:100%;
                     background:rgba(10,14,26,0.8);
                     border:1px solid #2a3560;
@@ -585,71 +575,12 @@
                     outline:none;
                     box-sizing:border-box;
                 ">
+                <div style="font-size:0.6rem;color:#2a3560;margin-top:4px;">
+                    <i class="fas fa-info-circle"></i> 留空则不跳转
+                </div>
             </div>
-            <div class="form-group">
-                <label style="display:block;font-size:12px;color:#5a6388;margin-bottom:4px;font-weight:600;">
-                    <i class="fas fa-heading"></i> Title
-                </label>
-                <input type="text" id="formTitle" placeholder="e.g. RM888 存款奖励" value="${isEdit ? (item.title || '') : ''}" style="
-                    width:100%;
-                    background:rgba(10,14,26,0.8);
-                    border:1px solid #2a3560;
-                    border-radius:12px;
-                    padding:12px 16px;
-                    color:#fff;
-                    font-size:14px;
-                    outline:none;
-                    box-sizing:border-box;
-                ">
-            </div>
-            <div class="form-group">
-                <label style="display:block;font-size:12px;color:#5a6388;margin-bottom:4px;font-weight:600;">
-                    <i class="fas fa-align-left"></i> Description
-                </label>
-                <input type="text" id="formDescription" placeholder="e.g. 首次存款可获得 100% 额外红利" value="${isEdit ? (item.description || '') : ''}" style="
-                    width:100%;
-                    background:rgba(10,14,26,0.8);
-                    border:1px solid #2a3560;
-                    border-radius:12px;
-                    padding:12px 16px;
-                    color:#fff;
-                    font-size:14px;
-                    outline:none;
-                    box-sizing:border-box;
-                ">
-            </div>
-            <div class="form-group">
-                <label style="display:block;font-size:12px;color:#5a6388;margin-bottom:4px;font-weight:600;">
-                    <i class="fas fa-link"></i> CTA Text
-                </label>
-                <input type="text" id="formCtaText" placeholder="e.g. 立即领取 →" value="${isEdit ? (item.cta_text || '') : ''}" style="
-                    width:100%;
-                    background:rgba(10,14,26,0.8);
-                    border:1px solid #2a3560;
-                    border-radius:12px;
-                    padding:12px 16px;
-                    color:#fff;
-                    font-size:14px;
-                    outline:none;
-                    box-sizing:border-box;
-                ">
-            </div>
-            <div class="form-group">
-                <label style="display:block;font-size:12px;color:#5a6388;margin-bottom:4px;font-weight:600;">
-                    <i class="fas fa-external-link-alt"></i> CTA Link
-                </label>
-                <input type="text" id="formCtaLink" placeholder="e.g. /deposit" value="${isEdit ? (item.cta_link || '') : ''}" style="
-                    width:100%;
-                    background:rgba(10,14,26,0.8);
-                    border:1px solid #2a3560;
-                    border-radius:12px;
-                    padding:12px 16px;
-                    color:#fff;
-                    font-size:14px;
-                    outline:none;
-                    box-sizing:border-box;
-                ">
-            </div>
+
+            <!-- Active -->
             <div class="form-group">
                 <label style="display:block;font-size:12px;color:#5a6388;margin-bottom:4px;font-weight:600;">
                     <i class="fas fa-power-off"></i> Active
@@ -665,8 +596,8 @@
                     outline:none;
                     box-sizing:border-box;
                 ">
-                    <option value="true" ${isEdit && item.active !== false ? 'selected' : ''}>Active</option>
-                    <option value="false" ${isEdit && item.active === false ? 'selected' : ''}>Inactive</option>
+                    <option value="true" ${isEdit && item.active !== false ? 'selected' : ''}>Active (显示)</option>
+                    <option value="false" ${isEdit && item.active === false ? 'selected' : ''}>Inactive (隐藏)</option>
                 </select>
             </div>
         `;
@@ -782,19 +713,11 @@
     // 保存表单数据
     // ============================================================
     function saveFormData() {
-        var badge = document.getElementById('formBadge').value.trim() || '';
-        var title = document.getElementById('formTitle').value.trim() || 'New Slide';
-        var description = document.getElementById('formDescription').value.trim() || '';
-        var cta_text = document.getElementById('formCtaText').value.trim() || 'View More →';
-        var cta_link = document.getElementById('formCtaLink').value.trim() || '/';
+        var cta_link = document.getElementById('formCtaLink').value.trim() || '';
         var active = document.getElementById('formActive').value === 'true';
 
         var data = {
             image_url: uploadedImageUrl,
-            badge: badge,
-            title: title,
-            description: description,
-            cta_text: cta_text,
             cta_link: cta_link,
             active: active
         };
