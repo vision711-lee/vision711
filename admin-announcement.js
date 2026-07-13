@@ -1,5 +1,5 @@
 // ============================================================
-// admin-announcement.js - 双保险版 (localStorage + Supabase)
+// admin-announcement.js - 修复版
 // ============================================================
 
 (function() {
@@ -143,30 +143,34 @@
     }
 
     // ============================================================
-    // 加载数据 (优先 localStorage)
+    // 加载数据 (从 localStorage + Supabase)
     // ============================================================
     function loadData() {
         console.log('📥 Loading announcements...');
-        
-        // 1️⃣ 先加载 localStorage (立即显示)
+
+        // 1️⃣ 先加载 localStorage
         var saved = localStorage.getItem('announcements');
         if (saved) {
             try {
                 currentItems = JSON.parse(saved);
-                renderAnnouncementPage();
                 console.log('✅ 从 localStorage 加载:', currentItems.length, '条');
-            } catch (e) {}
+                renderAnnouncementPage();
+            } catch (e) {
+                console.warn('⚠️ localStorage 解析失败');
+            }
         }
 
-        // 2️⃣ 再从 Supabase 加载 (如果有数据，则合并/覆盖)
+        // 2️⃣ 从 Supabase 加载
         if (!isSupabaseAvailable) return;
 
         try {
             var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-            sb.from('announcements').select('*').order('created_at', { ascending: false })
+            sb.from('announcements')
+                .select('*')
+                .order('created_at', { ascending: false })
                 .then(function(res) {
                     if (res.error) {
-                        console.warn('⚠️ Supabase 加载失败，使用 localStorage:', res.error);
+                        console.warn('⚠️ Supabase 加载失败:', res.error);
                         return;
                     }
                     if (res.data && res.data.length > 0) {
@@ -177,22 +181,22 @@
                     }
                 })
                 .catch(function(err) {
-                    console.warn('⚠️ Supabase 加载异常，使用 localStorage:', err);
+                    console.warn('⚠️ Supabase 加载异常:', err);
                 });
         } catch (e) {
-            console.warn('⚠️ Supabase 加载错误，使用 localStorage:', e);
+            console.warn('⚠️ Supabase 加载错误:', e);
         }
     }
 
     // ============================================================
-    // 保存数据 (双保险)
+    // 保存数据 (先 localStorage 再 Supabase)
     // ============================================================
     function saveToSupabase(callback) {
-        // 1️⃣ 先保存到 localStorage (保证刷新不丢)
+        // 1️⃣ 先保存到 localStorage
         localStorage.setItem('announcements', JSON.stringify(currentItems));
         console.log('💾 已保存到 localStorage');
 
-        // 2️⃣ 再同步到 Supabase (后台静默执行)
+        // 2️⃣ 同步到 Supabase
         if (!isSupabaseAvailable) {
             if (callback) callback();
             return;
@@ -202,30 +206,40 @@
             var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
             if (currentItems.length === 0) {
-                sb.from('announcements').delete().neq('id', '')
+                sb.from('announcements')
+                    .delete()
+                    .neq('id', '')
                     .then(function() { if (callback) callback(); })
                     .catch(function() { if (callback) callback(); });
                 return;
             }
 
-            // 使用 upsert
-            sb.from('announcements')
-                .upsert(currentItems, { onConflict: 'id' })
-                .then(function(res) {
-                    if (res.error) {
-                        console.warn('⚠️ Supabase 同步失败:', res.error);
-                    } else {
-                        console.log('✅ 已同步到 Supabase');
-                    }
+            // 逐条 upsert (最稳定)
+            var promises = [];
+            currentItems.forEach(function(item) {
+                var p = sb.from('announcements')
+                    .upsert(item, { onConflict: 'id' })
+                    .then(function(res) {
+                        if (res.error) {
+                            console.warn('⚠️ 单条同步失败:', res.error.message);
+                        }
+                        return res;
+                    });
+                promises.push(p);
+            });
+
+            Promise.all(promises)
+                .then(function() {
+                    console.log('✅ 同步到 Supabase 完成');
                     if (callback) callback();
                 })
                 .catch(function(err) {
-                    console.warn('⚠️ Supabase 同步异常:', err);
+                    console.warn('⚠️ 同步失败:', err);
                     if (callback) callback();
                 });
 
         } catch (e) {
-            console.warn('⚠️ Supabase 保存异常:', e);
+            console.warn('⚠️ 保存异常:', e);
             if (callback) callback();
         }
     }
@@ -244,29 +258,39 @@
             created_at: new Date().toISOString()
         };
         currentItems.unshift(newItem);
-        saveToSupabase(function() { 
-            renderAnnouncementPage(); 
-            showSaveResult(true, 'Announcement added successfully!'); 
+        saveToSupabase(function() {
+            renderAnnouncementPage();
+            showSaveResult(true, 'Announcement added successfully!');
         });
     }
 
     function updateItem(id, data) {
         var index = currentItems.findIndex(function(item) { return item.id === id; });
-        if (index === -1) { showSaveResult(false, 'Item not found'); return; }
-        currentItems[index] = { ...currentItems[index],
+        if (index === -1) {
+            showSaveResult(false, 'Item not found');
+            return;
+        }
+        currentItems[index] = {
+            ...currentItems[index],
             text: data.text || currentItems[index].text,
             time: data.time || currentItems[index].time,
             badge: data.badge || currentItems[index].badge,
             link: data.link || currentItems[index].link,
             status: data.status || currentItems[index].status
         };
-        saveToSupabase(function() { renderAnnouncementPage(); showSaveResult(true, 'Announcement updated successfully!'); });
+        saveToSupabase(function() {
+            renderAnnouncementPage();
+            showSaveResult(true, 'Announcement updated successfully!');
+        });
     }
 
     function deleteItem(id) {
         if (!confirm('Delete this announcement?')) return;
         currentItems = currentItems.filter(function(item) { return item.id !== id; });
-        saveToSupabase(function() { renderAnnouncementPage(); showSaveResult(true, 'Announcement deleted successfully!'); });
+        saveToSupabase(function() {
+            renderAnnouncementPage();
+            showSaveResult(true, 'Announcement deleted successfully!');
+        });
     }
 
     function toggleStatus(id) {
@@ -274,7 +298,10 @@
         if (index === -1) return;
         var statusMap = { 'active': 'inactive', 'inactive': 'draft', 'draft': 'active' };
         currentItems[index].status = statusMap[currentItems[index].status] || 'active';
-        saveToSupabase(function() { renderAnnouncementPage(); showSaveResult(true, 'Status toggled!'); });
+        saveToSupabase(function() {
+            renderAnnouncementPage();
+            showSaveResult(true, 'Status toggled!');
+        });
     }
 
     function showSaveResult(success, message) {
@@ -285,19 +312,35 @@
         var div = document.createElement('div');
         div.className = 'save-result';
         div.style.cssText = `
-            margin-top: 12px; padding: 10px 18px; border-radius: 12px; font-size: 13px; font-weight: 500;
+            margin-top: 12px;
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 500;
             ${success ? 'background: rgba(76, 217, 160, 0.1); border: 1px solid rgba(76, 217, 160, 0.2); color: #4cd9a0;' : 'background: rgba(255, 107, 107, 0.1); border: 1px solid rgba(255, 107, 107, 0.2); color: #ff6b6b;'}
         `;
         div.textContent = success ? '✅ ' + message : '❌ ' + (message || 'Operation failed');
         container.insertBefore(div, container.firstChild.nextSibling);
-        setTimeout(function() { if (div.parentNode) { div.style.opacity = '0'; div.style.transition = 'opacity 0.5s'; setTimeout(function() { if (div.parentNode) div.remove(); }, 500); } }, 3000);
+        setTimeout(function() {
+            if (div.parentNode) {
+                div.style.opacity = '0';
+                div.style.transition = 'opacity 0.5s';
+                setTimeout(function() { if (div.parentNode) div.remove(); }, 500);
+            }
+        }, 3000);
     }
 
-    function openAddModal() { editingItemId = null; openFormModal('Add Announcement', 'Create a new scrolling announcement', null); }
+    function openAddModal() {
+        editingItemId = null;
+        openFormModal('Add Announcement', 'Create a new scrolling announcement', null);
+    }
 
     function openEditModal(id) {
         var item = currentItems.find(function(i) { return i.id === id; });
-        if (!item) { showSaveResult(false, 'Item not found'); return; }
+        if (!item) {
+            showSaveResult(false, 'Item not found');
+            return;
+        }
         editingItemId = id;
         openFormModal('Edit Announcement', 'Update announcement', item);
     }
@@ -343,12 +386,17 @@
                 bodyHTML,
                 function() { saveFormData(); }
             );
-        } else { console.warn('openModal function not available'); }
+        } else {
+            console.warn('openModal function not available');
+        }
     }
 
     function saveFormData() {
         var text = document.getElementById('formText').value.trim();
-        if (!text) { alert('Announcement text is required!'); return; }
+        if (!text) {
+            alert('Announcement text is required!');
+            return;
+        }
         var data = {
             text: text,
             time: document.getElementById('formTime').value.trim() || 'Today',
@@ -356,7 +404,11 @@
             link: document.getElementById('formLink').value.trim() || '',
             status: document.getElementById('formStatus').value
         };
-        if (editingItemId) { updateItem(editingItemId, data); } else { addItem(data); }
+        if (editingItemId) {
+            updateItem(editingItemId, data);
+        } else {
+            addItem(data);
+        }
         if (typeof closeModal === 'function') closeModal();
         editingItemId = null;
     }
@@ -376,5 +428,8 @@
         getItems: function() { return currentItems; }
     };
 
-    console.log('✅ admin-announcement.js loaded (双保险版)');
+    console.log('✅ admin-announcement.js loaded (修复版)');
+
+    // 自动加载
+    loadData();
 })();
