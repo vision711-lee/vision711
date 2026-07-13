@@ -312,8 +312,8 @@
             var filePath = 'carousel/' + fileName;
 
             sb.storage
-                .from('vision-carousel')
-                .upload(filePath, file, {
+    .from('carousel-slide')
+    .upload(filePath, file, {
                     cacheControl: '3600',
                     upsert: false
                 })
@@ -325,8 +325,8 @@
                     }
 
                     var publicUrl = sb.storage
-                        .from('vision-carousel')
-                        .getPublicUrl(filePath);
+    .from('carousel-slide')
+    .getPublicUrl(filePath);
 
                     resolve(publicUrl.data.publicUrl);
                 })
