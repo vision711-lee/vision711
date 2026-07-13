@@ -1152,40 +1152,46 @@
     }
 
     function startProgress() {
-        if (progressInterval) clearInterval(progressInterval);
-        progressValue = 0;
-        progressBar.style.width = '0%';
-        
-        var step = 100 / (AUTO_PLAY_DELAY / 30);
-        
-        progressInterval = setInterval(function() {
-            progressValue += step;
-            if (progressValue >= 100) {
-                progressValue = 100;
-                progressBar.style.width = '100%';
-                clearInterval(progressInterval);
-                progressInterval = null;
-                setTimeout(function() {
-                    nextSlide();
-                    resetProgress();
-                }, 100);
-            } else {
-                progressBar.style.width = progressValue + '%';
-            }
-        }, 30);
+    if (progressInterval) {
+        clearInterval(progressInterval);
+        progressInterval = null;
     }
-
-    function resetProgress() {
-        if (progressInterval) {
+    progressValue = 0;
+    progressBar.style.width = '0%';
+    
+    var step = 100 / (AUTO_PLAY_DELAY / 30);
+    
+    progressInterval = setInterval(function() {
+        progressValue += step;
+        if (progressValue >= 100) {
+            progressValue = 100;
+            progressBar.style.width = '100%';
             clearInterval(progressInterval);
             progressInterval = null;
+            // ✅ 先跳转，再重置进度
+            nextSlide();
+            // ✅ 延迟一点点重置进度，避免冲突
+            setTimeout(function() {
+                resetProgress();
+            }, 50);
+        } else {
+            progressBar.style.width = progressValue + '%';
         }
-        progressValue = 0;
-        progressBar.style.width = '0%';
-        if (document.querySelectorAll('.carousel-slide').length > 1) {
-            startProgress();
-        }
+    }, 30);
+}
+
+function resetProgress() {
+    if (progressInterval) {
+        clearInterval(progressInterval);
+        progressInterval = null;
     }
+    progressValue = 0;
+    progressBar.style.width = '0%';
+    var total = document.querySelectorAll('.carousel-slide').length;
+    if (total > 1) {
+        startProgress();
+    }
+}
 
     function stopProgress() {
         if (progressInterval) {

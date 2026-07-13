@@ -2293,7 +2293,7 @@ html, body {
     overflow: visible !important;
 }
 
-/* 🔥 保留 GIF 背景 */
+/* 🔥 GIF 背景 - 在上层 */
 .bottom-nav .nav-games-center::before {
     content: '' !important;
     position: absolute !important;
@@ -2304,10 +2304,10 @@ html, body {
     height: 120px !important;
     background: url('https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/animated-button/slot-button.gif') no-repeat center / contain !important;
     pointer-events: none !important;
-    z-index: 0 !important;
+    z-index: 2 !important;
 }
 
-/* GAMES 文字 - 在 GIF 上方 */
+/* GAMES 文字 - 在 GIF 下方 + 右移 */
 .bottom-nav .games-metal-rajdhani {
     font-family: 'Rajdhani', sans-serif !important;
     font-weight: 700 !important;
@@ -2324,7 +2324,9 @@ html, body {
     line-height: 1.2 !important;
     position: relative !important;
     z-index: 1 !important;
-    padding-bottom: 18px !important;  /* ← 向上偏移，让 GIF 在下方 */
+    margin-top: 28px !important;
+    margin-left: 6px !important;  /* ← 新增：向右移动 6px */
+    padding-bottom: 0 !important;
 }
 
 @keyframes gamesShimmerFlow {
@@ -2341,7 +2343,8 @@ html, body {
     .bottom-nav .games-metal-rajdhani {
         font-size: 0.8rem !important;
         letter-spacing: 3px !important;
-        padding-bottom: 14px !important;
+        margin-top: 22px !important;
+        margin-left: 4px !important;  /* ← 手机版也右移一点 */
     }
     .bottom-nav .nav-games-center::before {
         width: 100px !important;
