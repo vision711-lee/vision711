@@ -1371,9 +1371,8 @@
         try {
             var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
             sb.from('announcements')
-                .select('*')
-                .eq('status', 'active')
-                .order('created_at', { ascending: false })
+    .select('*')
+    .order('created_at', { ascending: false })
                 .then(function(res) {
                     if (res.error || !res.data || res.data.length === 0) return;
                     renderAnnouncements(res.data);
@@ -1391,143 +1390,6 @@
 
     loadAnnouncements();
     console.log('✅ 极光呼吸通告条已加载 (无数据则隐藏)');
-})();
-
-// ============================================================
-// 霓虹蓝光 · 滚动公告栏 - 只显示 active 状态，无数据则留空
-// ============================================================
-(function initAnnouncement() {
-    var track = document.getElementById('announcementTrack');
-    var badge = document.getElementById('announcementBadge');
-    var moreLink = document.getElementById('announcementMore');
-    var wrapper = document.getElementById('announcementWrapper');
-    
-    if (!track) return;
-
-    var SUPABASE_URL = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co';
-    var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImprYnBiamhyZ2JuemV4dmp2eGd0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4Mzc3MDcyMSwiZXhwIjoyMDk5MzQ2NzIxfQ.cZumC1R8_pGEfQv-BBfqJXAExCYOC7mdDj4OmkfdjRw';
-
-    var announcements = [];
-
-    function hideAnnouncement() {
-        if (wrapper) {
-            wrapper.style.display = 'none';
-        }
-        console.log('📢 没有活跃公告，已隐藏公告栏');
-    }
-
-    function showAnnouncement() {
-        if (wrapper) {
-            wrapper.style.display = 'flex';
-        }
-    }
-
-    function renderAnnouncements() {
-        var data = announcements.filter(function(item) {
-            return item.status === 'active' || !item.status;
-        });
-
-        if (data.length === 0) {
-            hideAnnouncement();
-            return;
-        }
-
-        showAnnouncement();
-
-        var html = '';
-        for (var repeat = 0; repeat < 2; repeat++) {
-            data.forEach(function(item) {
-                html += '<span class="text-item">' + item.text + 
-                        ' <span class="time-tag">· ' + item.time + '</span></span>';
-            });
-        }
-        track.innerHTML = html;
-
-        if (badge && data.length > 0) {
-            badge.textContent = data[0].badge || 'HOT';
-        }
-        if (moreLink && data.length > 0 && data[0].link) {
-            moreLink.href = data[0].link;
-        }
-
-        console.log('📢 显示', data.length, '条活跃公告');
-    }
-
-    function loadAnnouncements() {
-        var loaded = false;
-
-        var saved = localStorage.getItem('announcements');
-        if (saved) {
-            try {
-                var parsed = JSON.parse(saved);
-                if (parsed && parsed.length > 0) {
-                    announcements = parsed.map(function(item) {
-                        return {
-                            text: item.text || '',
-                            time: item.time || '今日',
-                            badge: item.badge || 'HOT',
-                            link: item.link || '#',
-                            status: item.status || 'active'
-                        };
-                    });
-                    renderAnnouncements();
-                    loaded = true;
-                    console.log('✅ 从 localStorage 加载了', announcements.length, '条公告');
-                }
-            } catch (e) {
-                console.warn('⚠️ localStorage 解析失败');
-            }
-        }
-
-        if (!loaded) {
-            hideAnnouncement();
-        }
-
-        if (typeof supabase === 'undefined') {
-            return;
-        }
-
-        try {
-            var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-            sb.from('announcements')
-                .select('*')
-                .eq('status', 'active')
-                .order('created_at', { ascending: false })
-                .limit(20)
-                .then(function(res) {
-                    if (res.error) {
-                        console.warn('⚠️ Supabase 加载失败:', res.error);
-                        return;
-                    }
-                    
-                    if (res.data && res.data.length > 0) {
-                        announcements = res.data.map(function(item) {
-                            return {
-                                text: item.text || '',
-                                time: item.time || '今日',
-                                badge: item.badge || 'HOT',
-                                link: item.link || '#',
-                                status: item.status || 'active'
-                            };
-                        });
-                        localStorage.setItem('announcements', JSON.stringify(res.data));
-                        renderAnnouncements();
-                        console.log('✅ 从 Supabase 加载了', announcements.length, '条公告');
-                    } else {
-                        hideAnnouncement();
-                    }
-                })
-                .catch(function(err) {
-                    console.warn('⚠️ Supabase 异常:', err);
-                });
-        } catch (e) {
-            console.warn('⚠️ Supabase 加载错误:', e);
-        }
-    }
-
-    loadAnnouncements();
-    console.log('✅ 公告栏已加载 (无数据则隐藏)');
 })();
 </script>
 </body>
