@@ -1,699 +1,507 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Admin Dashboard · VISION711</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
-    <style>
-        /* ============================================================
-           全局重置
-           ============================================================ */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Inter', -apple-system, sans-serif;
-            background: #06080f;
-            color: #e5e9f0;
-            min-height: 100vh;
-            background-image: url('https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/hero-background/desktop-hero-background.png');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
+// ============================================================
+// admin-announcement.js - Announcement 管理模块
+// 支持公告的增删改查，存储到 Supabase
+// ============================================================
+
+(function() {
+    'use strict';
+
+    console.log('✅ admin-announcement.js loading...');
+
+    var SUPABASE_URL = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co';
+    var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImprYnBiamhyZ2JuemV4dmp2eGd0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4Mzc3MDcyMSwiZXhwIjoyMDk5MzQ2NzIxfQ.cZumC1R8_pGEfQv-BBfqJXAExCYOC7mdDj4OmkfdjRw';
+
+    var currentItems = [];
+    var isSupabaseAvailable = false;
+    var editingItemId = null;
+
+    try {
+        if (typeof supabase !== 'undefined') {
+            isSupabaseAvailable = true;
+            console.log('✅ Supabase available');
+        }
+    } catch (e) {}
+
+    // ============================================================
+    // 渲染公告管理页面
+    // ============================================================
+    function renderAnnouncementPage() {
+        var container = document.getElementById('panel_announcement');
+        if (!container) {
+            console.warn('⚠️ #panel_announcement not found');
+            return;
         }
 
-        /* ============================================================
-           侧边栏
-           ============================================================ */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 240px;
-            height: 100vh;
-            background: rgba(10, 14, 26, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-right: 1px solid rgba(255,255,255,0.05);
-            padding: 24px 16px 30px;
-            overflow-y: auto;
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            scrollbar-width: none;
-        }
-        .sidebar::-webkit-scrollbar { display: none; }
+        var itemsHTML = '';
+        if (currentItems && currentItems.length > 0) {
+            currentItems.forEach(function(item, index) {
+                var statusClass = item.status || 'active';
+                var statusMap = {
+                    'active': 'Active',
+                    'inactive': 'Inactive',
+                    'draft': 'Draft'
+                };
+                var statusText = statusMap[statusClass] || statusClass;
 
-        .sidebar .logo {
-            text-align: center;
-            padding-bottom: 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.04);
-            margin-bottom: 20px;
-            flex-shrink: 0;
-        }
-        .sidebar .logo h2 {
-            font-size: 22px;
-            font-weight: 800;
-            color: #fff;
-            letter-spacing: 1px;
-        }
-        .sidebar .logo h2 span {
-            background: linear-gradient(135deg, #00b4ff, #ffd700);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .sidebar .logo .version {
-            font-size: 10px;
-            color: #3a4a6a;
-            display: block;
-            margin-top: 2px;
-            -webkit-text-fill-color: #3a4a6a;
-            letter-spacing: 1px;
-        }
-
-        .sidebar .nav-list {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-        .sidebar .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding: 12px 16px;
-            border-radius: 12px;
-            color: #5a6388;
-            text-decoration: none;
-            cursor: pointer;
-            transition: 0.3s;
-            font-size: 13px;
-            font-weight: 500;
-            position: relative;
-        }
-        .sidebar .nav-item i {
-            width: 20px;
-            text-align: center;
-            font-size: 15px;
-            color: #3a4a6a;
-            transition: 0.3s;
-        }
-        .sidebar .nav-item:hover {
-            background: rgba(255,255,255,0.04);
-            color: #8a9abb;
-        }
-        .sidebar .nav-item:hover i { color: #4a7cff; }
-        .sidebar .nav-item.active {
-            background: rgba(74,124,255,0.1);
-            color: #fff;
-            border: 1px solid rgba(74,124,255,0.15);
-        }
-        .sidebar .nav-item.active i { color: #4a7cff; }
-        .sidebar .nav-item.active::before {
-            content: '';
-            position: absolute;
-            left: -1px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 3px;
-            height: 24px;
-            background: linear-gradient(180deg, #4a7cff, #ffd700);
-            border-radius: 0 3px 3px 0;
-            box-shadow: 0 0 20px rgba(74,124,255,0.3);
+                itemsHTML += `
+                    <div class="announcement-item" style="margin-bottom:8px;">
+                        <div style="flex:1;min-width:0;">
+                            <div style="font-weight:600;color:#e5e9f0;font-size:0.9rem;">
+                                ${item.text || 'Untitled'}
+                            </div>
+                            <div style="display:flex;align-items:center;gap:12px;margin-top:2px;">
+                                <span class="badge-status ${statusClass}">${statusText}</span>
+                                <span style="font-size:0.65rem;color:#4a5a7a;">
+                                    <i class="far fa-clock"></i> ${item.time || 'Today'}
+                                </span>
+                                ${item.link ? `<span style="font-size:0.65rem;color:#2a3560;"><i class="fas fa-link"></i> ${item.link}</span>` : ''}
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:6px;flex-shrink:0;">
+                            <button onclick="window._adminAnnouncement.openEditModal('${item.id}')" style="
+                                background:rgba(74,124,255,0.1);
+                                border:1px solid rgba(74,124,255,0.15);
+                                color:#4a7cff;
+                                padding:5px 12px;
+                                border-radius:6px;
+                                cursor:pointer;
+                                font-size:0.65rem;
+                                font-weight:600;
+                                transition:0.3s;
+                            " onmouseover="this.style.background='rgba(74,124,255,0.2)'" onmouseout="this.style.background='rgba(74,124,255,0.1)'">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button onclick="window._adminAnnouncement.deleteItem('${item.id}')" style="
+                                background:rgba(255,107,107,0.08);
+                                border:1px solid rgba(255,107,107,0.1);
+                                color:#ff6b6b;
+                                padding:5px 12px;
+                                border-radius:6px;
+                                cursor:pointer;
+                                font-size:0.65rem;
+                                font-weight:600;
+                                transition:0.3s;
+                            " onmouseover="this.style.background='rgba(255,107,107,0.2)'" onmouseout="this.style.background='rgba(255,107,107,0.08)'">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                            <button onclick="window._adminAnnouncement.toggleStatus('${item.id}')" style="
+                                background:rgba(255,255,255,0.03);
+                                border:1px solid rgba(255,255,255,0.05);
+                                color:#5a6388;
+                                padding:5px 10px;
+                                border-radius:6px;
+                                cursor:pointer;
+                                font-size:0.65rem;
+                                transition:0.3s;
+                            " onmouseover="this.style.color='#8a9abb'" onmouseout="this.style.color='#5a6388'">
+                                <i class="fas fa-${item.status === 'active' ? 'eye' : item.status === 'draft' ? 'file' : 'eye-slash'}"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        } else {
+            itemsHTML = `
+                <div style="text-align:center;padding:40px 20px;color:#4a5a7a;font-size:0.85rem;">
+                    <i class="fas fa-bullhorn" style="font-size:2.5rem;display:block;margin-bottom:12px;color:#2a3560;"></i>
+                    No announcements yet. Click "Add Announcement" to create one.
+                </div>
+            `;
         }
 
-        .sidebar .footer-section {
-            margin-top: auto;
-            padding-top: 16px;
-            border-top: 1px solid rgba(255,255,255,0.04);
-            flex-shrink: 0;
-        }
-        .sidebar .footer-item {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding: 12px 16px;
-            border-radius: 12px;
-            color: #3a4a6a;
-            cursor: pointer;
-            transition: 0.3s;
-            font-size: 13px;
-            background: transparent;
-            border: none;
-            width: 100%;
-        }
-        .sidebar .footer-item:hover {
-            background: rgba(255,255,255,0.04);
-            color: #ff6b6b;
-        }
-        .sidebar .footer-item i { width: 20px; text-align: center; }
-        .sidebar .footer-item .version {
-            margin-left: auto;
-            font-size: 10px;
-            color: #2a3560;
-        }
-
-        /* ============================================================
-           主内容区
-           ============================================================ */
-        .main-content {
-            margin-left: 240px;
-            padding: 24px 32px 40px;
-            min-height: 100vh;
-        }
-
-        /* ============================================================
-           Header
-           ============================================================ */
-        .admin-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 24px;
-            background: rgba(10, 14, 26, 0.6);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.04);
-            margin-bottom: 20px;
-        }
-        .admin-header .left {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-        .admin-header .left h3 {
-            font-size: 18px;
-            font-weight: 600;
-            color: #fff;
-        }
-        .admin-header .left h3 i { color: #4a7cff; margin-right: 8px; }
-        .admin-header .left .date {
-            font-size: 12px;
-            color: #4a5a7a;
-        }
-        .admin-header .right {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-        .admin-header .right .user-badge {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: rgba(255,255,255,0.04);
-            padding: 8px 16px 8px 12px;
-            border-radius: 40px;
-            border: 1px solid rgba(255,255,255,0.04);
-        }
-        .admin-header .right .user-badge .avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #2f3e7a, #4a7cff);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            color: #fff;
-        }
-        .admin-header .right .user-badge .name {
-            font-size: 13px;
-            font-weight: 500;
-            color: #8a9abb;
-        }
-        .admin-header .right .user-badge .role {
-            font-size: 10px;
-            color: #4a5a7a;
-            background: rgba(74,124,255,0.1);
-            padding: 2px 10px;
-            border-radius: 20px;
-            border: 1px solid rgba(74,124,255,0.1);
-        }
-
-        /* ============================================================
-           页面容器
-           ============================================================ */
-        .page {
-            display: none;
-            animation: fadeIn 0.3s ease;
-        }
-        .page.active { display: block; }
-
-        @keyframes fadeIn {
-            0% { opacity: 0; transform: translateY(10px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ============================================================
-           手机菜单
-           ============================================================ */
-        .menu-toggle {
-            display: none;
-            position: fixed;
-            top: 16px;
-            left: 16px;
-            z-index: 101;
-            background: rgba(10, 14, 26, 0.8);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 12px;
-            padding: 10px 14px;
-            color: #8a9abb;
-            cursor: pointer;
-            font-size: 18px;
-        }
-        .overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 99;
-        }
-        .overlay.show { display: block; }
-
-        /* ============================================================
-           Modal
-           ============================================================ */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(8px);
-            z-index: 200;
-            align-items: center;
-            justify-content: center;
-        }
-        .modal-overlay.show { display: flex; }
-        .modal-card {
-            background: rgba(20, 30, 55, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            padding: 32px 36px;
-            width: 440px;
-            max-width: 95%;
-            border: 1px solid rgba(255,255,255,0.06);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-        }
-        .modal-card h3 {
-            font-size: 20px;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 4px;
-        }
-        .modal-card h3 i { color: #4a7cff; margin-right: 10px; }
-        .modal-card .sub {
-            font-size: 13px;
-            color: #5a6388;
-            margin-bottom: 20px;
-        }
-        .modal-card .form-group {
-            margin-bottom: 14px;
-        }
-        .modal-card .form-group label {
-            display: block;
-            font-size: 12px;
-            color: #5a6388;
-            margin-bottom: 4px;
-            font-weight: 600;
-        }
-        .modal-card .form-group input,
-        .modal-card .form-group select {
-            width: 100%;
-            background: rgba(10, 14, 26, 0.8);
-            border: 1px solid #2a3560;
-            border-radius: 12px;
-            padding: 12px 16px;
-            color: #fff;
-            font-size: 14px;
-            outline: none;
-            transition: 0.3s;
-            box-sizing: border-box;
-        }
-        .modal-card .form-group input:focus,
-        .modal-card .form-group select:focus {
-            border-color: #4a7cff;
-            box-shadow: 0 0 20px rgba(74,124,255,0.05);
-        }
-        .modal-card .form-group select option { background: #0a0f2a; }
-        .modal-card .modal-actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 20px;
-        }
-        .modal-card .modal-actions button {
-            flex: 1;
-            padding: 12px;
-            border-radius: 40px;
-            border: none;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .modal-card .modal-actions .btn-save {
-            background: linear-gradient(135deg, #4a7cff, #2f3e7a);
-            color: #fff;
-        }
-        .modal-card .modal-actions .btn-save:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(74,124,255,0.3);
-        }
-        .modal-card .modal-actions .btn-cancel {
-            background: rgba(255,255,255,0.04);
-            color: #5a6388;
-            border: 1px solid rgba(255,255,255,0.04);
-        }
-        .modal-card .modal-actions .btn-cancel:hover {
-            background: rgba(255,255,255,0.08);
-            color: #8a9abb;
-        }
-
-        /* ============================================================
-           响应式
-           ============================================================ */
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                width: 260px;
-                transition: 0.3s;
-            }
-            .sidebar.open { transform: translateX(0); }
-            .main-content { margin-left: 0; padding: 16px; padding-top: 72px; }
-
-            .admin-header { flex-direction: column; gap: 12px; align-items: stretch; }
-            .admin-header .right { justify-content: space-between; flex-wrap: wrap; }
-
-            .menu-toggle { display: flex !important; }
-            .overlay.show { display: block; }
-            .modal-card { padding: 24px 20px; }
-        }
-
-        @media (max-width: 480px) {
-            .admin-header .right .user-badge .role { display: none; }
-        }
-
-        ::-webkit-scrollbar { width: 4px; height: 4px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #2a3560; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #3a4a7a; }
-    </style>
-</head>
-<body>
-
-    <!-- ===== 手机菜单按钮 ===== -->
-    <div class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">
-        <i class="fas fa-bars"></i>
-    </div>
-    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
-
-    <!-- ===== 侧边栏 ===== -->
-    <div class="sidebar" id="sidebar">
-        <div class="logo">
-            <h2>VISION<span>711</span></h2>
-            <span class="version">v2.4 · ADMIN</span>
-        </div>
-
-        <div class="nav-list">
-    <div class="nav-item active" data-page="users">
-        <i class="fas fa-users"></i> Users Management
-    </div>
-    <div class="nav-item" data-page="deposits">
-        <i class="fas fa-wallet"></i> Deposits
-    </div>
-    <div class="nav-item" data-page="withdrawals">
-        <i class="fas fa-money-bill-wave"></i> Withdrawals
-    </div>
-    <div class="nav-item" data-page="transactions">
-        <i class="fas fa-exchange-alt"></i> Transactions
-    </div>
-    <div class="nav-item" data-page="partnership">
-        <i class="fas fa-handshake"></i> Partnership
-    </div>
-<div class="nav-item" data-page="carousel">
-    <i class="fas fa-images"></i> Carousel
-</div>
-    <div class="nav-item" data-page="settings">
-        <i class="fas fa-cog"></i> Settings
-    </div>
-</div>
-
-        <div class="footer-section">
-            <button class="footer-item" id="logoutBtn">
-                <i class="fas fa-sign-out-alt"></i> Log Out
-                <span class="version">v2.4</span>
-            </button>
-        </div>
-    </div>
-
-    <!-- ===== 主内容 ===== -->
-    <div class="main-content">
-        <!-- Header -->
-        <div class="admin-header">
-            <div class="left">
-                <h3><i class="fas fa-users"></i> <span id="pageTitle">Users Management</span></h3>
-                <span class="date" id="currentDate">Loading...</span>
-            </div>
-            <div class="right">
-                <div class="user-badge">
-                    <div class="avatar"><i class="fas fa-user-shield"></i></div>
-                    <span class="name" id="adminName">admin</span>
-                    <span class="role">Super Admin</span>
+        var html = `
+            <div style="margin-bottom: 16px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                    <div>
+                        <div style="font-size:18px; font-weight:600; color:#fff;">
+                            <i class="fas fa-bullhorn" style="color:#4dc8ff;"></i> Announcements
+                        </div>
+                        <div style="font-size:12px; color:#5a6388;">Manage homepage scrolling announcements</div>
+                    </div>
+                    <button onclick="window._adminAnnouncement.openAddModal()" style="
+                        background: linear-gradient(135deg, #4a7cff, #2f3e7a);
+                        border: none;
+                        padding: 10px 24px;
+                        border-radius: 40px;
+                        color: #fff;
+                        font-weight: 600;
+                        font-size: 13px;
+                        cursor: pointer;
+                        transition: 0.3s;
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                    ">
+                        <i class="fas fa-plus"></i> Add Announcement
+                    </button>
                 </div>
             </div>
-        </div>
 
-        <!-- ===== 页面容器 ===== -->
-        <div id="page_users" class="page active">
-            <!-- Users Management 内容由 admin-user.js 渲染 -->
-            <div style="text-align:center; padding:60px 20px; color:#4a5a7a;">
-                <i class="fas fa-spinner fa-spin" style="font-size:32px; color:#4a7cff;"></i>
-                <div style="margin-top:16px; font-size:14px;">Loading users...</div>
+            <div style="
+                background: rgba(10, 14, 26, 0.4);
+                border-radius: 16px;
+                border: 1px solid rgba(255,255,255,0.04);
+                padding: 16px;
+            ">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:11px;color:#5a6388;font-weight:600;">
+                    <span><i class="fas fa-list"></i> ${currentItems.length} announcement(s)</span>
+                    <span style="color:#2a3560;">${isSupabaseAvailable ? '✅ Supabase' : '💾 Local'}</span>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                    ${itemsHTML}
+                </div>
             </div>
-        </div>
-        <div id="page_deposits" class="page">
-            <div style="text-align:center; padding:60px 20px; color:#4a5a7a;">
-                <i class="fas fa-wallet" style="font-size:48px; color:#2a3560; display:block; margin-bottom:12px;"></i>
-                <div style="font-size:16px; font-weight:600; color:#8a9abb;">Deposits</div>
-                <div style="font-size:13px; margin-top:4px;">Coming soon...</div>
-            </div>
-        </div>
-        <div id="page_withdrawals" class="page">
-            <div style="text-align:center; padding:60px 20px; color:#4a5a7a;">
-                <i class="fas fa-money-bill-wave" style="font-size:48px; color:#2a3560; display:block; margin-bottom:12px;"></i>
-                <div style="font-size:16px; font-weight:600; color:#8a9abb;">Withdrawals</div>
-                <div style="font-size:13px; margin-top:4px;">Coming soon...</div>
-            </div>
-        </div>
-        <div id="page_transactions" class="page">
-            <div style="text-align:center; padding:60px 20px; color:#4a5a7a;">
-                <i class="fas fa-exchange-alt" style="font-size:48px; color:#2a3560; display:block; margin-bottom:12px;"></i>
-                <div style="font-size:16px; font-weight:600; color:#8a9abb;">Transactions</div>
-                <div style="font-size:13px; margin-top:4px;">Coming soon...</div>
-            </div>
-        </div>
-<div id="page_partnership" class="page">
-    <div style="text-align:center; padding:60px 20px; color:#4a5a7a;">
-        <i class="fas fa-spinner fa-spin" style="font-size:32px; color:#4a7cff;"></i>
-        <div style="margin-top:16px; font-size:14px;">Loading partnership settings...</div>
-    </div>
-</div>
-<div id="page_carousel" class="page">
-    <div style="text-align:center; padding:60px 20px; color:#4a5a7a;">
-        <i class="fas fa-spinner fa-spin" style="font-size:32px; color:#4a7cff;"></i>
-        <div style="margin-top:16px; font-size:14px;">Loading carousel settings...</div>
-    </div>
-</div>
-        <div id="page_settings" class="page">
-            <div style="text-align:center; padding:60px 20px; color:#4a5a7a;">
-                <i class="fas fa-cog" style="font-size:48px; color:#2a3560; display:block; margin-bottom:12px;"></i>
-                <div style="font-size:16px; font-weight:600; color:#8a9abb;">Settings</div>
-                <div style="font-size:13px; margin-top:4px;">Coming soon...</div>
-            </div>
-        </div>
-    </div>
+        `;
 
-    <!-- ============================================================
-        Modal (通用)
-       ============================================================ -->
-    <div class="modal-overlay" id="modalOverlay">
-        <div class="modal-card">
-            <h3 id="modalTitle"><i class="fas fa-user-plus"></i> Add User</h3>
-            <div class="sub" id="modalSub">Create a new user account</div>
-            <div id="modalBody"></div>
-            <div class="modal-actions">
-                <button class="btn-save" id="modalSaveBtn">Save</button>
-                <button class="btn-cancel" id="modalCancelBtn">Cancel</button>
-            </div>
-        </div>
-    </div>
+        container.innerHTML = html;
+    }
 
-    <!-- ============================================================
-        JavaScript
-       ============================================================ -->
-    <script>
-        // ============================================================
-        //  工具函数
-        // ============================================================
-        function toggleSidebar() {
-            var sidebar = document.getElementById('sidebar');
-            var overlay = document.getElementById('overlay');
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('show');
+    // ============================================================
+    // 加载数据
+    // ============================================================
+    function loadData() {
+        console.log('📥 Loading announcements...');
+
+        if (!isSupabaseAvailable) {
+            loadFromLocalStorage();
+            return;
         }
 
-        function formatDate() {
-            var now = new Date();
-            return now.toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-        }
+        try {
+            var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // ============================================================
-        //  侧边栏导航
-        // ============================================================
-        var navItems = document.querySelectorAll('.nav-item');
-        navItems.forEach(function(item) {
-            item.addEventListener('click', function() {
-                var page = this.getAttribute('data-page');
-
-                // 更新导航高亮
-                document.querySelectorAll('.nav-item').forEach(function(n) {
-                    n.classList.remove('active');
+            sb.from('announcements')
+                .select('*')
+                .order('created_at', { ascending: false })
+                .then(function(res) {
+                    if (res.error) {
+                        console.error('加载失败:', res.error);
+                        loadFromLocalStorage();
+                        return;
+                    }
+                    currentItems = res.data || [];
+                    console.log('✅ 加载成功:', currentItems.length, 'announcements');
+                    renderAnnouncementPage();
+                })
+                .catch(function(err) {
+                    console.error('异常:', err);
+                    loadFromLocalStorage();
                 });
-                this.classList.add('active');
+        } catch (e) {
+            console.error('错误:', e);
+            loadFromLocalStorage();
+        }
+    }
 
-                // 切换页面
-                document.querySelectorAll('.page').forEach(function(p) {
-                    p.classList.remove('active');
+    function loadFromLocalStorage() {
+        var saved = localStorage.getItem('announcements');
+        if (saved) {
+            try {
+                currentItems = JSON.parse(saved);
+                renderAnnouncementPage();
+                return;
+            } catch (e) {}
+        }
+        currentItems = [];
+        renderAnnouncementPage();
+    }
+
+    // ============================================================
+    // 保存数据到 Supabase
+    // ============================================================
+    function saveToSupabase(callback) {
+        if (!isSupabaseAvailable) {
+            saveToLocalStorage();
+            if (callback) callback();
+            return;
+        }
+
+        try {
+            var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+            sb.from('announcements')
+                .upsert(currentItems, { onConflict: 'id' })
+                .then(function(res) {
+                    console.log('✅ 保存成功:', res);
+                    if (callback) callback();
+                })
+                .catch(function(err) {
+                    console.error('保存失败:', err);
+                    // 尝试先删除再插入
+                    sb.from('announcements')
+                        .delete()
+                        .neq('id', '')
+                        .then(function() {
+                            if (currentItems.length === 0) {
+                                if (callback) callback();
+                                return;
+                            }
+                            sb.from('announcements')
+                                .insert(currentItems)
+                                .then(function() {
+                                    console.log('✅ 插入成功');
+                                    if (callback) callback();
+                                })
+                                .catch(function(err2) {
+                                    console.error('插入失败:', err2);
+                                    if (callback) callback();
+                                });
+                        })
+                        .catch(function(err2) {
+                            console.error('删除失败:', err2);
+                            if (callback) callback();
+                        });
                 });
-                var target = document.getElementById('page_' + page);
-                if (target) {
-                    target.classList.add('active');
-                }
-
-                // 更新标题
-                var titleMap = {
-    'users': 'Users Management',
-    'deposits': 'Deposits',
-    'withdrawals': 'Withdrawals',
-    'transactions': 'Transactions',
-    'partnership': 'Partnership',
-    'carousel': 'Carousel',
-    'settings': 'Settings'
-};
-                document.getElementById('pageTitle').textContent = titleMap[page] || page;
-
-                if (page === 'users' && typeof window._adminUser !== 'undefined') {
-                    window._adminUser.refresh();
-                }
-
-if (page === 'partnership' && typeof window._adminPartnership !== 'undefined') {
-    window._adminPartnership.load();
-}
-
-if (page === 'carousel' && typeof window._adminCarousel !== 'undefined') {
-    window._adminCarousel.load();
-}
-
-                // 关闭手机菜单
-                if (window.innerWidth <= 768) {
-                    toggleSidebar();
-                }
-            });
-        });
-
-        // ============================================================
-        //  退出登录
-        // ============================================================
-        var logoutBtn = document.getElementById('logoutBtn');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', function() {
-                if (confirm('Are you sure you want to logout?')) {
-                    localStorage.removeItem('admin_logged_in');
-                    localStorage.removeItem('admin_login_time');
-                    localStorage.removeItem('admin_username');
-                    window.location.href = 'vision711-admin-login-K8G7Y.html';
-                }
-            });
+        } catch (e) {
+            console.error('保存异常:', e);
+            if (callback) callback();
         }
+    }
 
-        // ============================================================
-        //  Modal 控制
-        // ============================================================
-        var modalOverlay = document.getElementById('modalOverlay');
-        var modalCancelBtn = document.getElementById('modalCancelBtn');
+    function saveToLocalStorage() {
+        localStorage.setItem('announcements', JSON.stringify(currentItems));
+    }
 
-        function openModal(title, sub, bodyHTML, onSave) {
-            document.getElementById('modalTitle').innerHTML = title;
-            document.getElementById('modalSub').textContent = sub;
-            document.getElementById('modalBody').innerHTML = bodyHTML;
-            modalOverlay.classList.add('show');
-
-            var saveBtn = document.getElementById('modalSaveBtn');
-            var newSaveBtn = saveBtn.cloneNode(true);
-            saveBtn.parentNode.replaceChild(newSaveBtn, saveBtn);
-
-            newSaveBtn.addEventListener('click', function() {
-                if (typeof onSave === 'function') {
-                    onSave();
-                }
-            });
-        }
-
-        function closeModal() {
-            modalOverlay.classList.remove('show');
-        }
-
-        if (modalCancelBtn) {
-            modalCancelBtn.addEventListener('click', closeModal);
-        }
-        if (modalOverlay) {
-            modalOverlay.addEventListener('click', function(e) {
-                if (e.target === this) closeModal();
-            });
-        }
-
-        // 暴露给 admin-user.js
-        window._adminModal = {
-            open: openModal,
-            close: closeModal
+    // ============================================================
+    // 添加项目
+    // ============================================================
+    function addItem(data) {
+        var newItem = {
+            id: 'ann_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+            text: data.text || '',
+            time: data.time || 'Today',
+            badge: data.badge || 'HOT',
+            link: data.link || '',
+            status: data.status || 'active',
+            created_at: new Date().toISOString()
         };
 
-        // ============================================================
-        //  初始化
-        // ============================================================
-        document.getElementById('currentDate').textContent = formatDate();
+        currentItems.unshift(newItem);
+        saveToSupabase(function() {
+            renderAnnouncementPage();
+            showSaveResult(true, 'Announcement added successfully!');
+        });
+    }
 
-        var username = localStorage.getItem('admin_username') || 'admin';
-        document.getElementById('adminName').textContent = username;
+    // ============================================================
+    // 更新项目
+    // ============================================================
+    function updateItem(id, data) {
+        var index = currentItems.findIndex(function(item) {
+            return item.id === id;
+        });
 
-        // 检查登录状态
-        if (localStorage.getItem('admin_logged_in') !== 'true') {
-            window.location.href = 'vision711-admin-login-K8G7Y.html';
+        if (index === -1) {
+            showSaveResult(false, 'Item not found');
+            return;
         }
 
-        console.log('✅ VISION711 Admin Dashboard loaded');
-        console.log('📄 Waiting for admin-user.js to load...');
-    </script>
+        currentItems[index] = {
+            ...currentItems[index],
+            text: data.text || currentItems[index].text,
+            time: data.time || currentItems[index].time,
+            badge: data.badge || currentItems[index].badge,
+            link: data.link || currentItems[index].link,
+            status: data.status || currentItems[index].status
+        };
 
-    <!-- ============================================================
-        用户管理模块 (独立加载)
-       ============================================================ -->
-    <script src="admin-user.js"></script>
-    <script src="admin-partnership.js"></script>
-    <script src="admin-carousel.js"></script>
-</body>
-</html>
+        saveToSupabase(function() {
+            renderAnnouncementPage();
+            showSaveResult(true, 'Announcement updated successfully!');
+        });
+    }
+
+    // ============================================================
+    // 删除项目
+    // ============================================================
+    function deleteItem(id) {
+        if (!confirm('Delete this announcement?')) return;
+
+        currentItems = currentItems.filter(function(item) {
+            return item.id !== id;
+        });
+
+        saveToSupabase(function() {
+            renderAnnouncementPage();
+            showSaveResult(true, 'Announcement deleted successfully!');
+        });
+    }
+
+    // ============================================================
+    // 切换状态
+    // ============================================================
+    function toggleStatus(id) {
+        var index = currentItems.findIndex(function(item) {
+            return item.id === id;
+        });
+
+        if (index === -1) return;
+
+        var statusMap = { 'active': 'inactive', 'inactive': 'draft', 'draft': 'active' };
+        currentItems[index].status = statusMap[currentItems[index].status] || 'active';
+
+        saveToSupabase(function() {
+            renderAnnouncementPage();
+            showSaveResult(true, 'Status toggled!');
+        });
+    }
+
+    // ============================================================
+    // 显示保存结果
+    // ============================================================
+    function showSaveResult(success, message) {
+        var container = document.getElementById('panel_announcement');
+        if (!container) return;
+
+        var existing = container.querySelector('.save-result');
+        if (existing) existing.remove();
+
+        var div = document.createElement('div');
+        div.className = 'save-result';
+        div.style.cssText = `
+            margin-top: 12px;
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 500;
+            ${success ? 'background: rgba(76, 217, 160, 0.1); border: 1px solid rgba(76, 217, 160, 0.2); color: #4cd9a0;' : 'background: rgba(255, 107, 107, 0.1); border: 1px solid rgba(255, 107, 107, 0.2); color: #ff6b6b;'}
+        `;
+        div.textContent = success ? '✅ ' + message : '❌ ' + (message || 'Operation failed');
+
+        container.insertBefore(div, container.firstChild.nextSibling);
+
+        setTimeout(function() {
+            if (div.parentNode) {
+                div.style.opacity = '0';
+                div.style.transition = 'opacity 0.5s';
+                setTimeout(function() {
+                    if (div.parentNode) div.remove();
+                }, 500);
+            }
+        }, 3000);
+    }
+
+    // ============================================================
+    // 打开添加 Modal
+    // ============================================================
+    function openAddModal() {
+        editingItemId = null;
+        openFormModal('Add Announcement', 'Create a new scrolling announcement', null);
+    }
+
+    // ============================================================
+    // 打开编辑 Modal
+    // ============================================================
+    function openEditModal(id) {
+        var item = currentItems.find(function(i) { return i.id === id; });
+        if (!item) {
+            showSaveResult(false, 'Item not found');
+            return;
+        }
+
+        editingItemId = id;
+        openFormModal('Edit Announcement', 'Update announcement', item);
+    }
+
+    // ============================================================
+    // 通用表单 Modal
+    // ============================================================
+    function openFormModal(title, subtitle, item) {
+        var isEdit = !!item;
+
+        var bodyHTML = `
+            <div class="form-group">
+                <label><i class="fas fa-text"></i> Announcement Text *</label>
+                <textarea id="formText" placeholder="Enter announcement text...">${isEdit ? (item.text || '') : ''}</textarea>
+            </div>
+            <div class="form-group">
+                <label><i class="far fa-clock"></i> Time Tag</label>
+                <input type="text" id="formTime" placeholder="e.g. 10:30, Today, Yesterday" value="${isEdit ? (item.time || '') : 'Today'}">
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-tag"></i> Badge</label>
+                <select id="formBadge">
+                    <option value="HOT" ${isEdit && item.badge === 'HOT' ? 'selected' : ''}>🔥 HOT</option>
+                    <option value="NEW" ${isEdit && item.badge === 'NEW' ? 'selected' : ''}>🆕 NEW</option>
+                    <option value="VIP" ${isEdit && item.badge === 'VIP' ? 'selected' : ''}>👑 VIP</option>
+                    <option value="INFO" ${isEdit && item.badge === 'INFO' ? 'selected' : ''}>ℹ️ INFO</option>
+                    <option value="URGENT" ${isEdit && item.badge === 'URGENT' ? 'selected' : ''}>⚠️ URGENT</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-link"></i> Link (optional)</label>
+                <input type="text" id="formLink" placeholder="e.g. /deposit, https://example.com" value="${isEdit ? (item.link || '') : ''}">
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-toggle-on"></i> Status</label>
+                <select id="formStatus">
+                    <option value="active" ${isEdit && item.status === 'active' ? 'selected' : ''}>Active (显示)</option>
+                    <option value="draft" ${isEdit && item.status === 'draft' ? 'selected' : ''}>Draft (草稿)</option>
+                    <option value="inactive" ${isEdit && item.status === 'inactive' ? 'selected' : ''}>Inactive (隐藏)</option>
+                </select>
+            </div>
+        `;
+
+        if (typeof openModal === 'function') {
+            openModal(
+                '<i class="fas fa-' + (isEdit ? 'edit' : 'plus') + '"></i> ' + title,
+                subtitle,
+                bodyHTML,
+                function() {
+                    saveFormData();
+                }
+            );
+        } else {
+            console.warn('openModal function not available');
+        }
+    }
+
+    // ============================================================
+    // 保存表单数据
+    // ============================================================
+    function saveFormData() {
+        var text = document.getElementById('formText').value.trim();
+        if (!text) {
+            alert('Announcement text is required!');
+            return;
+        }
+
+        var data = {
+            text: text,
+            time: document.getElementById('formTime').value.trim() || 'Today',
+            badge: document.getElementById('formBadge').value,
+            link: document.getElementById('formLink').value.trim() || '',
+            status: document.getElementById('formStatus').value
+        };
+
+        if (editingItemId) {
+            updateItem(editingItemId, data);
+        } else {
+            addItem(data);
+        }
+
+        if (typeof closeModal === 'function') {
+            closeModal();
+        }
+
+        editingItemId = null;
+    }
+
+    // ============================================================
+    // 暴露全局接口
+    // ============================================================
+    window._adminAnnouncement = {
+        render: renderAnnouncementPage,
+        load: loadData,
+        addItem: addItem,
+        updateItem: updateItem,
+        deleteItem: deleteItem,
+        toggleStatus: toggleStatus,
+        openAddModal: openAddModal,
+        openEditModal: openEditModal,
+        getItems: function() { return currentItems; }
+    };
+
+    console.log('✅ admin-announcement.js loaded successfully');
+
+})();

@@ -169,7 +169,8 @@
             .main-content .lucky-draw,
             .main-content .admin-entry,
             .main-content .input-group-metal,
-            .main-content .carousel-container {
+            .main-content .carousel-container,
+            .main-content .announcement-wrapper {
                 max-width: 900px;
                 margin-left: auto;
                 margin-right: auto;
@@ -270,6 +271,7 @@
             .main-content .admin-entry,
             .main-content .input-group-metal,
             .main-content .carousel-container,
+            .main-content .announcement-wrapper,
             .banner-fixed-desktop {
                 max-width: 1100px;
             }
@@ -484,6 +486,148 @@
                 height: 2px;
             }
         }
+
+        /* ============================================================
+           霓虹蓝光 · 滚动公告栏
+           ============================================================ */
+        .announcement-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 18px;
+            border-radius: 16px;
+            background: rgba(10, 14, 26, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 180, 255, 0.2);
+            box-shadow: 0 0 30px rgba(0, 180, 255, 0.04);
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .announcement-wrapper .horn-icon {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(0, 180, 255, 0.08);
+            border: 1px solid rgba(0, 180, 255, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #4dc8ff;
+            z-index: 2;
+        }
+        .announcement-wrapper .horn-icon i {
+            filter: drop-shadow(0 0 20px rgba(0, 180, 255, 0.2));
+        }
+
+        .announcement-wrapper .scroll-container {
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            position: relative;
+            z-index: 2;
+        }
+
+        .announcement-wrapper .scroll-track {
+            display: flex;
+            white-space: nowrap;
+            animation: scrollLeft 14s linear infinite;
+        }
+
+        .announcement-wrapper .scroll-track .text-item {
+            font-size: 0.92rem;
+            color: rgba(255, 255, 255, 0.85);
+            padding-right: 60px;
+            flex-shrink: 0;
+        }
+
+        .announcement-wrapper .scroll-track .text-item .time-tag {
+            font-size: 0.6rem;
+            color: rgba(255, 255, 255, 0.2);
+            margin-left: 10px;
+        }
+
+        .announcement-wrapper:hover .scroll-track {
+            animation-play-state: paused;
+        }
+
+        .announcement-wrapper .badge-new {
+            flex-shrink: 0;
+            background: linear-gradient(135deg, #ff6b6b, #e33545);
+            color: #fff;
+            font-size: 0.55rem;
+            font-weight: 700;
+            padding: 2px 12px;
+            border-radius: 30px;
+            letter-spacing: 0.5px;
+            animation: pulseBadge 1.5s ease-in-out infinite;
+            z-index: 2;
+        }
+        @keyframes pulseBadge {
+            0% { opacity: 0.7; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+            100% { opacity: 0.7; transform: scale(1); }
+        }
+
+        .announcement-wrapper .arrow-link {
+            flex-shrink: 0;
+            color: rgba(255, 255, 255, 0.15);
+            font-size: 0.8rem;
+            transition: 0.3s;
+            cursor: pointer;
+            z-index: 2;
+            text-decoration: none;
+        }
+        .announcement-wrapper .arrow-link:hover {
+            color: #4dc8ff;
+        }
+
+        @keyframes scrollLeft {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .announcement-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(0, 180, 255, 0.3), rgba(0, 200, 255, 0.5), rgba(0, 180, 255, 0.3), transparent);
+            border-radius: 16px 16px 0 0;
+            animation: shimmerLine 3s ease-in-out infinite;
+            z-index: 1;
+        }
+        @keyframes shimmerLine {
+            0% { opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { opacity: 0.3; }
+        }
+
+        @media (max-width: 600px) {
+            .announcement-wrapper {
+                padding: 10px 12px;
+                gap: 10px;
+                margin-bottom: 12px;
+            }
+            .announcement-wrapper .horn-icon {
+                width: 32px;
+                height: 32px;
+                font-size: 0.9rem;
+            }
+            .announcement-wrapper .scroll-track .text-item {
+                font-size: 0.78rem;
+                padding-right: 40px;
+            }
+            .announcement-wrapper .badge-new {
+                font-size: 0.45rem;
+                padding: 1px 10px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -588,6 +732,20 @@
             <div class="carousel-progress" id="carouselProgress">
                 <div class="carousel-progress-bar" id="carouselProgressBar"></div>
             </div>
+        </div>
+
+        <!-- ============================================================
+        霓虹蓝光 · 滚动公告栏 (轮播图和余额卡片之间)
+        ============================================================ -->
+        <div class="announcement-wrapper" id="announcementWrapper">
+            <div class="horn-icon"><i class="fas fa-bullhorn"></i></div>
+            <div class="scroll-container">
+                <div class="scroll-track" id="announcementTrack">
+                    <!-- 由 JS 动态渲染 -->
+                </div>
+            </div>
+            <span class="badge-new" id="announcementBadge">HOT</span>
+            <a href="#" class="arrow-link" id="announcementMore"><i class="fas fa-chevron-right"></i></a>
         </div>
 
         <!-- ===== 欢迎卡片 ===== -->
@@ -965,7 +1123,7 @@
         progressValue = 0;
         progressBar.style.width = '0%';
         
-        var step = 100 / (AUTO_PLAY_DELAY / 30); // 每30ms更新一次
+        var step = 100 / (AUTO_PLAY_DELAY / 30);
         
         progressInterval = setInterval(function() {
             progressValue += step;
@@ -974,7 +1132,6 @@
                 progressBar.style.width = '100%';
                 clearInterval(progressInterval);
                 progressInterval = null;
-                // 自动换下一张
                 setTimeout(function() {
                     nextSlide();
                     resetProgress();
@@ -1008,7 +1165,6 @@
         if (autoPlayInterval) clearInterval(autoPlayInterval);
         var total = document.querySelectorAll('.carousel-slide').length;
         if (total > 1) {
-            // 进度条由 progressInterval 控制，不需要额外的 autoPlayInterval
             resetProgress();
         }
     }
@@ -1125,6 +1281,95 @@
     window.carousel = { goToSlide, nextSlide, prevSlide, refresh: loadFromSupabase };
 
     console.log('✅ Carousel loaded');
+})();
+
+
+// ============================================================
+// 霓虹蓝光 · 滚动公告栏 - 数据驱动
+// ============================================================
+(function initAnnouncement() {
+    var track = document.getElementById('announcementTrack');
+    var badge = document.getElementById('announcementBadge');
+    var moreLink = document.getElementById('announcementMore');
+    
+    if (!track) return;
+
+    // ===== 公告数据 (可从 Supabase 加载) =====
+    var announcements = [
+        { text: '🎉 新用户首存 100% 红利，最高 RM888！立即充值领取', time: '10:30' },
+        { text: '💎 每日幸运抽奖已开启！每 RM20 存款获得 1 个幸运号码', time: '09:15' },
+        { text: '⚡ 系统维护通知：每周二凌晨 3:00-5:00 进行例行维护', time: '昨日' },
+        { text: '👑 VIP 专属周返水 5% 已发放，请查收您的账户', time: '08:00' },
+        { text: '📌 合作平台 Mega888 新游戏已上线，欢迎体验', time: '昨日' }
+    ];
+
+    function renderAnnouncements() {
+        var html = '';
+        // 重复两遍实现无缝滚动
+        for (var repeat = 0; repeat < 2; repeat++) {
+            announcements.forEach(function(item) {
+                html += '<span class="text-item">' + item.text + 
+                        ' <span class="time-tag">· ' + item.time + '</span></span>';
+            });
+        }
+        track.innerHTML = html;
+    }
+
+    // ===== 从 Supabase 加载公告 (可选) =====
+    function loadFromSupabase() {
+        if (typeof supabase === 'undefined') {
+            renderAnnouncements();
+            return;
+        }
+
+        var SUPABASE_URL = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co';
+        var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImprYnBiamhyZ2JuemV4dmp2eGd0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4Mzc3MDcyMSwiZXhwIjoyMDk5MzQ2NzIxfQ.cZumC1R8_pGEfQv-BBfqJXAExCYOC7mdDj4OmkfdjRw';
+
+        var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        sb.from('announcements')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .limit(10)
+            .then(function(res) {
+                if (res.error) {
+                    console.warn('加载公告失败，使用默认数据:', res.error);
+                    renderAnnouncements();
+                    return;
+                }
+                if (res.data && res.data.length > 0) {
+                    announcements = res.data.map(function(item) {
+                        return {
+                            text: item.text || item.content || '📢 欢迎来到 VISION711',
+                            time: item.time || item.created_at ? new Date(item.created_at).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '今日'
+                        };
+                    });
+                    // 更新 HOT 徽章
+                    if (badge) {
+                        badge.textContent = res.data[0].badge || 'HOT';
+                    }
+                    // 更新更多链接
+                    if (moreLink && res.data[0].link) {
+                        moreLink.href = res.data[0].link;
+                    }
+                }
+                renderAnnouncements();
+            })
+            .catch(function(err) {
+                console.warn('加载公告异常，使用默认数据:', err);
+                renderAnnouncements();
+            });
+    }
+
+    // ===== 启动 =====
+    // 如果有 Supabase 表 "announcements" 就加载，否则用默认数据
+    if (typeof supabase !== 'undefined') {
+        loadFromSupabase();
+    } else {
+        renderAnnouncements();
+    }
+
+    console.log('✅ 公告栏已加载');
 })();
 </script>
 </body>
