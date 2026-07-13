@@ -438,6 +438,9 @@
     <div class="nav-item" data-page="partnership">
         <i class="fas fa-handshake"></i> Partnership
     </div>
+<div class="nav-item" data-page="carousel">
+    <i class="fas fa-images"></i> Carousel
+</div>
     <div class="nav-item" data-page="settings">
         <i class="fas fa-cog"></i> Settings
     </div>
@@ -501,6 +504,12 @@
     <div style="text-align:center; padding:60px 20px; color:#4a5a7a;">
         <i class="fas fa-spinner fa-spin" style="font-size:32px; color:#4a7cff;"></i>
         <div style="margin-top:16px; font-size:14px;">Loading partnership settings...</div>
+    </div>
+</div>
+<div id="page_carousel" class="page">
+    <div style="text-align:center; padding:60px 20px; color:#4a5a7a;">
+        <i class="fas fa-spinner fa-spin" style="font-size:32px; color:#4a7cff;"></i>
+        <div style="margin-top:16px; font-size:14px;">Loading carousel settings...</div>
     </div>
 </div>
         <div id="page_settings" class="page">
@@ -680,5 +689,6 @@ if (page === 'partnership' && typeof window._adminPartnership !== 'undefined') {
        ============================================================ -->
     <script src="admin-user.js"></script>
     <script src="admin-partnership.js"></script>
+    <script src="admin-carousel.js"></script>
 </body>
 </html>

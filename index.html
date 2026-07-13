@@ -402,44 +402,16 @@
         <div class="mobile-header"></div>
 
         <!-- ===== 轮播图 ===== -->
-        <div class="carousel-container">
-            <div class="carousel-track" id="carouselTrack">
-                <div class="carousel-slide">
-                    <div class="carousel-content">
-                        <div class="carousel-badge">🔥 热门</div>
-                        <div class="carousel-title">RM888 存款奖励</div>
-                        <div class="carousel-desc">首次存款可获得 100% 额外红利</div>
-                        <span class="carousel-cta">立即领取 →</span>
-                    </div>
-                    <div class="carousel-image"><i class="fas fa-gift"></i></div>
-                </div>
-                <div class="carousel-slide">
-                    <div class="carousel-content">
-                        <div class="carousel-badge">🎰 活动</div>
-                        <div class="carousel-title">幸运抽奖进行中</div>
-                        <div class="carousel-desc">存款 RM20 获得幸运号码，赢取大奖</div>
-                        <span class="carousel-cta">参与抽奖 →</span>
-                    </div>
-                    <div class="carousel-image"><i class="fas fa-trophy"></i></div>
-                </div>
-                <div class="carousel-slide">
-                    <div class="carousel-content">
-                        <div class="carousel-badge">🆕 新游戏</div>
-                        <div class="carousel-title">MEGA888 全新上线</div>
-                        <div class="carousel-desc">体验最新老虎机游戏，赢取丰厚奖金</div>
-                        <span class="carousel-cta">立即游玩 →</span>
-                    </div>
-                    <div class="carousel-image"><i class="fas fa-gamepad"></i></div>
-                </div>
-            </div>
-            <button class="carousel-btn carousel-btn-left" id="carouselPrev"><i class="fas fa-chevron-left"></i></button>
-            <button class="carousel-btn carousel-btn-right" id="carouselNext"><i class="fas fa-chevron-right"></i></button>
-            <div class="carousel-dots" id="carouselDots">
-                <span class="dot active" data-index="0"></span>
-                <span class="dot" data-index="1"></span>
-                <span class="dot" data-index="2"></span>
-            </div>
-        </div>
+<div class="carousel-container" id="carouselContainer">
+    <div class="carousel-track" id="carouselTrack">
+        <!-- 由 JS 动态生成 -->
+    </div>
+    <button class="carousel-btn carousel-btn-left" id="carouselPrev"><i class="fas fa-chevron-left"></i></button>
+    <button class="carousel-btn carousel-btn-right" id="carouselNext"><i class="fas fa-chevron-right"></i></button>
+    <div class="carousel-dots" id="carouselDots">
+        <!-- 由 JS 动态生成 -->
+    </div>
+</div>
 
         <!-- ===== 欢迎卡片 ===== -->
         <div class="card-welcome">
@@ -705,5 +677,280 @@
 
 <script src="js/main.js"></script>
 <script src="components/hamburger.js"></script>
+
+<script>
+// ============================================================
+// 加载轮播图数据
+// ============================================================
+(function loadCarousel() {
+    var SUPABASE_URL = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co';
+    var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImprYnBiamhyZ2JuemV4dmp2eGd0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4Mzc3MDcyMSwiZXhwIjoyMDk5MzQ2NzIxfQ.cZumC1R8_pGEfQv-BBfqJXAExCYOC7mdDj4OmkfdjRw';
+
+    var track = document.getElementById('carouselTrack');
+    var dotsContainer = document.getElementById('carouselDots');
+    var prevBtn = document.getElementById('carouselPrev');
+    var nextBtn = document.getElementById('carouselNext');
+
+    if (!track) return;
+
+    var slides = [];
+    var currentIndex = 0;
+    var autoPlayInterval = null;
+    var AUTO_PLAY_DELAY = 4000;
+
+    function renderSlides() {
+        if (!slides || slides.length === 0) {
+            track.innerHTML = `
+                <div class="carousel-slide">
+                    <div class="carousel-content">
+                        <div class="carousel-badge">📢 欢迎</div>
+                        <div class="carousel-title">VISION711</div>
+                        <div class="carousel-desc">Play Safe, Win Safe</div>
+                        <span class="carousel-cta">了解更多 →</span>
+                    </div>
+                    <div class="carousel-image"><i class="fas fa-crown"></i></div>
+                </div>
+            `;
+            dotsContainer.innerHTML = '';
+            return;
+        }
+
+        // 只显示 active 的 slides
+        var activeSlides = slides.filter(function(s) { return s.active !== false; });
+        if (activeSlides.length === 0) activeSlides = slides;
+
+        var slidesHTML = '';
+        var dotsHTML = '';
+
+        activeSlides.forEach(function(slide, index) {
+            var imageHTML = slide.image_url && slide.image_url.startsWith('http')
+                ? `<img src="${slide.image_url}" alt="${slide.title}" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;border-radius:20px;">`
+                : `<div class="carousel-image"><i class="fas fa-image"></i></div>`;
+
+            slidesHTML += `
+                <div class="carousel-slide" style="position:relative;min-height:200px;overflow:hidden;border-radius:20px;">
+                    ${imageHTML}
+                    <div style="position:relative;z-index:1;padding:24px 28px;display:flex;align-items:center;justify-content:space-between;width:100%;min-height:200px;background:linear-gradient(90deg,rgba(6,6,15,0.7) 40%,transparent 100%);">
+                        <div class="carousel-content">
+                            ${slide.badge ? `<div class="carousel-badge">${slide.badge}</div>` : ''}
+                            <div class="carousel-title">${slide.title || 'VISION711'}</div>
+                            <div class="carousel-desc">${slide.description || 'Play Safe, Win Safe'}</div>
+                            ${slide.cta_text ? `<a href="${slide.cta_link || '/'}" class="carousel-cta" style="text-decoration:none;">${slide.cta_text}</a>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            dotsHTML += `<span class="dot ${index === 0 ? 'active' : ''}" data-index="${index}"></span>`;
+        });
+
+        track.innerHTML = slidesHTML;
+        dotsContainer.innerHTML = dotsHTML;
+
+        // 重新绑定 dot 事件
+        document.querySelectorAll('.dot').forEach(function(dot) {
+            dot.addEventListener('click', function() {
+                var index = parseInt(this.dataset.index);
+                goToSlide(index);
+                resetAutoPlay();
+            });
+        });
+
+        // 重置到第一张
+        currentIndex = 0;
+        updateTrack();
+    }
+
+    function updateTrack() {
+        var total = document.querySelectorAll('.carousel-slide').length;
+        if (total === 0) return;
+        track.style.transform = 'translateX(-' + (currentIndex * 100) + '%)';
+
+        document.querySelectorAll('.dot').forEach(function(dot, i) {
+            dot.classList.toggle('active', i === currentIndex);
+        });
+    }
+
+    function goToSlide(index) {
+        var total = document.querySelectorAll('.carousel-slide').length;
+        if (total === 0) return;
+        if (index < 0) index = total - 1;
+        if (index >= total) index = 0;
+        currentIndex = index;
+        updateTrack();
+    }
+
+    function nextSlide() {
+        var total = document.querySelectorAll('.carousel-slide').length;
+        if (total === 0) return;
+        goToSlide(currentIndex + 1);
+    }
+
+    function prevSlide() {
+        var total = document.querySelectorAll('.carousel-slide').length;
+        if (total === 0) return;
+        goToSlide(currentIndex - 1);
+    }
+
+    function startAutoPlay() {
+        if (autoPlayInterval) clearInterval(autoPlayInterval);
+        var total = document.querySelectorAll('.carousel-slide').length;
+        if (total > 1) {
+            autoPlayInterval = setInterval(nextSlide, AUTO_PLAY_DELAY);
+        }
+    }
+
+    function resetAutoPlay() {
+        if (autoPlayInterval) {
+            clearInterval(autoPlayInterval);
+            autoPlayInterval = null;
+        }
+        startAutoPlay();
+    }
+
+    // 绑定按钮事件
+    if (prevBtn) {
+        prevBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            prevSlide();
+            resetAutoPlay();
+        });
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            nextSlide();
+            resetAutoPlay();
+        });
+    }
+
+    // 触摸滑动支持
+    var touchStartX = 0;
+    var touchEndX = 0;
+    var container = document.querySelector('.carousel-container');
+
+    if (container) {
+        container.addEventListener('touchstart', function(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        container.addEventListener('touchend', function(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            var diff = touchStartX - touchEndX;
+            if (Math.abs(diff) > 30) {
+                if (diff > 0) {
+                    nextSlide();
+                } else {
+                    prevSlide();
+                }
+                resetAutoPlay();
+            }
+        }, { passive: true });
+
+        container.addEventListener('mouseenter', function() {
+            if (autoPlayInterval) {
+                clearInterval(autoPlayInterval);
+                autoPlayInterval = null;
+            }
+        });
+
+        container.addEventListener('mouseleave', function() {
+            startAutoPlay();
+        });
+    }
+
+    // ===== 从 Supabase 加载数据 =====
+    function loadFromSupabase() {
+        if (typeof supabase === 'undefined') {
+            loadFromLocalStorage();
+            return;
+        }
+
+        var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        sb.from('carousel_items')
+            .select('*')
+            .order('order', { ascending: true })
+            .then(function(res) {
+                if (res.error) {
+                    console.error('加载轮播图失败:', res.error);
+                    loadFromLocalStorage();
+                    return;
+                }
+                if (res.data && res.data.length > 0) {
+                    slides = res.data;
+                } else {
+                    // 使用默认数据
+                    slides = getDefaultSlides();
+                }
+                renderSlides();
+                startAutoPlay();
+            })
+            .catch(function(err) {
+                console.error('异常:', err);
+                loadFromLocalStorage();
+            });
+    }
+
+    function loadFromLocalStorage() {
+        var saved = localStorage.getItem('carousel_items');
+        if (saved) {
+            try {
+                slides = JSON.parse(saved);
+                renderSlides();
+                startAutoPlay();
+                return;
+            } catch (e) {}
+        }
+        slides = getDefaultSlides();
+        renderSlides();
+        startAutoPlay();
+    }
+
+    function getDefaultSlides() {
+        return [
+            {
+                id: 'default_1',
+                image_url: '',
+                title: 'RM888 存款奖励',
+                description: '首次存款可获得 100% 额外红利',
+                badge: '🔥 热门',
+                cta_text: '立即领取 →',
+                cta_link: '/deposit',
+                active: true
+            },
+            {
+                id: 'default_2',
+                image_url: '',
+                title: '幸运抽奖进行中',
+                description: '存款 RM20 获得幸运号码，赢取大奖',
+                badge: '🎰 活动',
+                cta_text: '参与抽奖 →',
+                cta_link: '/',
+                active: true
+            },
+            {
+                id: 'default_3',
+                image_url: '',
+                title: 'MEGA888 全新上线',
+                description: '体验最新老虎机游戏，赢取丰厚奖金',
+                badge: '🆕 新游戏',
+                cta_text: '立即游玩 →',
+                cta_link: '/',
+                active: true
+            }
+        ];
+    }
+
+    // ===== 启动 =====
+    loadFromSupabase();
+
+    // 暴露方法
+    window.carousel = { goToSlide, nextSlide, prevSlide, refresh: loadFromSupabase };
+
+    console.log('✅ Carousel loaded');
+})();
+</script>
 </body>
 </html>
