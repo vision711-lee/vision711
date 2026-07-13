@@ -402,16 +402,16 @@
         <div class="mobile-header"></div>
 
         <!-- ===== 轮播图 ===== -->
-<div class="carousel-container" id="carouselContainer">
-    <div class="carousel-track" id="carouselTrack">
-        <!-- 由 JS 动态生成 -->
-    </div>
-    <button class="carousel-btn carousel-btn-left" id="carouselPrev"><i class="fas fa-chevron-left"></i></button>
-    <button class="carousel-btn carousel-btn-right" id="carouselNext"><i class="fas fa-chevron-right"></i></button>
-    <div class="carousel-dots" id="carouselDots">
-        <!-- 由 JS 动态生成 -->
-    </div>
-</div>
+        <div class="carousel-container" id="carouselContainer">
+            <div class="carousel-track" id="carouselTrack">
+                <!-- 由 JS 动态生成 -->
+            </div>
+            <button class="carousel-btn carousel-btn-left" id="carouselPrev"><i class="fas fa-chevron-left"></i></button>
+            <button class="carousel-btn carousel-btn-right" id="carouselNext"><i class="fas fa-chevron-right"></i></button>
+            <div class="carousel-dots" id="carouselDots">
+                <!-- 由 JS 动态生成 -->
+            </div>
+        </div>
 
         <!-- ===== 欢迎卡片 ===== -->
         <div class="card-welcome">
@@ -715,7 +715,6 @@
             return;
         }
 
-        // 只显示 active 的 slides
         var activeSlides = slides.filter(function(s) { return s.active !== false; });
         if (activeSlides.length === 0) activeSlides = slides;
 
@@ -747,7 +746,6 @@
         track.innerHTML = slidesHTML;
         dotsContainer.innerHTML = dotsHTML;
 
-        // 重新绑定 dot 事件
         document.querySelectorAll('.dot').forEach(function(dot) {
             dot.addEventListener('click', function() {
                 var index = parseInt(this.dataset.index);
@@ -756,7 +754,6 @@
             });
         });
 
-        // 重置到第一张
         currentIndex = 0;
         updateTrack();
     }
@@ -808,7 +805,6 @@
         startAutoPlay();
     }
 
-    // 绑定按钮事件
     if (prevBtn) {
         prevBtn.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -825,7 +821,6 @@
         });
     }
 
-    // 触摸滑动支持
     var touchStartX = 0;
     var touchEndX = 0;
     var container = document.querySelector('.carousel-container');
@@ -860,7 +855,6 @@
         });
     }
 
-    // ===== 从 Supabase 加载数据 =====
     function loadFromSupabase() {
         if (typeof supabase === 'undefined') {
             loadFromLocalStorage();
@@ -881,8 +875,7 @@
                 if (res.data && res.data.length > 0) {
                     slides = res.data;
                 } else {
-                    // 使用默认数据
-                    slides = getDefaultSlides();
+                    slides = [];
                 }
                 renderSlides();
                 startAutoPlay();
@@ -903,50 +896,13 @@
                 return;
             } catch (e) {}
         }
-        slides = getDefaultSlides();
+        slides = [];
         renderSlides();
         startAutoPlay();
     }
 
-    function getDefaultSlides() {
-    return [];
-}
-                id: 'default_1',
-                image_url: '',
-                title: 'RM888 存款奖励',
-                description: '首次存款可获得 100% 额外红利',
-                badge: '🔥 热门',
-                cta_text: '立即领取 →',
-                cta_link: '/deposit',
-                active: true
-            },
-            {
-                id: 'default_2',
-                image_url: '',
-                title: '幸运抽奖进行中',
-                description: '存款 RM20 获得幸运号码，赢取大奖',
-                badge: '🎰 活动',
-                cta_text: '参与抽奖 →',
-                cta_link: '/',
-                active: true
-            },
-            {
-                id: 'default_3',
-                image_url: '',
-                title: 'MEGA888 全新上线',
-                description: '体验最新老虎机游戏，赢取丰厚奖金',
-                badge: '🆕 新游戏',
-                cta_text: '立即游玩 →',
-                cta_link: '/',
-                active: true
-            }
-        ];
-    }
-
-    // ===== 启动 =====
     loadFromSupabase();
 
-    // 暴露方法
     window.carousel = { goToSlide, nextSlide, prevSlide, refresh: loadFromSupabase };
 
     console.log('✅ Carousel loaded');
