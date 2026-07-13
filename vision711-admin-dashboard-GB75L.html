@@ -9,29 +9,45 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="admin-common.css">
     <style>
-        /* ✅ 额外修复 - 强制所有页面内容从顶部开始 */
+        /* ============================================================
+           终极修复 - 确保所有页面内容从顶部开始
+           ============================================================ */
+
+        /* 1. 主内容 - 使用正常 block 流 */
         .main-content {
-            display: flex !important;
-            flex-direction: column !important;
+            display: block !important;
+            margin-left: 240px;
+            padding: 24px 32px 40px 32px;
+            min-height: 100vh;
+            width: auto;
+            flex: none !important;
             align-items: stretch !important;
             justify-content: flex-start !important;
         }
 
+        /* 2. 所有页面容器 - 从顶部开始 */
         .page {
             display: none !important;
-            width: 100% !important;
-            flex-shrink: 0 !important;
+            position: static !important;
+            top: auto !important;
+            bottom: auto !important;
+            left: auto !important;
+            right: auto !important;
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+            min-height: auto !important;
+            height: auto !important;
+            transform: none !important;
+            float: none !important;
+            clear: both !important;
         }
         .page.active {
             display: block !important;
         }
 
-        /* 确保 admin-header 固定在顶部不浮动 */
-        .admin-header {
-            flex-shrink: 0 !important;
-        }
-
-        /* 内容区域不要有任何 margin-top: auto */
+        /* 3. 所有具体页面 - 强制从顶部开始 */
         #page_users,
         #page_deposits,
         #page_withdrawals,
@@ -39,20 +55,77 @@
         #page_partnership,
         #page_content,
         #page_settings {
+            display: none !important;
+            margin-top: 0 !important;
+            padding-top: 0 !important;
+            min-height: auto !important;
+            height: auto !important;
+            position: static !important;
+            top: auto !important;
+            bottom: auto !important;
+            transform: none !important;
+        }
+        #page_users.active,
+        #page_deposits.active,
+        #page_withdrawals.active,
+        #page_transactions.active,
+        #page_partnership.active,
+        #page_content.active,
+        #page_settings.active {
+            display: block !important;
+        }
+
+        /* 4. 确保页面内部内容也从顶部开始 */
+        #page_partnership > *,
+        #page_users > *,
+        #page_deposits > *,
+        #page_withdrawals > *,
+        #page_transactions > *,
+        #page_content > *,
+        #page_settings > * {
             margin-top: 0 !important;
             padding-top: 0 !important;
         }
 
-        /* 修复 Content 子标签页 */
+        /* 5. Admin Header 保持固定位置 */
+        .admin-header {
+            position: relative !important;
+            top: auto !important;
+            bottom: auto !important;
+            flex-shrink: 0 !important;
+            margin-bottom: 20px !important;
+        }
+
+        /* 6. 侧边栏保持固定 */
+        .sidebar {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            height: 100vh !important;
+            z-index: 100 !important;
+        }
+
+        /* 7. Content 子标签页修复 */
         .content-tabs {
             flex-shrink: 0 !important;
+            margin-bottom: 20px !important;
         }
         .content-tab-panel {
             display: none !important;
-            width: 100% !important;
+            margin-top: 0 !important;
+            padding-top: 0 !important;
         }
         .content-tab-panel.active {
             display: block !important;
+        }
+
+        /* 8. 响应式修复 */
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0 !important;
+                padding: 16px !important;
+                padding-top: 72px !important;
+            }
         }
     </style>
 </head>
