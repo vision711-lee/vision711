@@ -25,12 +25,12 @@
         </div>
 
         <div class="nav-list">
-            <div class="nav-item" data-page="users"><i class="fas fa-users"></i> Users Management</div>
+            <div class="nav-item active" data-page="users"><i class="fas fa-users"></i> Users Management</div>
             <div class="nav-item" data-page="deposits"><i class="fas fa-wallet"></i> Deposits</div>
             <div class="nav-item" data-page="withdrawals"><i class="fas fa-money-bill-wave"></i> Withdrawals</div>
             <div class="nav-item" data-page="transactions"><i class="fas fa-exchange-alt"></i> Transactions</div>
             <div class="nav-item" data-page="partnership"><i class="fas fa-handshake"></i> Partnership</div>
-            <div class="nav-item active" data-page="content"><i class="fas fa-newspaper"></i> Content Management</div>
+            <div class="nav-item" data-page="content"><i class="fas fa-newspaper"></i> Content Management</div>
             <div class="nav-item" data-page="settings"><i class="fas fa-cog"></i> Settings</div>
         </div>
 
@@ -48,7 +48,7 @@
         <!-- Header -->
         <div class="admin-header">
             <div class="left">
-                <h3><i class="fas fa-newspaper"></i> <span id="pageTitle">Content Management</span></h3>
+                <h3><i class="fas fa-users"></i> <span id="pageTitle">Users Management</span></h3>
                 <span class="date" id="currentDate">Loading...</span>
             </div>
             <div class="right">
@@ -61,7 +61,7 @@
         </div>
 
         <!-- ===== 页面容器 ===== -->
-        <div id="page_users" class="page">
+        <div id="page_users" class="page active">
             <div style="text-align:center; padding:60px 20px; color:#5a6a7a;">
                 <i class="fas fa-spinner fa-spin" style="font-size:32px; color:#ccb89f;"></i>
                 <div style="margin-top:16px; font-size:14px;">Loading users...</div>
@@ -100,7 +100,7 @@
         </div>
 
         <!-- ===== Content Management 页面 ===== -->
-        <div id="page_content" class="page active">
+        <div id="page_content" class="page">
             <div class="content-tabs" id="contentTabs">
                 <button class="tab-btn active" data-tab="carousel">
                     <i class="fas fa-images"></i> Carousel
@@ -180,6 +180,14 @@
         if (localStorage.getItem('admin_logged_in') !== 'true') {
             window.location.href = 'vision711-admin-login-K8G7Y.html';
         }
+
+        // ===== 🔥 页面加载后自动刷新 Users =====
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof window._adminUser !== 'undefined' && window._adminUser.refresh) {
+                console.log('🔄 自动刷新 Users...');
+                window._adminUser.refresh();
+            }
+        });
 
         // ===== 侧边栏导航 =====
         var navItems = document.querySelectorAll('.nav-item');
