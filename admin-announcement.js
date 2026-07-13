@@ -1,5 +1,5 @@
 // ============================================================
-// admin-announcement.js - Announcement 管理模块 (修复版)
+// admin-announcement.js - 双保险版 (localStorage + Supabase)
 // ============================================================
 
 (function() {
@@ -22,7 +22,7 @@
     } catch (e) {}
 
     // ============================================================
-    // 渲染公告管理页面
+    // 渲染
     // ============================================================
     function renderAnnouncementPage() {
         var container = document.getElementById('panel_announcement');
@@ -143,127 +143,95 @@
     }
 
     // ============================================================
-    // 加载数据
+    // 加载数据 (优先 localStorage)
     // ============================================================
     function loadData() {
         console.log('📥 Loading announcements...');
-        if (!isSupabaseAvailable) { loadFromLocalStorage(); return; }
+        
+        // 1️⃣ 先加载 localStorage (立即显示)
+        var saved = localStorage.getItem('announcements');
+        if (saved) {
+            try {
+                currentItems = JSON.parse(saved);
+                renderAnnouncementPage();
+                console.log('✅ 从 localStorage 加载:', currentItems.length, '条');
+            } catch (e) {}
+        }
+
+        // 2️⃣ 再从 Supabase 加载 (如果有数据，则合并/覆盖)
+        if (!isSupabaseAvailable) return;
+
         try {
             var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
             sb.from('announcements').select('*').order('created_at', { ascending: false })
                 .then(function(res) {
-                    if (res.error) { console.error('加载失败:', res.error); loadFromLocalStorage(); return; }
-                    currentItems = res.data || [];
-                    console.log('✅ 加载成功:', currentItems.length, 'announcements');
-                    renderAnnouncementPage();
+                    if (res.error) {
+                        console.warn('⚠️ Supabase 加载失败，使用 localStorage:', res.error);
+                        return;
+                    }
+                    if (res.data && res.data.length > 0) {
+                        currentItems = res.data;
+                        localStorage.setItem('announcements', JSON.stringify(currentItems));
+                        renderAnnouncementPage();
+                        console.log('✅ 从 Supabase 加载:', currentItems.length, '条');
+                    }
                 })
-                .catch(function(err) { console.error('异常:', err); loadFromLocalStorage(); });
-        } catch (e) { console.error('错误:', e); loadFromLocalStorage(); }
-    }
-
-    function loadFromLocalStorage() {
-        var saved = localStorage.getItem('announcements');
-        if (saved) { try { currentItems = JSON.parse(saved); renderAnnouncementPage(); return; } catch (e) {} }
-        currentItems = [];
-        renderAnnouncementPage();
+                .catch(function(err) {
+                    console.warn('⚠️ Supabase 加载异常，使用 localStorage:', err);
+                });
+        } catch (e) {
+            console.warn('⚠️ Supabase 加载错误，使用 localStorage:', e);
+        }
     }
 
     // ============================================================
-// 保存数据到 Supabase (使用 upsert)
-// ============================================================
-function saveToSupabase(callback) {
-    if (!isSupabaseAvailable) {
-        saveToLocalStorage();
-        if (callback) callback();
-        return;
-    }
+    // 保存数据 (双保险)
+    // ============================================================
+    function saveToSupabase(callback) {
+        // 1️⃣ 先保存到 localStorage (保证刷新不丢)
+        localStorage.setItem('announcements', JSON.stringify(currentItems));
+        console.log('💾 已保存到 localStorage');
 
-    try {
-        var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-        // 如果没有数据，则删除所有
-        if (currentItems.length === 0) {
-            sb.from('announcements')
-                .delete()
-                .neq('id', '') // 删除所有 id 不为空的行
-                .then(function(res) {
-                    console.log('✅ 所有公告已删除', res);
-                    if (callback) callback();
-                })
-                .catch(function(err) {
-                    console.error('删除失败:', err);
-                    if (callback) callback();
-                });
+        // 2️⃣ 再同步到 Supabase (后台静默执行)
+        if (!isSupabaseAvailable) {
+            if (callback) callback();
             return;
         }
 
-        // 使用 upsert：如果 id 存在则更新，不存在则插入
-        // 这是最稳健的方法
-        sb.from('announcements')
-            .upsert(currentItems, { onConflict: 'id' })
-            .then(function(res) {
-                if (res.error) {
-                    console.error('Upsert 失败:', res.error);
-                    // 如果 upsert 失败，回退到逐条处理
-                    insertOneByOne(callback);
-                    return;
-                }
-                console.log('✅ 保存成功 (upsert):', res);
-                if (callback) callback();
-            })
-            .catch(function(err) {
-                console.error('Upsert 异常:', err);
-                insertOneByOne(callback);
-            });
+        try {
+            var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    } catch (e) {
-        console.error('保存异常:', e);
-        if (callback) callback();
-    }
-}
+            if (currentItems.length === 0) {
+                sb.from('announcements').delete().neq('id', '')
+                    .then(function() { if (callback) callback(); })
+                    .catch(function() { if (callback) callback(); });
+                return;
+            }
 
-// ============================================================
-// 逐条插入或更新 (备用方案)
-// ============================================================
-function insertOneByOne(callback) {
-    if (currentItems.length === 0) {
-        if (callback) callback();
-        return;
-    }
+            // 使用 upsert
+            sb.from('announcements')
+                .upsert(currentItems, { onConflict: 'id' })
+                .then(function(res) {
+                    if (res.error) {
+                        console.warn('⚠️ Supabase 同步失败:', res.error);
+                    } else {
+                        console.log('✅ 已同步到 Supabase');
+                    }
+                    if (callback) callback();
+                })
+                .catch(function(err) {
+                    console.warn('⚠️ Supabase 同步异常:', err);
+                    if (callback) callback();
+                });
 
-    var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    var promises = [];
-
-    currentItems.forEach(function(item) {
-        // 为每条记录独立执行 upsert
-        var p = sb.from('announcements')
-            .upsert(item, { onConflict: 'id' })
-            .then(function(res) {
-                if (res.error) {
-                    console.warn('单条 upsert 失败:', res.error);
-                }
-                return res;
-            });
-        promises.push(p);
-    });
-
-    Promise.all(promises)
-        .then(function() {
-            console.log('✅ 逐条 upsert 完成');
+        } catch (e) {
+            console.warn('⚠️ Supabase 保存异常:', e);
             if (callback) callback();
-        })
-        .catch(function(err) {
-            console.error('逐条 upsert 失败:', err);
-            if (callback) callback();
-        });
-}
-
-    function saveToLocalStorage() {
-        localStorage.setItem('announcements', JSON.stringify(currentItems));
+        }
     }
 
     // ============================================================
-    // 添加项目
+    // CRUD 操作
     // ============================================================
     function addItem(data) {
         var newItem = {
@@ -276,12 +244,12 @@ function insertOneByOne(callback) {
             created_at: new Date().toISOString()
         };
         currentItems.unshift(newItem);
-        saveToSupabase(function() { renderAnnouncementPage(); showSaveResult(true, 'Announcement added successfully!'); });
+        saveToSupabase(function() { 
+            renderAnnouncementPage(); 
+            showSaveResult(true, 'Announcement added successfully!'); 
+        });
     }
 
-    // ============================================================
-    // 更新项目
-    // ============================================================
     function updateItem(id, data) {
         var index = currentItems.findIndex(function(item) { return item.id === id; });
         if (index === -1) { showSaveResult(false, 'Item not found'); return; }
@@ -295,18 +263,12 @@ function insertOneByOne(callback) {
         saveToSupabase(function() { renderAnnouncementPage(); showSaveResult(true, 'Announcement updated successfully!'); });
     }
 
-    // ============================================================
-    // 删除项目
-    // ============================================================
     function deleteItem(id) {
         if (!confirm('Delete this announcement?')) return;
         currentItems = currentItems.filter(function(item) { return item.id !== id; });
         saveToSupabase(function() { renderAnnouncementPage(); showSaveResult(true, 'Announcement deleted successfully!'); });
     }
 
-    // ============================================================
-    // 切换状态
-    // ============================================================
     function toggleStatus(id) {
         var index = currentItems.findIndex(function(item) { return item.id === id; });
         if (index === -1) return;
@@ -315,9 +277,6 @@ function insertOneByOne(callback) {
         saveToSupabase(function() { renderAnnouncementPage(); showSaveResult(true, 'Status toggled!'); });
     }
 
-    // ============================================================
-    // 显示保存结果
-    // ============================================================
     function showSaveResult(success, message) {
         var container = document.getElementById('panel_announcement');
         if (!container) return;
@@ -334,14 +293,8 @@ function insertOneByOne(callback) {
         setTimeout(function() { if (div.parentNode) { div.style.opacity = '0'; div.style.transition = 'opacity 0.5s'; setTimeout(function() { if (div.parentNode) div.remove(); }, 500); } }, 3000);
     }
 
-    // ============================================================
-    // 打开添加 Modal
-    // ============================================================
     function openAddModal() { editingItemId = null; openFormModal('Add Announcement', 'Create a new scrolling announcement', null); }
 
-    // ============================================================
-    // 打开编辑 Modal
-    // ============================================================
     function openEditModal(id) {
         var item = currentItems.find(function(i) { return i.id === id; });
         if (!item) { showSaveResult(false, 'Item not found'); return; }
@@ -349,9 +302,6 @@ function insertOneByOne(callback) {
         openFormModal('Edit Announcement', 'Update announcement', item);
     }
 
-    // ============================================================
-    // 通用表单 Modal
-    // ============================================================
     function openFormModal(title, subtitle, item) {
         var isEdit = !!item;
         var bodyHTML = `
@@ -396,9 +346,6 @@ function insertOneByOne(callback) {
         } else { console.warn('openModal function not available'); }
     }
 
-    // ============================================================
-    // 保存表单数据
-    // ============================================================
     function saveFormData() {
         var text = document.getElementById('formText').value.trim();
         if (!text) { alert('Announcement text is required!'); return; }
@@ -429,5 +376,5 @@ function insertOneByOne(callback) {
         getItems: function() { return currentItems; }
     };
 
-    console.log('✅ admin-announcement.js loaded successfully');
+    console.log('✅ admin-announcement.js loaded (双保险版)');
 })();
