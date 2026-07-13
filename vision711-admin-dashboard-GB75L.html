@@ -181,14 +181,6 @@
             window.location.href = 'vision711-admin-login-K8G7Y.html';
         }
 
-        // ===== 🔥 页面加载后自动刷新 Users =====
-        document.addEventListener('DOMContentLoaded', function() {
-            if (typeof window._adminUser !== 'undefined' && window._adminUser.refresh) {
-                console.log('🔄 自动刷新 Users...');
-                window._adminUser.refresh();
-            }
-        });
-
         // ===== 侧边栏导航 =====
         var navItems = document.querySelectorAll('.nav-item');
         navItems.forEach(function(item) {
