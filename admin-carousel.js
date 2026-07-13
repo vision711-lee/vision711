@@ -240,7 +240,7 @@
     }
 
     // ============================================================
-    // 保存数据到 Supabase
+    // 保存数据到 Supabase (使用 upsert，安全可靠)
     // ============================================================
     function saveToSupabase(callback) {
         if (!isSupabaseAvailable) {
@@ -252,27 +252,52 @@
         try {
             var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-            sb.from('carousel_items')
-                .delete()
-                .neq('id', '')
-                .then(function() {
-                    if (currentItems.length === 0) {
+            if (currentItems.length === 0) {
+                // 如果没数据，删除所有
+                sb.from('carousel_items')
+                    .delete()
+                    .neq('id', '')
+                    .then(function() {
+                        console.log('✅ 所有数据已删除');
                         if (callback) callback();
-                        return;
-                    }
-                    sb.from('carousel_items')
-                        .insert(currentItems)
-                        .then(function() {
-                            if (callback) callback();
-                        })
-                        .catch(function(err) {
-                            console.error('保存失败:', err);
-                            if (callback) callback();
-                        });
+                    })
+                    .catch(function(err) {
+                        console.error('删除失败:', err);
+                        if (callback) callback();
+                    });
+                return;
+            }
+
+            // 🔥 使用 upsert：有则更新，无则插入
+            sb.from('carousel_items')
+                .upsert(currentItems, { onConflict: 'id' })
+                .then(function(res) {
+                    console.log('✅ 保存成功 (upsert):', res);
+                    if (callback) callback();
                 })
                 .catch(function(err) {
-                    console.error('删除失败:', err);
-                    if (callback) callback();
+                    console.error('Upsert 失败，尝试先删除再插入:', err);
+                    // 如果 upsert 失败，尝试先删除再插入
+                    sb.from('carousel_items')
+                        .delete()
+                        .neq('id', '')
+                        .then(function() {
+                            console.log('✅ 删除成功，正在插入...');
+                            sb.from('carousel_items')
+                                .insert(currentItems)
+                                .then(function() {
+                                    console.log('✅ 插入成功');
+                                    if (callback) callback();
+                                })
+                                .catch(function(err2) {
+                                    console.error('插入失败:', err2);
+                                    if (callback) callback();
+                                });
+                        })
+                        .catch(function(err2) {
+                            console.error('删除失败:', err2);
+                            if (callback) callback();
+                        });
                 });
         } catch (e) {
             console.error('保存异常:', e);
@@ -312,8 +337,8 @@
             var filePath = 'carousel/' + fileName;
 
             sb.storage
-    .from('carousel-slide')
-    .upload(filePath, file, {
+                .from('carousel-slide')
+                .upload(filePath, file, {
                     cacheControl: '3600',
                     upsert: false
                 })
@@ -325,8 +350,8 @@
                     }
 
                     var publicUrl = sb.storage
-    .from('carousel-slide')
-    .getPublicUrl(filePath);
+                        .from('carousel-slide')
+                        .getPublicUrl(filePath);
 
                     resolve(publicUrl.data.publicUrl);
                 })
@@ -695,10 +720,10 @@
                     if (!file) return;
 
                     if (file.size > 10 * 1024 * 1024) {
-    alert('File too large! Maximum 10MB.');
-    this.value = '';
-    return;
-}
+                        alert('File too large! Maximum 10MB.');
+                        this.value = '';
+                        return;
+                    }
 
                     selectedFile = file;
                     fileNameText.textContent = file.name;
@@ -731,9 +756,9 @@
                     if (!file) return;
 
                     if (file.size > 10 * 1024 * 1024) {
-    alert('File too large! Maximum 10MB.');
-    return;
-}
+                        alert('File too large! Maximum 10MB.');
+                        return;
+                    }
 
                     selectedFile = file;
                     fileNameText.textContent = file.name;
