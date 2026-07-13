@@ -1,6 +1,5 @@
 // ============================================================
 // admin-partnership.js - Partnership 管理模块
-// 支持图片上传到 Supabase Storage
 // ============================================================
 
 (function() {
@@ -15,7 +14,7 @@
     var isSupabaseAvailable = false;
     var selectedFile = null;
     var uploadedLogoUrl = '';
-    var editingItemId = null; // 编辑模式下的 ID
+    var editingItemId = null;
 
     try {
         if (typeof supabase !== 'undefined') {
@@ -24,9 +23,6 @@
         }
     } catch (e) {}
 
-    // ============================================================
-    // 渲染 Partnership 管理页面
-    // ============================================================
     function renderPartnershipPage() {
         var container = document.getElementById('page_partnership');
         if (!container) {
@@ -36,84 +32,26 @@
 
         var itemsHTML = '';
         if (currentItems && currentItems.length > 0) {
-            currentItems.forEach(function(item, index) {
+            currentItems.forEach(function(item) {
                 var logoDisplay = item.logo_url && item.logo_url.startsWith('http')
                     ? `<img src="${item.logo_url}" style="width:50px;height:50px;border-radius:50%;object-fit:cover;border:1px solid rgba(0,180,255,0.15);" onerror="this.style.display='none'">`
                     : `<div style="width:50px;height:50px;border-radius:50%;background:rgba(0,180,255,0.08);display:flex;align-items:center;justify-content:center;color:#4a5a7a;font-size:1.2rem;"><i class="fas fa-handshake"></i></div>`;
 
                 itemsHTML += `
-                    <div style="
-                        display:flex;
-                        align-items:center;
-                        gap:16px;
-                        padding:14px 18px;
-                        background:rgba(255,255,255,0.02);
-                        border-radius:12px;
-                        border:1px solid rgba(255,255,255,0.04);
-                        transition:0.3s;
-                    " onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='rgba(255,255,255,0.02)'">
-                        <!-- Logo -->
+                    <div style="display:flex;align-items:center;gap:16px;padding:14px 18px;background:rgba(255,255,255,0.02);border-radius:12px;border:1px solid rgba(255,255,255,0.04);">
                         ${logoDisplay}
-
-                        <!-- 信息 -->
                         <div style="flex:1;min-width:0;">
-                            <div style="font-weight:700;color:#e5e9f0;font-size:0.95rem;margin-bottom:4px;">
-                                ${item.title || 'Untitled'}
-                            </div>
+                            <div style="font-weight:700;color:#e5e9f0;font-size:0.95rem;margin-bottom:4px;">${item.title || 'Untitled'}</div>
                             <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px 20px;font-size:0.75rem;">
-                                <div style="color:#5a6388;">
-                                    <span style="color:#ffd700;">Welcome Bonus:</span>
-                                    <span style="color:#e5e9f0;">${item.welcome_bonus || 'RM 0'}</span>
-                                </div>
-                                <div style="color:#5a6388;">
-                                    <span style="color:#4cd9a0;">Daily Rebate:</span>
-                                    <span style="color:#e5e9f0;">${item.daily_rebate || '0%'}</span>
-                                </div>
-                                <div style="color:#5a6388;">
-                                    <span style="color:#4a7cff;">Weekly Bonus:</span>
-                                    <span style="color:#e5e9f0;">${item.weekly_bonus || 'RM 0'}</span>
-                                </div>
-                                <div style="color:#5a6388;">
-                                    <span style="color:#ffd700;">Description:</span>
-                                    <span style="color:#8a9abb;font-style:italic;">${item.description || '-'}</span>
-                                </div>
+                                <div style="color:#5a6388;"><span style="color:#ffd700;">Welcome Bonus:</span> <span style="color:#e5e9f0;">${item.welcome_bonus || 'RM 0'}</span></div>
+                                <div style="color:#5a6388;"><span style="color:#4cd9a0;">Daily Rebate:</span> <span style="color:#e5e9f0;">${item.daily_rebate || '0%'}</span></div>
+                                <div style="color:#5a6388;"><span style="color:#4a7cff;">Weekly Bonus:</span> <span style="color:#e5e9f0;">${item.weekly_bonus || 'RM 0'}</span></div>
+                                <div style="color:#5a6388;"><span style="color:#ffd700;">Description:</span> <span style="color:#8a9abb;font-style:italic;">${item.description || '-'}</span></div>
                             </div>
                         </div>
-
-                        <!-- 操作按钮 -->
                         <div style="display:flex;gap:6px;flex-shrink:0;">
-                            <button onclick="window._adminPartnership.openEditModal('${item.id}')" style="
-                                background:rgba(74,124,255,0.1);
-                                border:1px solid rgba(74,124,255,0.15);
-                                color:#4a7cff;
-                                padding:6px 14px;
-                                border-radius:8px;
-                                cursor:pointer;
-                                font-size:0.7rem;
-                                font-weight:600;
-                                transition:0.3s;
-                                display:flex;
-                                align-items:center;
-                                gap:4px;
-                            " onmouseover="this.style.background='rgba(74,124,255,0.2)'" onmouseout="this.style.background='rgba(74,124,255,0.1)'">
-                                <i class="fas fa-edit"></i> Edit
-                            </button>
-                            <button onclick="window._adminPartnership.deleteItem('${item.id}')" style="
-                                background:rgba(255,107,107,0.08);
-                                border:1px solid rgba(255,107,107,0.1);
-                                color:#ff6b6b;
-                                padding:6px 14px;
-                                border-radius:8px;
-                                cursor:pointer;
-                                font-size:0.7rem;
-                                font-weight:600;
-                                transition:0.3s;
-                                display:flex;
-                                align-items:center;
-                                gap:4px;
-                            " onmouseover="this.style.background='rgba(255,107,107,0.2)'" onmouseout="this.style.background='rgba(255,107,107,0.08)'">
-                                <i class="fas fa-trash"></i> Delete
-                            </button>
+                            <button onclick="window._adminPartnership.openEditModal('${item.id}')" style="background:rgba(74,124,255,0.1);border:1px solid rgba(74,124,255,0.15);color:#4a7cff;padding:6px 14px;border-radius:8px;cursor:pointer;font-size:0.7rem;font-weight:600;display:flex;align-items:center;gap:4px;"><i class="fas fa-edit"></i> Edit</button>
+                            <button onclick="window._adminPartnership.deleteItem('${item.id}')" style="background:rgba(255,107,107,0.08);border:1px solid rgba(255,107,107,0.1);color:#ff6b6b;padding:6px 14px;border-radius:8px;cursor:pointer;font-size:0.7rem;font-weight:600;display:flex;align-items:center;gap:4px;"><i class="fas fa-trash"></i> Delete</button>
                         </div>
                     </div>
                 `;
@@ -128,204 +66,94 @@
         }
 
         var html = `
-            <div style="margin-bottom: 20px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
-                    <div>
-                        <div style="font-size:22px; font-weight:700; color:#fff;">
-                            <i class="fas fa-handshake" style="color:#ffd700;"></i> Partnership Management
-                        </div>
-                        <div style="font-size:13px; color:#5a6388;">Manage partnership program items displayed on user page</div>
-                    </div>
-                    <button onclick="window._adminPartnership.openAddModal()" style="
-                        background: linear-gradient(135deg, #4a7cff, #2f3e7a);
-                        border: none;
-                        padding: 12px 28px;
-                        border-radius: 40px;
-                        color: #fff;
-                        font-weight: 600;
-                        font-size: 14px;
-                        cursor: pointer;
-                        transition: 0.3s;
-                        display: flex;
-                        align-items: center;
-                        gap: 8px;
-                    ">
-                        <i class="fas fa-plus"></i> Add Partnership
-                    </button>
+            <div style="margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+                <div>
+                    <div style="font-size:22px;font-weight:700;color:#fff;"><i class="fas fa-handshake" style="color:#ffd700;"></i> Partnership Management</div>
+                    <div style="font-size:13px;color:#5a6388;">Manage partnership program items displayed on user page</div>
                 </div>
+                <button onclick="window._adminPartnership.openAddModal()" style="background:linear-gradient(135deg,#4a7cff,#2f3e7a);border:none;padding:12px 28px;border-radius:40px;color:#fff;font-weight:600;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:8px;">
+                    <i class="fas fa-plus"></i> Add Partnership
+                </button>
             </div>
-
-            <div style="
-                background: rgba(10, 14, 26, 0.6);
-                backdrop-filter: blur(12px);
-                border-radius: 16px;
-                border: 1px solid rgba(255,255,255,0.04);
-                padding: 20px;
-            ">
+            <div style="background:rgba(10,14,26,0.6);backdrop-filter:blur(12px);border-radius:16px;border:1px solid rgba(255,255,255,0.04);padding:20px;">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;font-size:12px;color:#5a6388;font-weight:600;">
                     <span><i class="fas fa-list"></i> ${currentItems.length} item(s)</span>
                     <span style="color:#2a3560;">${isSupabaseAvailable ? '✅ Supabase' : '💾 Local'}</span>
                 </div>
-                <div style="display:flex;flex-direction:column;gap:10px;">
-                    ${itemsHTML}
-                </div>
+                <div style="display:flex;flex-direction:column;gap:10px;">${itemsHTML}</div>
             </div>
         `;
-
         container.innerHTML = html;
     }
 
-    // ============================================================
-    // 加载数据
-    // ============================================================
     function loadData() {
         console.log('📥 Loading partnership items...');
-
-        if (!isSupabaseAvailable) {
-            loadFromLocalStorage();
-            return;
-        }
-
+        if (!isSupabaseAvailable) { loadFromLocalStorage(); return; }
         try {
             var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-            sb.from('partnership_items')
-                .select('*')
-                .order('created_at', { ascending: true })
+            sb.from('partnership_items').select('*').order('created_at', { ascending: true })
                 .then(function(res) {
-                    if (res.error) {
-                        console.error('加载失败:', res.error);
-                        loadFromLocalStorage();
-                        return;
-                    }
+                    if (res.error) { console.error('加载失败:', res.error); loadFromLocalStorage(); return; }
                     currentItems = res.data || [];
                     console.log('✅ 加载成功:', currentItems.length, 'items');
                     renderPartnershipPage();
                 })
-                .catch(function(err) {
-                    console.error('异常:', err);
-                    loadFromLocalStorage();
-                });
-        } catch (e) {
-            console.error('错误:', e);
-            loadFromLocalStorage();
-        }
+                .catch(function(err) { console.error('异常:', err); loadFromLocalStorage(); });
+        } catch (e) { console.error('错误:', e); loadFromLocalStorage(); }
     }
 
     function loadFromLocalStorage() {
         var saved = localStorage.getItem('partnership_items');
         if (saved) {
-            try {
-                currentItems = JSON.parse(saved);
-                renderPartnershipPage();
-                return;
-            } catch (e) {}
+            try { currentItems = JSON.parse(saved); renderPartnershipPage(); return; } catch (e) {}
         }
         currentItems = [];
         renderPartnershipPage();
     }
 
-    // ============================================================
-    // 保存数据到 Supabase
-    // ============================================================
     function saveToSupabase(callback) {
-        if (!isSupabaseAvailable) {
-            saveToLocalStorage();
-            if (callback) callback();
-            return;
-        }
-
+        if (!isSupabaseAvailable) { saveToLocalStorage(); if (callback) callback(); return; }
         try {
             var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-            sb.from('partnership_items')
-                .delete()
-                .neq('id', '')
+            sb.from('partnership_items').delete().neq('id', '')
                 .then(function() {
-                    if (currentItems.length === 0) {
-                        if (callback) callback();
-                        return;
-                    }
-                    sb.from('partnership_items')
-                        .insert(currentItems)
-                        .then(function() {
-                            if (callback) callback();
-                        })
-                        .catch(function(err) {
-                            console.error('保存失败:', err);
-                            if (callback) callback();
-                        });
+                    if (currentItems.length === 0) { if (callback) callback(); return; }
+                    sb.from('partnership_items').insert(currentItems)
+                        .then(function() { if (callback) callback(); })
+                        .catch(function(err) { console.error('保存失败:', err); if (callback) callback(); });
                 })
-                .catch(function(err) {
-                    console.error('删除失败:', err);
-                    if (callback) callback();
-                });
-        } catch (e) {
-            console.error('保存异常:', e);
-            if (callback) callback();
-        }
+                .catch(function(err) { console.error('删除失败:', err); if (callback) callback(); });
+        } catch (e) { console.error('保存异常:', e); if (callback) callback(); }
     }
 
     function saveToLocalStorage() {
         localStorage.setItem('partnership_items', JSON.stringify(currentItems));
     }
 
-    // ============================================================
-    // 上传图片到 Supabase Storage
-    // ============================================================
     function uploadImage(file) {
         return new Promise(function(resolve, reject) {
-            if (!file) {
-                resolve('');
-                return;
-            }
-
+            if (!file) { resolve(''); return; }
             if (!isSupabaseAvailable) {
                 var reader = new FileReader();
-                reader.onload = function(e) {
-                    resolve(e.target.result);
-                };
-                reader.onerror = function() {
-                    reject('Failed to read file');
-                };
+                reader.onload = function(e) { resolve(e.target.result); };
+                reader.onerror = function() { reject('Failed to read file'); };
                 reader.readAsDataURL(file);
                 return;
             }
-
             var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
             var fileExt = file.name.split('.').pop();
             var fileName = 'partnership_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6) + '.' + fileExt;
             var filePath = 'partnership-logos/' + fileName;
-
-            sb.storage
-                .from('vision-partner')
-                .upload(filePath, file, {
-                    cacheControl: '3600',
-                    upsert: false
-                })
+            sb.storage.from('vision-partner').upload(filePath, file, { cacheControl: '3600', upsert: false })
                 .then(function(uploadRes) {
-                    if (uploadRes.error) {
-                        console.error('上传失败:', uploadRes.error);
-                        reject(uploadRes.error.message);
-                        return;
-                    }
-
-                    var publicUrl = sb.storage
-                        .from('vision-partner')
-                        .getPublicUrl(filePath);
-
+                    if (uploadRes.error) { reject(uploadRes.error.message); return; }
+                    var publicUrl = sb.storage.from('vision-partner').getPublicUrl(filePath);
                     resolve(publicUrl.data.publicUrl);
                 })
-                .catch(function(err) {
-                    console.error('上传异常:', err);
-                    reject(err.message);
-                });
+                .catch(function(err) { reject(err.message); });
         });
     }
 
-    // ============================================================
-    // 添加项目
-    // ============================================================
     function addItem(data) {
         var newItem = {
             id: 'item_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
@@ -337,27 +165,13 @@
             description: data.description || '',
             created_at: new Date().toISOString()
         };
-
         currentItems.push(newItem);
-        saveToSupabase(function() {
-            renderPartnershipPage();
-            showSaveResult(true, 'Partnership added successfully!');
-        });
+        saveToSupabase(function() { renderPartnershipPage(); showSaveResult(true, 'Partnership added successfully!'); });
     }
 
-    // ============================================================
-    // 更新项目
-    // ============================================================
     function updateItem(id, data) {
-        var index = currentItems.findIndex(function(item) {
-            return item.id === id;
-        });
-
-        if (index === -1) {
-            showSaveResult(false, 'Item not found');
-            return;
-        }
-
+        var index = currentItems.findIndex(function(item) { return item.id === id; });
+        if (index === -1) { showSaveResult(false, 'Item not found'); return; }
         currentItems[index] = {
             ...currentItems[index],
             logo_url: data.logo_url || currentItems[index].logo_url,
@@ -367,344 +181,130 @@
             weekly_bonus: data.weekly_bonus || currentItems[index].weekly_bonus,
             description: data.description || currentItems[index].description
         };
-
-        saveToSupabase(function() {
-            renderPartnershipPage();
-            showSaveResult(true, 'Partnership updated successfully!');
-        });
+        saveToSupabase(function() { renderPartnershipPage(); showSaveResult(true, 'Partnership updated successfully!'); });
     }
 
-    // ============================================================
-    // 删除项目
-    // ============================================================
     function deleteItem(id) {
         if (!confirm('Delete this partnership item?')) return;
-
-        currentItems = currentItems.filter(function(item) {
-            return item.id !== id;
-        });
-
-        saveToSupabase(function() {
-            renderPartnershipPage();
-            showSaveResult(true, 'Item deleted successfully!');
-        });
+        currentItems = currentItems.filter(function(item) { return item.id !== id; });
+        saveToSupabase(function() { renderPartnershipPage(); showSaveResult(true, 'Item deleted successfully!'); });
     }
 
-    // ============================================================
-    // 显示保存结果
-    // ============================================================
     function showSaveResult(success, message) {
         var container = document.getElementById('page_partnership');
         if (!container) return;
-
         var existing = container.querySelector('.save-result');
         if (existing) existing.remove();
-
         var div = document.createElement('div');
         div.className = 'save-result';
         div.style.cssText = `
-            margin-top: 12px;
-            padding: 12px 20px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 500;
-            ${success ? 'background: rgba(76, 217, 160, 0.1); border: 1px solid rgba(76, 217, 160, 0.2); color: #4cd9a0;' : 'background: rgba(255, 107, 107, 0.1); border: 1px solid rgba(255, 107, 107, 0.2); color: #ff6b6b;'}
+            margin-top:12px;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:500;
+            ${success ? 'background:rgba(76,217,160,0.1);border:1px solid rgba(76,217,160,0.2);color:#4cd9a0;' : 'background:rgba(255,107,107,0.1);border:1px solid rgba(255,107,107,0.2);color:#ff6b6b;'}
         `;
         div.textContent = success ? '✅ ' + message : '❌ ' + (message || 'Operation failed');
-
         container.insertBefore(div, container.firstChild.nextSibling);
-
         setTimeout(function() {
             if (div.parentNode) {
                 div.style.opacity = '0';
                 div.style.transition = 'opacity 0.5s';
-                setTimeout(function() {
-                    if (div.parentNode) div.remove();
-                }, 500);
+                setTimeout(function() { if (div.parentNode) div.remove(); }, 500);
             }
         }, 3000);
     }
 
-    // ============================================================
-    // 打开添加 Modal
-    // ============================================================
-    function openAddModal() {
-        editingItemId = null;
-        selectedFile = null;
-        uploadedLogoUrl = '';
-        openFormModal('Add Partnership', 'Create a new partnership program item', null);
-    }
+    function openAddModal() { editingItemId = null; selectedFile = null; uploadedLogoUrl = ''; openFormModal('Add Partnership', 'Create a new partnership program item', null); }
 
-    // ============================================================
-    // 打开编辑 Modal
-    // ============================================================
     function openEditModal(id) {
         var item = currentItems.find(function(i) { return i.id === id; });
-        if (!item) {
-            showSaveResult(false, 'Item not found');
-            return;
-        }
-
+        if (!item) { showSaveResult(false, 'Item not found'); return; }
         editingItemId = id;
         selectedFile = null;
         uploadedLogoUrl = item.logo_url || '';
-
         openFormModal('Edit Partnership', 'Update partnership program item', item);
     }
 
-    // ============================================================
-    // 通用表单 Modal
-    // ============================================================
     function openFormModal(title, subtitle, item) {
         var isEdit = !!item;
-
-        var logoPreviewContent = '';
-        if (isEdit && item.logo_url && item.logo_url.startsWith('http')) {
-            logoPreviewContent = `<img src="${item.logo_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
-        } else {
-            logoPreviewContent = `<i class="fas fa-handshake" style="font-size:1.5rem;color:#4a5a7a;"></i>`;
-        }
+        var logoPreviewContent = isEdit && item.logo_url && item.logo_url.startsWith('http')
+            ? `<img src="${item.logo_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
+            : `<i class="fas fa-handshake" style="font-size:1.5rem;color:#4a5a7a;"></i>`;
 
         var bodyHTML = `
             <div class="form-group">
-                <label style="display:block;font-size:12px;color:#5a6388;margin-bottom:4px;font-weight:600;">
-                    <i class="fas fa-image"></i> Upload Logo
-                </label>
-                <div style="
-                    display:flex;
-                    align-items:center;
-                    gap:12px;
-                    background:rgba(10,14,26,0.8);
-                    border:1px dashed #2a3560;
-                    border-radius:12px;
-                    padding:16px;
-                    cursor:pointer;
-                    transition:0.3s;
-                " id="uploadArea" onmouseover="this.style.borderColor='rgba(74,124,255,0.4)'" onmouseout="this.style.borderColor='#2a3560'">
-                    <div style="
-                        width:60px;
-                        height:60px;
-                        border-radius:50%;
-                        background:rgba(0,180,255,0.05);
-                        display:flex;
-                        align-items:center;
-                        justify-content:center;
-                        font-size:1.5rem;
-                        color:#4a5a7a;
-                        flex-shrink:0;
-                        overflow:hidden;
-                    " id="logoPreview">
-                        ${logoPreviewContent}
-                    </div>
+                <label style="display:block;font-size:12px;color:#5a6388;margin-bottom:4px;font-weight:600;"><i class="fas fa-image"></i> Upload Logo</label>
+                <div style="display:flex;align-items:center;gap:12px;background:rgba(10,14,26,0.8);border:1px dashed #2a3560;border-radius:12px;padding:16px;cursor:pointer;" id="uploadArea">
+                    <div style="width:60px;height:60px;border-radius:50%;background:rgba(0,180,255,0.05);display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:#4a5a7a;flex-shrink:0;overflow:hidden;" id="logoPreview">${logoPreviewContent}</div>
                     <div style="flex:1;">
-                        <div style="font-size:0.8rem;color:#5a6388;" id="fileNameText">
-                            ${isEdit && item.logo_url ? 'Current logo uploaded' : 'Click or drag to upload image'}
-                        </div>
+                        <div style="font-size:0.8rem;color:#5a6388;" id="fileNameText">${isEdit && item.logo_url ? 'Current logo uploaded' : 'Click or drag to upload image'}</div>
                         <div style="font-size:0.6rem;color:#2a3560;">PNG, JPG, GIF up to 2MB</div>
                     </div>
                     <input type="file" id="fileInput" accept="image/*" style="display:none;">
                 </div>
             </div>
-            <div class="form-group">
-                <label style="display:block;font-size:12px;color:#5a6388;margin-bottom:4px;font-weight:600;">
-                    <i class="fas fa-building"></i> Partner Company Name
-                </label>
-                <input type="text" id="formTitle" placeholder="e.g. Partner Company" value="${isEdit ? item.title : 'Partnership'}" style="
-                    width:100%;
-                    background:rgba(10,14,26,0.8);
-                    border:1px solid #2a3560;
-                    border-radius:12px;
-                    padding:12px 16px;
-                    color:#fff;
-                    font-size:14px;
-                    outline:none;
-                    box-sizing:border-box;
-                ">
-            </div>
-            <div class="form-group">
-                <label style="display:block;font-size:12px;color:#5a6388;margin-bottom:4px;font-weight:600;">
-                    <i class="fas fa-gift" style="color:#ffd700;"></i> Welcome Bonus
-                </label>
-                <input type="text" id="formWelcomeBonus" placeholder="e.g. RM 88" value="${isEdit ? item.welcome_bonus : 'RM 88'}" style="
-                    width:100%;
-                    background:rgba(10,14,26,0.8);
-                    border:1px solid #2a3560;
-                    border-radius:12px;
-                    padding:12px 16px;
-                    color:#fff;
-                    font-size:14px;
-                    outline:none;
-                    box-sizing:border-box;
-                ">
-            </div>
-            <div class="form-group">
-                <label style="display:block;font-size:12px;color:#5a6388;margin-bottom:4px;font-weight:600;">
-                    <i class="fas fa-percent" style="color:#4cd9a0;"></i> Daily Rebate
-                </label>
-                <input type="text" id="formDailyRebate" placeholder="e.g. 5%" value="${isEdit ? item.daily_rebate : '5%'}" style="
-                    width:100%;
-                    background:rgba(10,14,26,0.8);
-                    border:1px solid #2a3560;
-                    border-radius:12px;
-                    padding:12px 16px;
-                    color:#fff;
-                    font-size:14px;
-                    outline:none;
-                    box-sizing:border-box;
-                ">
-            </div>
-            <div class="form-group">
-                <label style="display:block;font-size:12px;color:#5a6388;margin-bottom:4px;font-weight:600;">
-                    <i class="fas fa-calendar-week" style="color:#4a7cff;"></i> Weekly Bonus
-                </label>
-                <input type="text" id="formWeeklyBonus" placeholder="e.g. RM 188" value="${isEdit ? item.weekly_bonus : 'RM 188'}" style="
-                    width:100%;
-                    background:rgba(10,14,26,0.8);
-                    border:1px solid #2a3560;
-                    border-radius:12px;
-                    padding:12px 16px;
-                    color:#fff;
-                    font-size:14px;
-                    outline:none;
-                    box-sizing:border-box;
-                ">
-            </div>
-            <div class="form-group">
-                <label style="display:block;font-size:12px;color:#5a6388;margin-bottom:4px;font-weight:600;">
-                    <i class="fas fa-align-left"></i> Description
-                </label>
-                <input type="text" id="formDescription" placeholder="e.g. First deposit bonus" value="${isEdit ? item.description : 'Exclusive partnership reward'}" style="
-                    width:100%;
-                    background:rgba(10,14,26,0.8);
-                    border:1px solid #2a3560;
-                    border-radius:12px;
-                    padding:12px 16px;
-                    color:#fff;
-                    font-size:14px;
-                    outline:none;
-                    box-sizing:border-box;
-                ">
-            </div>
+            <div class="form-group"><label style="display:block;font-size:12px;color:#5a6388;margin-bottom:4px;font-weight:600;"><i class="fas fa-building"></i> Partner Company Name</label><input type="text" id="formTitle" placeholder="e.g. Partner Company" value="${isEdit ? item.title : 'Partnership'}" style="width:100%;background:rgba(10,14,26,0.8);border:1px solid #2a3560;border-radius:12px;padding:12px 16px;color:#fff;font-size:14px;outline:none;box-sizing:border-box;"></div>
+            <div class="form-group"><label style="display:block;font-size:12px;color:#5a6388;margin-bottom:4px;font-weight:600;"><i class="fas fa-gift" style="color:#ffd700;"></i> Welcome Bonus</label><input type="text" id="formWelcomeBonus" placeholder="e.g. RM 88" value="${isEdit ? item.welcome_bonus : 'RM 88'}" style="width:100%;background:rgba(10,14,26,0.8);border:1px solid #2a3560;border-radius:12px;padding:12px 16px;color:#fff;font-size:14px;outline:none;box-sizing:border-box;"></div>
+            <div class="form-group"><label style="display:block;font-size:12px;color:#5a6388;margin-bottom:4px;font-weight:600;"><i class="fas fa-percent" style="color:#4cd9a0;"></i> Daily Rebate</label><input type="text" id="formDailyRebate" placeholder="e.g. 5%" value="${isEdit ? item.daily_rebate : '5%'}" style="width:100%;background:rgba(10,14,26,0.8);border:1px solid #2a3560;border-radius:12px;padding:12px 16px;color:#fff;font-size:14px;outline:none;box-sizing:border-box;"></div>
+            <div class="form-group"><label style="display:block;font-size:12px;color:#5a6388;margin-bottom:4px;font-weight:600;"><i class="fas fa-calendar-week" style="color:#4a7cff;"></i> Weekly Bonus</label><input type="text" id="formWeeklyBonus" placeholder="e.g. RM 188" value="${isEdit ? item.weekly_bonus : 'RM 188'}" style="width:100%;background:rgba(10,14,26,0.8);border:1px solid #2a3560;border-radius:12px;padding:12px 16px;color:#fff;font-size:14px;outline:none;box-sizing:border-box;"></div>
+            <div class="form-group"><label style="display:block;font-size:12px;color:#5a6388;margin-bottom:4px;font-weight:600;"><i class="fas fa-align-left"></i> Description</label><input type="text" id="formDescription" placeholder="e.g. First deposit bonus" value="${isEdit ? item.description : 'Exclusive partnership reward'}" style="width:100%;background:rgba(10,14,26,0.8);border:1px solid #2a3560;border-radius:12px;padding:12px 16px;color:#fff;font-size:14px;outline:none;box-sizing:border-box;"></div>
         `;
 
         if (typeof openModal === 'function') {
-            openModal(
-                '<i class="fas fa-' + (isEdit ? 'edit' : 'plus') + '"></i> ' + title,
-                subtitle,
-                bodyHTML,
-                function() {
-                    // 如果有文件正在上传，先上传
-                    if (selectedFile) {
-                        var saveBtn = document.querySelector('#modalSaveBtn');
-                        if (saveBtn) {
-                            saveBtn.disabled = true;
-                            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
-                        }
-
-                        uploadImage(selectedFile)
-                            .then(function(url) {
-                                uploadedLogoUrl = url;
-                                saveFormData();
-                            })
-                            .catch(function(err) {
-                                alert('Image upload failed: ' + err);
-                                if (saveBtn) {
-                                    saveBtn.disabled = false;
-                                    saveBtn.innerHTML = 'Save';
-                                }
-                            });
-                    } else {
-                        saveFormData();
-                    }
+            openModal('<i class="fas fa-' + (isEdit ? 'edit' : 'plus') + '"></i> ' + title, subtitle, bodyHTML, function() {
+                if (selectedFile) {
+                    var saveBtn = document.querySelector('#modalSaveBtn');
+                    if (saveBtn) { saveBtn.disabled = true; saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...'; }
+                    uploadImage(selectedFile)
+                        .then(function(url) { uploadedLogoUrl = url; saveFormData(); })
+                        .catch(function(err) { alert('Image upload failed: ' + err); if (saveBtn) { saveBtn.disabled = false; saveBtn.innerHTML = 'Save'; } });
+                } else {
+                    saveFormData();
                 }
-            );
-
-            // 绑定文件上传事件
+            });
             setTimeout(function() {
                 var fileInput = document.getElementById('fileInput');
                 var uploadArea = document.getElementById('uploadArea');
                 var logoPreview = document.getElementById('logoPreview');
                 var fileNameText = document.getElementById('fileNameText');
-
                 if (!fileInput || !uploadArea) return;
-
-                uploadArea.addEventListener('click', function() {
-                    fileInput.click();
-                });
-
+                uploadArea.addEventListener('click', function() { fileInput.click(); });
                 fileInput.addEventListener('change', function() {
                     var file = this.files[0];
                     if (!file) return;
-
-                    if (file.size > 2 * 1024 * 1024) {
-                        alert('File too large! Maximum 2MB.');
-                        this.value = '';
-                        return;
-                    }
-
+                    if (file.size > 2 * 1024 * 1024) { alert('File too large! Maximum 2MB.'); this.value = ''; return; }
                     selectedFile = file;
                     fileNameText.textContent = file.name;
-
                     var reader = new FileReader();
-                    reader.onload = function(e) {
-                        logoPreview.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
-                    };
+                    reader.onload = function(e) { logoPreview.innerHTML = '<img src="' + e.target.result + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">'; };
                     reader.readAsDataURL(file);
                 });
-
-                uploadArea.addEventListener('dragover', function(e) {
-                    e.preventDefault();
-                    this.style.borderColor = 'rgba(74,124,255,0.6)';
-                    this.style.background = 'rgba(74,124,255,0.05)';
-                });
-
-                uploadArea.addEventListener('dragleave', function(e) {
-                    e.preventDefault();
-                    this.style.borderColor = '#2a3560';
-                    this.style.background = 'transparent';
-                });
-
+                uploadArea.addEventListener('dragover', function(e) { e.preventDefault(); this.style.borderColor = 'rgba(74,124,255,0.6)'; this.style.background = 'rgba(74,124,255,0.05)'; });
+                uploadArea.addEventListener('dragleave', function(e) { e.preventDefault(); this.style.borderColor = '#2a3560'; this.style.background = 'transparent'; });
                 uploadArea.addEventListener('drop', function(e) {
                     e.preventDefault();
                     this.style.borderColor = '#2a3560';
                     this.style.background = 'transparent';
-
                     var file = e.dataTransfer.files[0];
                     if (!file) return;
-
-                    if (file.size > 2 * 1024 * 1024) {
-                        alert('File too large! Maximum 2MB.');
-                        return;
-                    }
-
+                    if (file.size > 2 * 1024 * 1024) { alert('File too large! Maximum 2MB.'); return; }
                     selectedFile = file;
                     fileNameText.textContent = file.name;
-
                     var reader = new FileReader();
-                    reader.onload = function(e) {
-                        logoPreview.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
-                    };
+                    reader.onload = function(e) { logoPreview.innerHTML = '<img src="' + e.target.result + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">'; };
                     reader.readAsDataURL(file);
-
                     fileInput.files = e.dataTransfer.files;
                 });
-
             }, 100);
         } else {
             console.warn('openModal function not available');
         }
     }
 
-    // ============================================================
-    // 保存表单数据
-    // ============================================================
     function saveFormData() {
         var title = document.getElementById('formTitle').value.trim() || 'Partnership';
         var welcome_bonus = document.getElementById('formWelcomeBonus').value.trim() || 'RM 0';
         var daily_rebate = document.getElementById('formDailyRebate').value.trim() || '0%';
         var weekly_bonus = document.getElementById('formWeeklyBonus').value.trim() || 'RM 0';
         var description = document.getElementById('formDescription').value.trim() || '';
-
         var data = {
             logo_url: uploadedLogoUrl,
             title: title,
@@ -713,27 +313,14 @@
             weekly_bonus: weekly_bonus,
             description: description
         };
-
-        if (editingItemId) {
-            // 编辑模式
-            updateItem(editingItemId, data);
-        } else {
-            // 添加模式
-            addItem(data);
-        }
-
-        if (typeof closeModal === 'function') {
-            closeModal();
-        }
-
+        if (editingItemId) updateItem(editingItemId, data);
+        else addItem(data);
+        if (typeof closeModal === 'function') closeModal();
         selectedFile = null;
         uploadedLogoUrl = '';
         editingItemId = null;
     }
 
-    // ============================================================
-    // 暴露全局接口
-    // ============================================================
     window._adminPartnership = {
         render: renderPartnershipPage,
         load: loadData,
@@ -746,6 +333,4 @@
     };
 
     console.log('✅ admin-partnership.js loaded successfully');
-    console.log('📦 Available: window._adminPartnership');
-
 })();

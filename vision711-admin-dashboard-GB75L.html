@@ -11,19 +11,16 @@
 </head>
 <body>
 
-    <!-- ===== 手机菜单按钮 ===== -->
     <div class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">
         <i class="fas fa-bars"></i>
     </div>
     <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
-    <!-- ===== 侧边栏 ===== -->
     <div class="sidebar" id="sidebar">
         <div class="logo">
             <h2>VISION<span>711</span></h2>
             <span class="version">v2.4 · ADMIN</span>
         </div>
-
         <div class="nav-list">
             <div class="nav-item active" data-page="users"><i class="fas fa-users"></i> Users Management</div>
             <div class="nav-item" data-page="deposits"><i class="fas fa-wallet"></i> Deposits</div>
@@ -33,7 +30,6 @@
             <div class="nav-item" data-page="content"><i class="fas fa-newspaper"></i> Content Management</div>
             <div class="nav-item" data-page="settings"><i class="fas fa-cog"></i> Settings</div>
         </div>
-
         <div class="footer-section">
             <button class="footer-item" id="logoutBtn">
                 <i class="fas fa-sign-out-alt"></i> Log Out
@@ -42,10 +38,8 @@
         </div>
     </div>
 
-    <!-- ===== 主内容 ===== -->
     <div class="main-content">
 
-        <!-- Header -->
         <div class="admin-header">
             <div class="left">
                 <h3><i class="fas fa-users"></i> <span id="pageTitle">Users Management</span></h3>
@@ -60,82 +54,25 @@
             </div>
         </div>
 
-        <!-- ===== 页面容器 ===== -->
-        <div id="page_users" class="page active">
-            <div style="text-align:center; padding:60px 20px; color:#5a6a7a;">
-                <i class="fas fa-spinner fa-spin" style="font-size:32px; color:#ccb89f;"></i>
-                <div style="margin-top:16px; font-size:14px;">Loading users...</div>
-            </div>
-        </div>
+        <div id="page_users" class="page active"></div>
+        <div id="page_deposits" class="page"></div>
+        <div id="page_withdrawals" class="page"></div>
+        <div id="page_transactions" class="page"></div>
+        <div id="page_partnership" class="page"></div>
 
-        <div id="page_deposits" class="page">
-            <div style="text-align:center; padding:60px 20px; color:#5a6a7a;">
-                <i class="fas fa-wallet" style="font-size:48px; color:#3a4a5a; display:block; margin-bottom:12px;"></i>
-                <div style="font-size:16px; font-weight:600; color:#8a9aaa;">Deposits</div>
-                <div style="font-size:13px; margin-top:4px;">Coming soon...</div>
-            </div>
-        </div>
-
-        <div id="page_withdrawals" class="page">
-            <div style="text-align:center; padding:60px 20px; color:#5a6a7a;">
-                <i class="fas fa-money-bill-wave" style="font-size:48px; color:#3a4a5a; display:block; margin-bottom:12px;"></i>
-                <div style="font-size:16px; font-weight:600; color:#8a9aaa;">Withdrawals</div>
-                <div style="font-size:13px; margin-top:4px;">Coming soon...</div>
-            </div>
-        </div>
-
-        <div id="page_transactions" class="page">
-            <div style="text-align:center; padding:60px 20px; color:#5a6a7a;">
-                <i class="fas fa-exchange-alt" style="font-size:48px; color:#3a4a5a; display:block; margin-bottom:12px;"></i>
-                <div style="font-size:16px; font-weight:600; color:#8a9aaa;">Transactions</div>
-                <div style="font-size:13px; margin-top:4px;">Coming soon...</div>
-            </div>
-        </div>
-
-        <div id="page_partnership" class="page">
-            <div style="text-align:center; padding:60px 20px; color:#5a6a7a;">
-                <i class="fas fa-spinner fa-spin" style="font-size:32px; color:#ccb89f;"></i>
-                <div style="margin-top:16px; font-size:14px;">Loading partnership settings...</div>
-            </div>
-        </div>
-
-        <!-- ===== Content Management 页面 ===== -->
         <div id="page_content" class="page">
             <div class="content-tabs" id="contentTabs">
-                <button class="tab-btn active" data-tab="carousel">
-                    <i class="fas fa-images"></i> Carousel
-                </button>
-                <button class="tab-btn" data-tab="announcement">
-                    <i class="fas fa-bullhorn"></i> Announcement
-                </button>
+                <button class="tab-btn active" data-tab="carousel"><i class="fas fa-images"></i> Carousel</button>
+                <button class="tab-btn" data-tab="announcement"><i class="fas fa-bullhorn"></i> Announcement</button>
             </div>
-
-            <div class="content-tab-panel active" id="panel_carousel">
-                <div style="text-align:center; padding:60px 20px; color:#5a6a7a;">
-                    <i class="fas fa-spinner fa-spin" style="font-size:32px; color:#ccb89f;"></i>
-                    <div style="margin-top:16px; font-size:14px;">Loading carousel settings...</div>
-                </div>
-            </div>
-
-            <div class="content-tab-panel" id="panel_announcement">
-                <div style="text-align:center; padding:60px 20px; color:#5a6a7a;">
-                    <i class="fas fa-spinner fa-spin" style="font-size:32px; color:#ccb89f;"></i>
-                    <div style="margin-top:16px; font-size:14px;">Loading announcements...</div>
-                </div>
-            </div>
+            <div class="content-tab-panel active" id="panel_carousel"></div>
+            <div class="content-tab-panel" id="panel_announcement"></div>
         </div>
 
-        <div id="page_settings" class="page">
-            <div style="text-align:center; padding:60px 20px; color:#5a6a7a;">
-                <i class="fas fa-cog" style="font-size:48px; color:#3a4a5a; display:block; margin-bottom:12px;"></i>
-                <div style="font-size:16px; font-weight:600; color:#8a9aaa;">Settings</div>
-                <div style="font-size:13px; margin-top:4px;">Coming soon...</div>
-            </div>
-        </div>
+        <div id="page_settings" class="page"></div>
 
     </div>
 
-    <!-- ===== Modal ===== -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal-card">
             <h3 id="modalTitle"><i class="fas fa-bullhorn"></i> Add Announcement</h3>
@@ -148,7 +85,6 @@
         </div>
     </div>
 
-    <!-- ===== JavaScript ===== -->
     <script>
         function toggleSidebar() {
             var sidebar = document.getElementById('sidebar');
@@ -176,45 +112,28 @@
             window.location.href = 'vision711-admin-login-K8G7Y.html';
         }
 
-        // ===== 🔥 页面加载后自动刷新 Users =====
-        function waitForAdminUser(attempts) {
-            attempts = attempts || 0;
-            if (typeof window._adminUser !== 'undefined' && window._adminUser.refresh) {
-                console.log('🔄 adminUser 已加载，刷新...');
+        function loadPage(page) {
+            if (page === 'users' && typeof window._adminUser !== 'undefined') {
                 window._adminUser.refresh();
-                return;
             }
-            if (attempts > 30) {
-                console.warn('⚠️ adminUser 加载超时');
-                return;
+            if (page === 'partnership' && typeof window._adminPartnership !== 'undefined') {
+                window._adminPartnership.load();
             }
-            setTimeout(function() {
-                waitForAdminUser(attempts + 1);
-            }, 200);
+            if (page === 'content') {
+                if (typeof window._adminCarousel !== 'undefined') window._adminCarousel.load();
+                if (typeof window._adminAnnouncement !== 'undefined') window._adminAnnouncement.load();
+            }
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            waitForAdminUser();
-        });
-
-        // ===== 侧边栏导航 =====
         var navItems = document.querySelectorAll('.nav-item');
         navItems.forEach(function(item) {
             item.addEventListener('click', function() {
-                var page = this.getAttribute('data-page');
-
-                document.querySelectorAll('.nav-item').forEach(function(n) {
-                    n.classList.remove('active');
-                });
+                var page = this.dataset.page;
+                document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
                 this.classList.add('active');
-
-                document.querySelectorAll('.page').forEach(function(p) {
-                    p.classList.remove('active');
-                });
+                document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
                 var target = document.getElementById('page_' + page);
-                if (target) {
-                    target.classList.add('active');
-                }
+                if (target) target.classList.add('active');
 
                 var titleMap = {
                     'users': 'Users Management',
@@ -226,59 +145,25 @@
                     'settings': 'Settings'
                 };
                 document.getElementById('pageTitle').textContent = titleMap[page] || page;
-
-                if (page === 'users' && typeof window._adminUser !== 'undefined') {
-                    setTimeout(function() {
-                        window._adminUser.refresh();
-                    }, 50);
-                }
-                if (page === 'partnership' && typeof window._adminPartnership !== 'undefined') {
-                    window._adminPartnership.load();
-                }
-                if (page === 'content') {
-                    if (typeof window._adminCarousel !== 'undefined') {
-                        window._adminCarousel.load();
-                    }
-                    if (typeof window._adminAnnouncement !== 'undefined') {
-                        window._adminAnnouncement.load();
-                    }
-                }
-
-                if (window.innerWidth <= 768) {
-                    toggleSidebar();
-                }
+                loadPage(page);
+                if (window.innerWidth <= 768) toggleSidebar();
             });
         });
 
-        // ===== Content Management 子标签页切换 =====
         var tabBtns = document.querySelectorAll('.tab-btn');
         tabBtns.forEach(function(btn) {
             btn.addEventListener('click', function() {
                 var tab = this.dataset.tab;
-
-                tabBtns.forEach(function(b) {
-                    b.classList.remove('active');
-                });
+                tabBtns.forEach(function(b) { b.classList.remove('active'); });
                 this.classList.add('active');
-
-                document.querySelectorAll('.content-tab-panel').forEach(function(p) {
-                    p.classList.remove('active');
-                });
+                document.querySelectorAll('.content-tab-panel').forEach(function(p) { p.classList.remove('active'); });
                 var panel = document.getElementById('panel_' + tab);
-                if (panel) {
-                    panel.classList.add('active');
-                }
-
-                if (tab === 'carousel' && typeof window._adminCarousel !== 'undefined') {
-                    window._adminCarousel.load();
-                }
-                if (tab === 'announcement' && typeof window._adminAnnouncement !== 'undefined') {
-                    window._adminAnnouncement.load();
-                }
+                if (panel) panel.classList.add('active');
+                if (tab === 'carousel' && typeof window._adminCarousel !== 'undefined') window._adminCarousel.load();
+                if (tab === 'announcement' && typeof window._adminAnnouncement !== 'undefined') window._adminAnnouncement.load();
             });
         });
 
-        // ===== 退出登录 =====
         var logoutBtn = document.getElementById('logoutBtn');
         if (logoutBtn) {
             logoutBtn.addEventListener('click', function() {
@@ -291,7 +176,6 @@
             });
         }
 
-        // ===== Modal 控制 =====
         var modalOverlay = document.getElementById('modalOverlay');
         var modalCancelBtn = document.getElementById('modalCancelBtn');
 
@@ -300,15 +184,11 @@
             document.getElementById('modalSub').textContent = sub;
             document.getElementById('modalBody').innerHTML = bodyHTML;
             modalOverlay.classList.add('show');
-
             var saveBtn = document.getElementById('modalSaveBtn');
             var newSaveBtn = saveBtn.cloneNode(true);
             saveBtn.parentNode.replaceChild(newSaveBtn, saveBtn);
-
             newSaveBtn.addEventListener('click', function() {
-                if (typeof onSave === 'function') {
-                    onSave();
-                }
+                if (typeof onSave === 'function') onSave();
             });
         }
 
@@ -316,24 +196,21 @@
             modalOverlay.classList.remove('show');
         }
 
-        if (modalCancelBtn) {
-            modalCancelBtn.addEventListener('click', closeModal);
-        }
-        if (modalOverlay) {
-            modalOverlay.addEventListener('click', function(e) {
-                if (e.target === this) closeModal();
-            });
-        }
+        if (modalCancelBtn) modalCancelBtn.addEventListener('click', closeModal);
+        if (modalOverlay) modalOverlay.addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
 
-        window._adminModal = {
-            open: openModal,
-            close: closeModal
-        };
+        window._adminModal = { open: openModal, close: closeModal };
+
+        // 默认加载 Users
+        setTimeout(function() {
+            loadPage('users');
+        }, 300);
 
         console.log('✅ VISION711 Admin Dashboard loaded');
     </script>
 
-    <!-- ===== 模块 JS ===== -->
     <script src="admin-user.js"></script>
     <script src="admin-partnership.js"></script>
     <script src="admin-carousel.js"></script>

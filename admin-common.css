@@ -1,5 +1,5 @@
 /* ============================================================
-   admin-common.css - 修复内容跑到底部问题
+   admin-common.css - VISION711 后台统一样式
    ============================================================ */
 
 * {
@@ -26,9 +26,6 @@ body {
     background: rgba(204, 184, 159, 0.15);
     border-radius: 4px;
 }
-::-webkit-scrollbar-thumb:hover {
-    background: rgba(204, 184, 159, 0.25);
-}
 
 /* ===== 侧边栏 ===== */
 .sidebar {
@@ -39,7 +36,6 @@ body {
     height: 100vh;
     background: linear-gradient(145deg, rgba(10, 12, 24, 0.95), rgba(20, 24, 40, 0.8));
     backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
     border-right: 1px solid rgba(180, 180, 200, 0.05);
     padding: 24px 16px 30px;
     overflow-y: auto;
@@ -50,23 +46,8 @@ body {
     position: relative;
     box-shadow: 4px 0 30px rgba(0, 0, 0, 0.3);
 }
-.sidebar::before {
-    content: '';
-    position: absolute;
-    top: -30%;
-    right: -30%;
-    width: 80%;
-    height: 80%;
-    background: radial-gradient(ellipse, rgba(255, 255, 255, 0.02), transparent 70%);
-    pointer-events: none;
-    z-index: 0;
-}
 .sidebar::-webkit-scrollbar {
     display: none;
-}
-.sidebar>* {
-    position: relative;
-    z-index: 1;
 }
 .sidebar .logo {
     text-align: center;
@@ -106,7 +87,6 @@ body {
     padding: 12px 16px;
     border-radius: 12px;
     color: #6a7a8a;
-    text-decoration: none;
     cursor: pointer;
     transition: all 0.3s;
     font-size: 13px;
@@ -145,7 +125,6 @@ body {
     height: 24px;
     background: linear-gradient(180deg, #ccb89f, #d4af37);
     border-radius: 0 3px 3px 0;
-    box-shadow: 0 0 20px rgba(204, 184, 159, 0.1);
 }
 .sidebar .footer-section {
     margin-top: auto;
@@ -184,9 +163,8 @@ body {
 /* ===== 主内容 ===== */
 .main-content {
     margin-left: 240px;
-    padding: 0 32px 40px 32px;
+    padding: 24px 32px 40px 32px;
     min-height: 100vh;
-    position: relative;
 }
 
 /* ===== Header ===== */
@@ -197,13 +175,10 @@ body {
     padding: 16px 24px;
     background: linear-gradient(145deg, rgba(20, 24, 40, 0.7), rgba(10, 12, 24, 0.4));
     backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
     border-radius: 20px;
     border: 1px solid rgba(180, 180, 200, 0.05);
-    margin: 20px 0 20px 0;
+    margin-bottom: 20px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    position: relative;
-    z-index: 10;
 }
 .admin-header .left {
     display: flex;
@@ -262,29 +237,12 @@ body {
     border: 1px solid rgba(204, 184, 159, 0.06);
 }
 
-/* ===== 🔥 页面容器 - 用绝对定位叠在一起 ===== */
+/* ===== 页面容器 ===== */
 .page {
     display: none;
-    position: absolute;
-    top: 78px;  /* header 高度 + margin */
-    left: 0;
-    right: 0;
-    padding-right: 32px;
-    animation: fadeIn 0.3s ease;
-    min-height: 500px;
 }
 .page.active {
     display: block;
-}
-@keyframes fadeIn {
-    0% {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
 
 /* ===== Content Management 子标签页 ===== */
@@ -322,12 +280,8 @@ body {
     color: #e8eef8;
     border: 1px solid rgba(204, 184, 159, 0.06);
 }
-.content-tabs .tab-btn i {
-    font-size: 14px;
-}
 .content-tab-panel {
     display: none;
-    animation: fadeIn 0.3s ease;
 }
 .content-tab-panel.active {
     display: block;
@@ -337,7 +291,6 @@ body {
 .card-metal {
     background: linear-gradient(145deg, rgba(20, 24, 40, 0.7), rgba(10, 12, 24, 0.4));
     backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
     border-radius: 16px;
     border: 1px solid rgba(180, 180, 200, 0.05);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.02);
@@ -345,21 +298,6 @@ body {
     margin-bottom: 16px;
     position: relative;
     overflow: hidden;
-}
-.card-metal::before {
-    content: '';
-    position: absolute;
-    top: -15%;
-    right: -5%;
-    width: 75%;
-    height: 75%;
-    background: radial-gradient(ellipse at 70% 20%, rgba(255, 255, 255, 0.03), transparent 70%);
-    pointer-events: none;
-    border-radius: 50%;
-}
-.card-metal>* {
-    position: relative;
-    z-index: 1;
 }
 .card-metal .card-title {
     font-size: 14px;
@@ -382,7 +320,6 @@ body {
     padding: 12px 16px;
     background: linear-gradient(145deg, rgba(20, 24, 40, 0.7), rgba(10, 12, 24, 0.4));
     backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
     border-radius: 16px;
     border: 1px solid rgba(180, 180, 200, 0.05);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.02);
@@ -390,21 +327,6 @@ body {
     margin-bottom: 8px;
     position: relative;
     overflow: hidden;
-}
-.announcement-item::before {
-    content: '';
-    position: absolute;
-    top: -15%;
-    right: -5%;
-    width: 75%;
-    height: 75%;
-    background: radial-gradient(ellipse at 70% 20%, rgba(255, 255, 255, 0.03), transparent 70%);
-    pointer-events: none;
-    border-radius: 50%;
-}
-.announcement-item>* {
-    position: relative;
-    z-index: 1;
 }
 .announcement-item:hover {
     background: rgba(204, 184, 159, 0.04);
@@ -437,7 +359,6 @@ body {
     z-index: 101;
     background: rgba(10, 12, 24, 0.8);
     backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(180, 180, 200, 0.06);
     border-radius: 12px;
     padding: 10px 14px;
@@ -469,7 +390,6 @@ body {
     height: 100%;
     background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
     z-index: 200;
     align-items: center;
     justify-content: center;
@@ -480,7 +400,6 @@ body {
 .modal-card {
     background: linear-gradient(145deg, rgba(20, 24, 40, 0.95), rgba(10, 12, 24, 0.8));
     backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
     border-radius: 24px;
     padding: 32px 36px;
     width: 480px;
@@ -540,9 +459,6 @@ body {
     border-color: rgba(204, 184, 159, 0.2);
     box-shadow: 0 0 20px rgba(204, 184, 159, 0.03);
 }
-.modal-card .form-group select option {
-    background: #0a0f2a;
-}
 .modal-card .modal-actions {
     display: flex;
     gap: 12px;
@@ -579,7 +495,6 @@ body {
     color: #8a9aaa;
 }
 
-/* ===== 响应式 ===== */
 @media (max-width: 768px) {
     .sidebar {
         transform: translateX(-100%);
@@ -591,11 +506,8 @@ body {
     }
     .main-content {
         margin-left: 0;
-        padding: 0 12px 80px 12px;
-        padding-top: 0;
-    }
-    .admin-header {
-        margin-top: 0;
+        padding: 16px;
+        padding-top: 72px;
     }
     .admin-header {
         flex-direction: column;
@@ -625,28 +537,5 @@ body {
         padding: 8px 12px;
         font-size: 12px;
         white-space: nowrap;
-    }
-    /* 手机版页面叠放调整 */
-    .page {
-        top: 120px;
-        padding-right: 12px;
-        min-height: 400px;
-    }
-}
-@media (max-width: 480px) {
-    .admin-header .right .user-badge .role {
-        display: none;
-    }
-    .content-tabs .tab-btn {
-        font-size: 11px;
-        padding: 6px 10px;
-    }
-    .content-tabs .tab-btn i {
-        font-size: 12px;
-    }
-    .page {
-        top: 130px;
-        padding-right: 12px;
-        min-height: 350px;
     }
 }
