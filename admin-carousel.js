@@ -540,7 +540,7 @@
                         <div style="font-size:0.8rem;color:#5a6388;" id="fileNameText">
                             ${isEdit && item.image_url ? 'Current image uploaded' : 'Click or drag to upload image'}
                         </div>
-                        <div style="font-size:0.6rem;color:#2a3560;">PNG, JPG, WebP up to 2MB</div>
+                        <div style="font-size:0.6rem;color:#2a3560;">PNG, JPG, WebP up to 10MB</div>
                     </div>
                     <input type="file" id="fileInput" accept="image/*" style="display:none;">
                 </div>
@@ -694,11 +694,11 @@
                     var file = this.files[0];
                     if (!file) return;
 
-                    if (file.size > 2 * 1024 * 1024) {
-                        alert('File too large! Maximum 2MB.');
-                        this.value = '';
-                        return;
-                    }
+                    if (file.size > 10 * 1024 * 1024) {
+    alert('File too large! Maximum 10MB.');
+    this.value = '';
+    return;
+}
 
                     selectedFile = file;
                     fileNameText.textContent = file.name;
@@ -730,10 +730,10 @@
                     var file = e.dataTransfer.files[0];
                     if (!file) return;
 
-                    if (file.size > 2 * 1024 * 1024) {
-                        alert('File too large! Maximum 2MB.');
-                        return;
-                    }
+                    if (file.size > 10 * 1024 * 1024) {
+    alert('File too large! Maximum 10MB.');
+    return;
+}
 
                     selectedFile = file;
                     fileNameText.textContent = file.name;
