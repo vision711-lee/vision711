@@ -43,19 +43,6 @@
             display: block !important;
         }
 
-        .admin-header {
-            position: relative !important;
-            flex-shrink: 0 !important;
-            margin-bottom: 0 !important;
-            border-radius: 0 !important;
-            border-left: none !important;
-            border-right: none !important;
-            border-top: none !important;
-            padding: 12px 24px !important;
-            background: rgba(10, 14, 26, 0.6) !important;
-            backdrop-filter: blur(12px) !important;
-        }
-
         .sidebar {
             position: fixed !important;
             top: 0 !important;
@@ -75,14 +62,14 @@
             display: block !important;
         }
 
-        /* Tab Bar 样式 */
+        /* ===== Tab Bar 容器 - 紧贴浏览器顶部 ===== */
         #tabBarContainer {
             display: flex !important;
             align-items: center !important;
             background: rgba(12, 16, 28, 0.92) !important;
             border-bottom: 1px solid rgba(214, 178, 94, 0.08) !important;
             padding: 0 16px !important;
-            height: 50px !important;
+            height: 46px !important;
             overflow-x: auto !important;
             overflow-y: hidden !important;
             flex-shrink: 0 !important;
@@ -91,11 +78,11 @@
             top: 0 !important;
             z-index: 99 !important;
             scrollbar-width: thin !important;
-            box-shadow: 0 2px 20px rgba(0,0,0,0.3) !important;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.2) !important;
             margin: 0 -32px 0 -32px !important;
             padding-left: 20px !important;
             padding-right: 16px !important;
-            min-height: 50px !important;
+            min-height: 46px !important;
         }
 
         #tabsWrapper {
@@ -125,54 +112,42 @@
             display: flex !important;
             align-items: center !important;
             gap: 8px !important;
-            padding: 6px 14px !important;
-            border-radius: 8px 8px 0 0 !important;
-            background: rgba(255,255,255,0.02) !important;
-            color: rgba(255,255,255,0.45) !important;
+            padding: 4px 14px !important;
+            border-radius: 6px 6px 0 0 !important;
+            background: transparent !important;
+            color: rgba(255,255,255,0.35) !important;
             font-size: 12px !important;
             font-weight: 500 !important;
             cursor: pointer !important;
             transition: all 0.25s ease !important;
             white-space: nowrap !important;
             flex-shrink: 0 !important;
-            height: 42px !important;
+            height: 38px !important;
             border: none !important;
             font-family: 'Inter', sans-serif !important;
             position: relative !important;
             user-select: none !important;
-            border-top: 1px solid transparent !important;
-            border-left: 1px solid transparent !important;
-            border-right: 1px solid transparent !important;
+            border-bottom: 2px solid transparent !important;
         }
         .tab-item i {
             font-size: 13px !important;
-            color: rgba(255,255,255,0.2) !important;
+            color: rgba(255,255,255,0.15) !important;
             transition: 0.25s !important;
         }
         .tab-item:hover {
-            background: rgba(255,255,255,0.05) !important;
             color: rgba(255,255,255,0.6) !important;
+            background: rgba(255,255,255,0.03) !important;
+        }
+        .tab-item:hover i {
+            color: rgba(255,255,255,0.3) !important;
         }
         .tab-item.active {
-            background: linear-gradient(180deg, rgba(214,178,94,0.08) 0%, rgba(214,178,94,0.02) 100%) !important;
             color: #F3D38B !important;
-            border-top: 1px solid rgba(214,178,94,0.2) !important;
-            border-left: 1px solid rgba(214,178,94,0.06) !important;
-            border-right: 1px solid rgba(214,178,94,0.06) !important;
-            box-shadow: 0 -2px 16px rgba(214,178,94,0.04) !important;
+            background: transparent !important;
+            border-bottom: 2px solid #D6B25E !important;
         }
         .tab-item.active i {
             color: #D6B25E !important;
-        }
-        .tab-item.active::after {
-            content: '' !important;
-            position: absolute !important;
-            bottom: 0 !important;
-            left: 15% !important;
-            width: 70% !important;
-            height: 2px !important;
-            background: linear-gradient(90deg, transparent, #D6B25E, #F3D38B, #D6B25E, transparent) !important;
-            border-radius: 2px !important;
         }
 
         .tab-close {
@@ -233,7 +208,7 @@
             background: rgba(255,255,255,0.02) !important;
             color: rgba(255,255,255,0.2) !important;
             cursor: pointer !important;
-            font-size: 16px !important;
+            font-size: 15px !important;
             transition: 0.25s !important;
             flex-shrink: 0 !important;
             font-family: 'Inter', sans-serif !important;
@@ -268,7 +243,7 @@
         #globalNotificationDropdown {
             display: none !important;
             position: fixed !important;
-            top: 70px !important;
+            top: 60px !important;
             right: 20px !important;
             width: 400px !important;
             max-height: 500px !important;
@@ -313,34 +288,123 @@
         #globalNotificationDropdown::-webkit-scrollbar { width: 4px; }
         #globalNotificationDropdown::-webkit-scrollbar-thumb { background: rgba(204,184,159,0.15); border-radius: 4px; }
 
+        /* ===== Admin Header - 在 Tab Bar 下方，留一点缝隙 ===== */
+        .admin-header {
+            position: relative !important;
+            flex-shrink: 0 !important;
+            margin-top: 8px !important;
+            margin-bottom: 0 !important;
+            border-radius: 16px !important;
+            border: 1px solid rgba(180, 180, 200, 0.05) !important;
+            padding: 12px 24px !important;
+            background: rgba(10, 14, 26, 0.6) !important;
+            backdrop-filter: blur(12px) !important;
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+        }
+
+        .admin-header .left {
+            display: flex !important;
+            align-items: center !important;
+            gap: 16px !important;
+        }
+        .admin-header .left h3 {
+            font-size: 18px !important;
+            font-weight: 600 !important;
+            color: #fff !important;
+            margin: 0 !important;
+        }
+        .admin-header .left h3 i {
+            color: #ccb89f !important;
+            margin-right: 8px !important;
+        }
+        .admin-header .left .date {
+            font-size: 12px !important;
+            color: #5a6a7a !important;
+        }
+        .admin-header .right {
+            display: flex !important;
+            align-items: center !important;
+            gap: 16px !important;
+        }
+        .admin-header .right .user-badge {
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            background: rgba(255, 255, 255, 0.03) !important;
+            padding: 8px 16px 8px 12px !important;
+            border-radius: 40px !important;
+            border: 1px solid rgba(180, 180, 200, 0.05) !important;
+        }
+        .admin-header .right .user-badge .avatar {
+            width: 32px !important;
+            height: 32px !important;
+            border-radius: 50% !important;
+            background: linear-gradient(135deg, #2f3e7a, #4a7cff) !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 14px !important;
+            color: #fff !important;
+        }
+        .admin-header .right .user-badge .name {
+            font-size: 13px !important;
+            font-weight: 500 !important;
+            color: #8a9aaa !important;
+        }
+        .admin-header .right .user-badge .role {
+            font-size: 10px !important;
+            color: #5a6a7a !important;
+            background: rgba(204, 184, 159, 0.08) !important;
+            padding: 2px 10px !important;
+            border-radius: 20px !important;
+            border: 1px solid rgba(204, 184, 159, 0.06) !important;
+        }
+
+        /* ===== 页面内容区域 - 在 admin-header 下方 ===== */
+        .page-content-wrapper {
+            padding-top: 16px !important;
+        }
+
         @media (max-width: 768px) {
             .main-content {
                 margin-left: 0 !important;
                 padding: 0 16px 40px 16px !important;
             }
-            .admin-header {
-                padding: 10px 16px !important;
-            }
-            .admin-header .left h3 { font-size: 14px !important; }
-            .admin-header .right .user-badge { padding: 4px 10px 4px 8px !important; }
-            .admin-header .right .user-badge .name { font-size: 11px !important; }
-            .admin-header .right .user-badge .role { font-size: 8px !important; padding: 1px 6px !important; }
-            .menu-toggle { top: 12px !important; left: 12px !important; padding: 8px 12px !important; font-size: 14px !important; }
-
             #tabBarContainer {
                 margin: 0 -16px 0 -16px !important;
                 padding-left: 12px !important;
                 padding-right: 12px !important;
-                height: 44px !important;
-                min-height: 44px !important;
+                height: 40px !important;
+                min-height: 40px !important;
             }
-            .tab-item { padding: 4px 10px !important; font-size: 11px !important; height: 36px !important; }
+            .tab-item {
+                padding: 4px 10px !important;
+                font-size: 11px !important;
+                height: 34px !important;
+            }
             .tab-item i { font-size: 11px !important; }
             .tab-close { width: 14px !important; height: 14px !important; font-size: 8px !important; }
             #globalNotificationBtn { width: 28px !important; height: 28px !important; font-size: 13px !important; }
             #addTabBtn { width: 28px !important; height: 28px !important; font-size: 12px !important; }
-            #globalNotificationDropdown { width: 320px !important; right: 10px !important; top: 60px !important; }
+            #globalNotificationDropdown { width: 320px !important; right: 10px !important; top: 54px !important; }
+            .admin-header {
+                padding: 10px 16px !important;
+                margin-top: 6px !important;
+                border-radius: 12px !important;
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 8px !important;
+            }
+            .admin-header .left h3 { font-size: 14px !important; }
+            .admin-header .right { justify-content: flex-start !important; }
+            .admin-header .right .user-badge { padding: 4px 10px 4px 8px !important; }
+            .admin-header .right .user-badge .name { font-size: 11px !important; }
+            .admin-header .right .user-badge .role { font-size: 8px !important; padding: 1px 6px !important; }
+            .menu-toggle { top: 8px !important; left: 8px !important; padding: 6px 10px !important; font-size: 14px !important; }
             .modal-card { padding: 20px 16px !important; width: 95% !important; }
+            .page-content-wrapper { padding-top: 12px !important; }
         }
     </style>
 </head>
@@ -375,6 +439,21 @@
 
     <div class="main-content">
 
+        <!-- ===== Tab Bar - 紧贴浏览器顶部 ===== -->
+        <div id="tabBarContainer">
+            <div id="tabsWrapper"></div>
+            <div id="tabBarRightWrapper">
+                <div id="globalNotificationContainer">
+                    <button id="globalNotificationBtn">
+                        <i class="fas fa-bell"></i>
+                        <span id="globalNotificationBadge"></span>
+                    </button>
+                </div>
+                <button id="addTabBtn"><i class="fas fa-plus"></i></button>
+            </div>
+        </div>
+
+        <!-- ===== Admin Header - Tab Bar 下方，留 8px 缝隙 ===== -->
         <div class="admin-header">
             <div class="left">
                 <h3><i class="fas fa-users"></i> <span id="pageTitle">Users Management</span></h3>
@@ -389,37 +468,25 @@
             </div>
         </div>
 
-        <!-- ===== Tab Bar 容器 ===== -->
-        <div id="tabBarContainer">
-            <div id="tabsWrapper"></div>
-            <div id="tabBarRightWrapper">
-                <div id="globalNotificationContainer">
-                    <button id="globalNotificationBtn">
-                        <i class="fas fa-bell"></i>
-                        <span id="globalNotificationBadge"></span>
-                    </button>
+        <!-- ===== 页面内容 - admin-header 下方，留 16px 缝隙 ===== -->
+        <div class="page-content-wrapper">
+            <div id="page_users" class="page active"></div>
+            <div id="page_deposits" class="page"></div>
+            <div id="page_withdrawals" class="page"></div>
+            <div id="page_transactions" class="page"></div>
+            <div id="page_partnership" class="page"></div>
+
+            <div id="page_content" class="page">
+                <div class="content-tabs" id="contentTabs">
+                    <button class="tab-btn active" data-tab="carousel"><i class="fas fa-images"></i> Carousel</button>
+                    <button class="tab-btn" data-tab="announcement"><i class="fas fa-bullhorn"></i> Announcement</button>
                 </div>
-                <button id="addTabBtn"><i class="fas fa-plus"></i></button>
+                <div class="content-tab-panel active" id="panel_carousel"></div>
+                <div class="content-tab-panel" id="panel_announcement"></div>
             </div>
+
+            <div id="page_settings" class="page"></div>
         </div>
-
-        <!-- ===== 页面容器 ===== -->
-        <div id="page_users" class="page active"></div>
-        <div id="page_deposits" class="page"></div>
-        <div id="page_withdrawals" class="page"></div>
-        <div id="page_transactions" class="page"></div>
-        <div id="page_partnership" class="page"></div>
-
-        <div id="page_content" class="page">
-            <div class="content-tabs" id="contentTabs">
-                <button class="tab-btn active" data-tab="carousel"><i class="fas fa-images"></i> Carousel</button>
-                <button class="tab-btn" data-tab="announcement"><i class="fas fa-bullhorn"></i> Announcement</button>
-            </div>
-            <div class="content-tab-panel active" id="panel_carousel"></div>
-            <div class="content-tab-panel" id="panel_announcement"></div>
-        </div>
-
-        <div id="page_settings" class="page"></div>
 
     </div>
 
@@ -701,7 +768,6 @@
                         });
                     }
                 });
-                // 确保 dashboard 在第一个
                 var hasDefault = tabs.some(function(t) { return t.pageId === 'users'; });
                 if (!hasDefault) {
                     tabs.unshift({
