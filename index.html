@@ -1285,37 +1285,51 @@
 
 
 // ============================================================
-// 霓虹蓝光 · 滚动公告栏 - 只显示 active 状态
+// 霓虹蓝光 · 滚动公告栏 - 只显示 active 状态，无数据则留空
 // ============================================================
 (function initAnnouncement() {
     var track = document.getElementById('announcementTrack');
     var badge = document.getElementById('announcementBadge');
     var moreLink = document.getElementById('announcementMore');
+    var wrapper = document.getElementById('announcementWrapper');
     
     if (!track) return;
 
     var SUPABASE_URL = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co';
     var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImprYnBiamhyZ2JuemV4dmp2eGd0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4Mzc3MDcyMSwiZXhwIjoyMDk5MzQ2NzIxfQ.cZumC1R8_pGEfQv-BBfqJXAExCYOC7mdDj4OmkfdjRw';
 
-    // ===== 默认数据 (只显示活跃的) =====
-    var defaultAnnouncements = [
-        { text: '🎉 新用户首存 100% 红利，最高 RM888！立即充值领取', time: '10:30', badge: 'HOT', link: '/deposit', status: 'active' },
-        { text: '💎 每日幸运抽奖已开启！每 RM20 存款获得 1 个幸运号码', time: '09:15', badge: 'NEW', link: '/', status: 'active' },
-        { text: '👑 VIP 专属周返水 5% 已发放，请查收您的账户', time: '08:00', badge: 'VIP', link: '/profile', status: 'active' }
-    ];
-
     var announcements = [];
 
-    function renderAnnouncements() {
-        // 🔥 只显示 status === 'active' 的公告
-        var data = announcements.length > 0 
-            ? announcements.filter(function(item) { return item.status !== 'inactive' && item.status !== 'draft'; })
-            : defaultAnnouncements;
-        
-        // 如果过滤后没有数据，用默认
-        if (data.length === 0) {
-            data = defaultAnnouncements;
+    // ===== 隐藏整个公告栏 =====
+    function hideAnnouncement() {
+        if (wrapper) {
+            wrapper.style.display = 'none';
         }
+        console.log('📢 没有活跃公告，已隐藏公告栏');
+    }
+
+    // ===== 显示公告栏 =====
+    function showAnnouncement() {
+        if (wrapper) {
+            wrapper.style.display = 'flex';
+        }
+    }
+
+    // ===== 渲染公告 =====
+    function renderAnnouncements() {
+        // 🔥 只取 status === 'active' 的公告
+        var data = announcements.filter(function(item) {
+            return item.status === 'active' || !item.status;
+        });
+
+        // 🔥 如果没有活跃公告 → 隐藏整个公告栏
+        if (data.length === 0) {
+            hideAnnouncement();
+            return;
+        }
+
+        // 有数据 → 显示公告栏
+        showAnnouncement();
 
         var html = '';
         for (var repeat = 0; repeat < 2; repeat++) {
@@ -1332,44 +1346,45 @@
         if (moreLink && data.length > 0 && data[0].link) {
             moreLink.href = data[0].link;
         }
+
+        console.log('📢 显示', data.length, '条活跃公告');
     }
 
+    // ===== 加载公告 =====
     function loadAnnouncements() {
         var loaded = false;
 
-        // 1️⃣ 从 localStorage 读取 (只取 active 的)
+        // 1️⃣ 从 localStorage 读取
         var saved = localStorage.getItem('announcements');
         if (saved) {
             try {
                 var parsed = JSON.parse(saved);
                 if (parsed && parsed.length > 0) {
-                    // 🔥 过滤：只保留 status === 'active'
-                    var activeItems = parsed.filter(function(item) {
-                        return item.status === 'active' || !item.status; // 没有 status 字段的默认为 active
+                    announcements = parsed.map(function(item) {
+                        return {
+                            text: item.text || '',
+                            time: item.time || '今日',
+                            badge: item.badge || 'HOT',
+                            link: item.link || '#',
+                            status: item.status || 'active'
+                        };
                     });
-                    if (activeItems.length > 0) {
-                        announcements = activeItems.map(function(item) {
-                            return {
-                                text: item.text || '📢 欢迎来到 VISION711',
-                                time: item.time || '今日',
-                                badge: item.badge || 'HOT',
-                                link: item.link || '#',
-                                status: item.status || 'active'
-                            };
-                        });
-                        renderAnnouncements();
-                        loaded = true;
-                        console.log('✅ 从 localStorage 加载了', announcements.length, '条活跃公告');
-                    }
+                    renderAnnouncements();
+                    loaded = true;
+                    console.log('✅ 从 localStorage 加载了', announcements.length, '条公告');
                 }
             } catch (e) {
                 console.warn('⚠️ localStorage 解析失败');
             }
         }
 
-        // 2️⃣ 从 Supabase 加载 (只取 active)
+        // 如果 localStorage 没数据，先隐藏
+        if (!loaded) {
+            hideAnnouncement();
+        }
+
+        // 2️⃣ 从 Supabase 加载
         if (typeof supabase === 'undefined') {
-            if (!loaded) renderAnnouncements();
             return;
         }
 
@@ -1378,53 +1393,43 @@
 
             sb.from('announcements')
                 .select('*')
-                .eq('status', 'active')  // 🔥 只查 active
+                .eq('status', 'active')
                 .order('created_at', { ascending: false })
                 .limit(20)
                 .then(function(res) {
                     if (res.error) {
                         console.warn('⚠️ Supabase 加载失败:', res.error);
-                        if (!loaded) renderAnnouncements();
                         return;
                     }
                     
                     if (res.data && res.data.length > 0) {
                         announcements = res.data.map(function(item) {
                             return {
-                                text: item.text || '📢 欢迎来到 VISION711',
+                                text: item.text || '',
                                 time: item.time || '今日',
                                 badge: item.badge || 'HOT',
                                 link: item.link || '#',
                                 status: item.status || 'active'
                             };
                         });
-                        // 更新 localStorage (只存 active)
                         localStorage.setItem('announcements', JSON.stringify(res.data));
                         renderAnnouncements();
-                        console.log('✅ 从 Supabase 加载了', announcements.length, '条活跃公告');
-                    } else if (!loaded) {
-                        renderAnnouncements();
+                        console.log('✅ 从 Supabase 加载了', announcements.length, '条公告');
+                    } else {
+                        // Supabase 没有 active 数据 → 隐藏
+                        hideAnnouncement();
                     }
                 })
                 .catch(function(err) {
                     console.warn('⚠️ Supabase 异常:', err);
-                    if (!loaded) renderAnnouncements();
                 });
         } catch (e) {
             console.warn('⚠️ Supabase 加载错误:', e);
-            if (!loaded) renderAnnouncements();
         }
-
-        setTimeout(function() {
-            if (track.innerHTML === '') {
-                console.log('⏰ 超时，使用默认公告');
-                renderAnnouncements();
-            }
-        }, 3000);
     }
 
     loadAnnouncements();
-    console.log('✅ 公告栏已加载 (只显示 active 状态)');
+    console.log('✅ 公告栏已加载 (无数据则隐藏)');
 })();
 </script>
 </body>

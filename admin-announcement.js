@@ -1,5 +1,5 @@
 // ============================================================
-// admin-announcement.js - 终极稳定版
+// admin-announcement.js - 双状态版 (active / inactive)
 // localStorage 主存储 + Supabase 备份同步
 // ============================================================
 
@@ -39,8 +39,7 @@
         if (currentItems && currentItems.length > 0) {
             currentItems.forEach(function(item) {
                 var statusClass = item.status || 'active';
-                var statusMap = { 'active': 'Active', 'inactive': 'Inactive', 'draft': 'Draft' };
-                var statusText = statusMap[statusClass] || statusClass;
+                var statusText = statusClass === 'active' ? 'Active' : 'Hidden';
 
                 itemsHTML += `
                     <div class="announcement-item" style="margin-bottom:8px;">
@@ -93,7 +92,8 @@
                                 font-size:0.65rem;
                                 transition:0.3s;
                             " onmouseover="this.style.color='#8a9abb'" onmouseout="this.style.color='#5a6388'">
-                                <i class="fas fa-${item.status === 'active' ? 'eye' : item.status === 'draft' ? 'file' : 'eye-slash'}"></i>
+                                <i class="fas fa-${item.status === 'active' ? 'eye' : 'eye-slash'}"></i>
+                                ${item.status === 'active' ? 'Hide' : 'Show'}
                             </button>
                         </div>
                     </div>
@@ -172,29 +172,10 @@
                 currentItems = [];
             }
         } else {
-            // 首次使用，插入示例数据
-            currentItems = [
-                {
-                    id: 'ann_demo_1',
-                    text: '🎉 新用户首存 100% 红利，最高 RM888！立即充值领取',
-                    time: '10:30',
-                    badge: 'HOT',
-                    link: '/deposit',
-                    status: 'active',
-                    created_at: new Date().toISOString()
-                },
-                {
-                    id: 'ann_demo_2',
-                    text: '💎 每日幸运抽奖已开启！每 RM20 存款获得 1 个幸运号码',
-                    time: '09:15',
-                    badge: 'NEW',
-                    link: '/',
-                    status: 'active',
-                    created_at: new Date().toISOString()
-                }
-            ];
+            // 首次使用，空数据
+            currentItems = [];
             localStorage.setItem('announcements', JSON.stringify(currentItems));
-            console.log('📝 已初始化示例数据');
+            console.log('📝 初始化空数据');
         }
 
         renderAnnouncementPage();
@@ -356,13 +337,19 @@
         });
     }
 
+    // ============================================================
+    // 切换状态 (active ↔ inactive)
+    // ============================================================
     function toggleStatus(id) {
         var index = currentItems.findIndex(function(item) { return item.id === id; });
         if (index === -1) return;
-        var statusMap = { 'active': 'inactive', 'inactive': 'draft', 'draft': 'active' };
-        currentItems[index].status = statusMap[currentItems[index].status] || 'active';
+        
+        // 切换状态：active → inactive, inactive → active
+        currentItems[index].status = currentItems[index].status === 'active' ? 'inactive' : 'active';
+        
         saveData(function() {
-            showSaveResult(true, 'Status toggled!');
+            var statusText = currentItems[index].status === 'active' ? 'shown' : 'hidden';
+            showSaveResult(true, 'Announcement ' + statusText + '!');
         });
     }
 
@@ -447,7 +434,6 @@
                 <label><i class="fas fa-toggle-on"></i> Status</label>
                 <select id="formStatus">
                     <option value="active" ${isEdit && item.status === 'active' ? 'selected' : ''}>Active (显示)</option>
-                    <option value="draft" ${isEdit && item.status === 'draft' ? 'selected' : ''}>Draft (草稿)</option>
                     <option value="inactive" ${isEdit && item.status === 'inactive' ? 'selected' : ''}>Inactive (隐藏)</option>
                 </select>
             </div>
@@ -507,7 +493,7 @@
         sync: syncFromSupabase
     };
 
-    console.log('✅ admin-announcement.js loaded (终极稳定版)');
+    console.log('✅ admin-announcement.js loaded (双状态版)');
 
     // 自动加载
     loadData();
