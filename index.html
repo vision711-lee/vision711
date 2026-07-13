@@ -1129,16 +1129,15 @@
             });
         });
 
-        // ✅ Priority 1: 只在首次渲染或强制重建时重置索引
-        if (forceRebuild || currentIndex === 0) {
-            currentIndex = 0;
-        } else {
-            // 保持当前索引，但确保不超出范围
-            var total = getTotalSlides();
-            if (currentIndex >= total) {
-                currentIndex = total - 1;
-            }
-        }
+        // ✅ 保持当前索引不变，只确保不超出范围
+var total = getTotalSlides();
+if (currentIndex >= total) {
+    currentIndex = Math.max(0, total - 1);
+}
+// 如果 currentIndex 为 0 且总数为 0，保持 0
+if (total === 0) {
+    currentIndex = 0;
+}
         updateTrack();
         
         // ✅ Priority 4: 重建后延迟重启自动播放
@@ -1158,32 +1157,39 @@
     }
 
     function goToSlide(index) {
-        if (isAnimating) return;
-        var total = getTotalSlides();
-        if (total === 0) return;
-        if (index < 0) index = total - 1;
-        if (index >= total) index = 0;
-        if (currentIndex === index) return;
-        
-        isAnimating = true;
-        currentIndex = index;
-        updateTrack();
-        
-        // ✅ Priority 4: 手动导航后暂停自动播放2.5秒
-        stopAutoPlay();
-        isPaused = true;
-        
-        setTimeout(function() {
-            isAnimating = false;
-            // ✅ Priority 4: 2.5秒后恢复自动播放
-            setTimeout(function() {
-                isPaused = false;
-                if (!isAnimating) {
-                    startAutoPlay();
-                }
-            }, 2500);
-        }, 650);
+    if (isAnimating) return;
+    var total = getTotalSlides();
+    if (total === 0) return;
+    if (index < 0) index = total - 1;
+    if (index >= total) index = 0;
+    if (currentIndex === index) return;
+    
+    // ✅ 立即停止所有定时器
+    if (progressTimer) {
+        clearInterval(progressTimer);
+        progressTimer = null;
     }
+    progressBar.style.width = '0%';
+    
+    isAnimating = true;
+    currentIndex = index;
+    updateTrack();
+    
+    // ✅ 手动导航后暂停自动播放3秒
+    isPaused = true;
+    
+    setTimeout(function() {
+        isAnimating = false;
+        // ✅ 3秒后恢复自动播放
+        setTimeout(function() {
+            isPaused = false;
+            // ✅ 只有不处于动画状态时才重启
+            if (!isAnimating) {
+                startAutoPlay();
+            }
+        }, 3000);
+    }, 650);
+}
 
     function nextSlide() {
         if (isAnimating) return;
@@ -1380,7 +1386,6 @@
         nextSlide: nextSlide, 
         prevSlide: prevSlide, 
         refresh: function() {
-            hasLoaded = false;
             loadFromSupabase();
         }
     };
