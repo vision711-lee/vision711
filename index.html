@@ -8,7 +8,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
     <style>
         /* ============================================================
@@ -228,13 +227,10 @@
                 flex: none !important;
             }
             body {
-                background-image: url('https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/hero-background/mobile-hero-background.png');
-                background-size: cover;
-                background-position: center;
-                background-attachment: fixed;
-                background-repeat: no-repeat;
-                background-color: #06060f;
-            }
+    background: #0a0a1a;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
             .banner-fixed-desktop {
                 display: none !important;
             }
@@ -242,13 +238,10 @@
 
         @media (min-width: 768px) {
             body {
-                background-image: url('https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/hero-background/desktop-hero-background.png');
-                background-size: cover;
-                background-position: center;
-                background-attachment: fixed;
-                background-repeat: no-repeat;
-                background-color: #06060f;
-            }
+    background: #0a0a1a;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
         }
 
         @media (min-width: 1200px) {
@@ -670,6 +663,40 @@
         display: none !important;
     }
 }
+
+/* 只对 index.html 生效 - 修复内容偏移 */
+@media (min-width: 768px) {
+    .main-content {
+        transform: translateX(-260px) !important;
+    }
+}
+
+/* 扩大 GAMES 点击区域 - 向上延伸 */
+.nav-games-center {
+    position: relative !important;
+    cursor: pointer !important;
+}
+
+.nav-games-center::after {
+    content: '' !important;
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 140px !important;
+    height: 80px !important;
+    z-index: 999 !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    background: transparent !important;
+}
+
+/* 让 GAMES 文字本身不阻挡点击 */
+.nav-games-center .games-metal-rajdhani {
+    pointer-events: none !important;
+    position: relative !important;
+    z-index: 1 !important;
+}
     </style>
 </head>
 <body>
@@ -1036,31 +1063,44 @@
             </div>
         </div>
 
-        <!-- ===== 手机底部导航 - 5个位置，中间空出 ===== -->
+        <!-- 手机底部导航 -->
 <div class="bottom-nav">
     <a href="index.html" class="nav-item"><i class="fas fa-home"></i><span>Home</span></a>
     <a href="promo.html" class="nav-item"><i class="fas fa-gem"></i><span>Promo</span></a>
-    <div class="nav-games-center" id="gamesCenter">
-        <div class="gif-btn-wrapper" id="gifBtn">
-            <img src="https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/animated-button/slot-button.gif" alt="GAMES" draggable="false">
-        </div>
+    <div class="nav-games-center" id="gifBtn" style="cursor:pointer; height:100%; min-height:76px; display:flex; align-items:center; justify-content:center; padding:0 8px;">
+        <span class="games-metal-rajdhani">GAMES</span>
     </div>
     <a href="deposit.html" class="nav-item"><i class="fas fa-wallet"></i><span>Deposit</span></a>
     <a href="withdraw.html" class="nav-item"><i class="fas fa-arrow-up"></i><span>Withdraw</span></a>
 </div>
 
-<!-- 遮罩 + 菜单 -->
+<!-- ===== GAMES 遮罩 + 6张卡片 (手机版) ===== -->
 <div class="games-overlay" id="gamesOverlay"></div>
 <div class="games-menu" id="gamesMenu">
-    <div class="games-card" onclick="alert('🎰 Slot Games')"><div class="games-box"><span class="games-icon">🎰</span></div><span class="games-label">Slot Games</span></div>
-    <div class="games-card" onclick="alert('⚡ Fast Games')"><div class="games-box"><span class="games-icon">⚡</span></div><span class="games-label">Fast Games</span></div>
-    <div class="games-card" onclick="alert('🎥 Live Games')"><div class="games-box"><span class="games-icon">🎥</span></div><span class="games-label">Live Games</span></div>
-    <div class="games-card" onclick="alert('🐟 Fish Games')"><div class="games-box"><span class="games-icon">🐟</span></div><span class="games-label">Fish Games</span></div>
-    <div class="games-card" onclick="alert('⚽ Sport Games')"><div class="games-box"><span class="games-icon">⚽</span></div><span class="games-label">Sport Games</span></div>
-    <div class="games-card" onclick="alert('🎮 Other Games')"><div class="games-box"><span class="games-icon">🎮</span></div><span class="games-label">Other Games</span></div>
-</div>
-    <a href="deposit.html" class="nav-item"><i class="fas fa-wallet"></i><span>Deposit</span></a>
-    <a href="withdraw.html" class="nav-item"><i class="fas fa-arrow-up"></i><span>Withdraw</span></a>
+    <div class="games-card" onclick="alert('🎰 Slot Games')">
+        <span class="card-icon">🎰</span>
+        <span class="card-label">Slot Games</span>
+    </div>
+    <div class="games-card" onclick="alert('⚡ Fast Games')">
+        <span class="card-icon">⚡</span>
+        <span class="card-label">Fast Games</span>
+    </div>
+    <div class="games-card" onclick="alert('🎥 Live Games')">
+        <span class="card-icon">🎥</span>
+        <span class="card-label">Live Games</span>
+    </div>
+    <div class="games-card" onclick="alert('🐟 Fish Games')">
+        <span class="card-icon">🐟</span>
+        <span class="card-label">Fish Games</span>
+    </div>
+    <div class="games-card" onclick="alert('⚽ Sport Games')">
+        <span class="card-icon">⚽</span>
+        <span class="card-label">Sport Games</span>
+    </div>
+    <div class="games-card" onclick="alert('🎮 Other Games')">
+        <span class="card-icon">🎮</span>
+        <span class="card-label">Other Games</span>
+    </div>
 </div>
 
     </div><!-- /main-content -->

@@ -1829,7 +1829,6 @@ html, body {
     overflow-x: hidden;
     width: 100%;
     flex: 1;
-    transform: translateX(-260px);
 }
 
 .main-content > *,
