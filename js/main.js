@@ -435,24 +435,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ===== 高亮导航（侧边栏 + 底部导航） =====
 const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-console.log('📍 当前页面:', currentPage);
 
 document.querySelectorAll('.nav-item').forEach(item => {
     const href = item.getAttribute('href');
     if (href) {
-        // 提取文件名（去掉 ./ 和 /）
+        // 提取文件名
         let linkPage = href.replace('./', '').replace('/', '').split('?')[0];
         if (!linkPage || linkPage === '') linkPage = 'index.html';
         
-        // 去掉可能的前缀路径
-        if (linkPage.includes('/')) {
-            linkPage = linkPage.split('/').pop();
-        }
+        // 去掉 .html 后缀再比较（兼容两种写法）
+        const linkBase = linkPage.replace('.html', '');
+        const currentBase = currentPage.replace('.html', '');
         
-        console.log('🔗 链接:', linkPage, '当前:', currentPage);
-        
-        // 精确匹配
-        if (linkPage === currentPage) {
+        if (linkBase === currentBase || linkPage === currentPage) {
             item.classList.add('active');
         } else {
             item.classList.remove('active');
