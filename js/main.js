@@ -435,15 +435,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ===== 高亮导航（侧边栏 + 底部导航） =====
 const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+console.log('📍 当前页面:', currentPage);
 
 document.querySelectorAll('.nav-item').forEach(item => {
     const href = item.getAttribute('href');
     if (href) {
-        // 提取文件名
+        // 提取文件名（去掉 ./ 和 /）
         let linkPage = href.replace('./', '').replace('/', '').split('?')[0];
-        if (!linkPage) linkPage = 'index.html';
+        if (!linkPage || linkPage === '') linkPage = 'index.html';
         
-        // 匹配当前页面
+        // 去掉可能的前缀路径
+        if (linkPage.includes('/')) {
+            linkPage = linkPage.split('/').pop();
+        }
+        
+        console.log('🔗 链接:', linkPage, '当前:', currentPage);
+        
+        // 精确匹配
         if (linkPage === currentPage) {
             item.classList.add('active');
         } else {
@@ -452,9 +460,9 @@ document.querySelectorAll('.nav-item').forEach(item => {
     }
 });
 
-// 特殊处理：如果是根路径 / 或 /index.html
+// 特殊处理首页
 if (currentPage === 'index.html' || currentPage === '') {
-    document.querySelectorAll('.nav-item[href="/"], .nav-item[href="index.html"]').forEach(el => {
+    document.querySelectorAll('.nav-item[href="/"], .nav-item[href="index.html"], .nav-item[href="./"], .nav-item[href=""]').forEach(el => {
         el.classList.add('active');
     });
 }
