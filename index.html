@@ -521,7 +521,7 @@
         .announcement-wrapper .scroll-track {
             display: flex;
             white-space: nowrap;
-            animation: scrollLeft 14s linear infinite;
+            animation: scrollLeft 7s linear infinite;
         }
 
         .announcement-wrapper .scroll-track .text-item {
@@ -1031,14 +1031,13 @@
 
         <!-- ===== 手机底部导航 - 5个位置，中间空出 ===== -->
 <div class="bottom-nav">
-    <a href="/" class="nav-item active"><i class="fas fa-home"></i><span data-i18n="nav.home">Home</span></a>
-    <a href="dashboard.html" class="nav-item"><i class="fas fa-tachometer-alt"></i><span data-i18n="nav.dashboard">Dashboard</span></a>
-    <!-- ===== GIF + GAMES 叠加 ===== -->
+    <a href="/" class="nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+    <a href="promo.html" class="nav-item"><i class="fas fa-gem"></i><span>Promo</span></a>
     <div class="nav-games-center">
         <span class="games-metal-rajdhani">GAMES</span>
     </div>
-    <a href="deposit.html" class="nav-item"><i class="fas fa-wallet"></i><span data-i18n="nav.deposit">Deposit</span></a>
-    <a href="withdraw.html" class="nav-item"><i class="fas fa-arrow-up"></i><span data-i18n="nav.withdraw">Withdraw</span></a>
+    <a href="deposit.html" class="nav-item"><i class="fas fa-wallet"></i><span>Deposit</span></a>
+    <a href="withdraw.html" class="nav-item"><i class="fas fa-arrow-up"></i><span>Withdraw</span></a>
 </div>
 
     </div><!-- /main-content -->
@@ -1049,7 +1048,7 @@
 
 <script>
 // ============================================================
-// 加载轮播图数据 (按5个优先级修复)
+// 轮播图 - 数据加载和播放完全分离
 // ============================================================
 (function loadCarousel() {
     var SUPABASE_URL = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co';
@@ -1063,334 +1062,261 @@
 
     if (!track) return;
 
-    var slides = [];
+    // ===== 核心数据 =====
+    var slideImages = [];        // 图片URL数组
     var currentIndex = 0;
+    var total = 0;
+    var isPlaying = false;
+    var playTimer = null;
     var progressTimer = null;
-    var AUTO_PLAY_DELAY = 4000;
-    var isAnimating = false;
     var isPaused = false;
-    var lastSlideData = ''; // 用于检测数据是否变化
 
-    function getTotalSlides() {
-        return document.querySelectorAll('.carousel-slide').length;
-    }
+    // ===== 只渲染一次 =====
+    var rendered = false;
 
-    // ✅ Priority 5: 只有数据变化时才重建DOM
-    function renderSlides(forceRebuild) {
-        if (!slides || slides.length === 0) {
-            track.innerHTML = `
-                <div class="carousel-slide" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#0a0a25,#181845);">
-                    <i class="fas fa-crown" style="color:rgba(255,255,255,0.05);font-size:3rem;"></i>
-                </div>
-            `;
+    // ===== 渲染函数（只执行一次） =====
+    function renderCarousel() {
+        if (rendered) {
+            console.log('⏭️ 已渲染，跳过');
+            return;
+        }
+
+        if (slideImages.length === 0) {
+            track.innerHTML = '<div class="carousel-slide" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#0a0a25,#181845);"><i class="fas fa-crown" style="color:rgba(255,255,255,0.05);font-size:3rem;"></i></div>';
             dotsContainer.innerHTML = '';
             return;
         }
 
-        var activeSlides = slides.filter(function(s) { return s.active !== false; });
-        if (activeSlides.length === 0) activeSlides = slides;
+        total = slideImages.length;
 
-        // 检查数据是否变化
-        var currentData = JSON.stringify(activeSlides.map(function(s) { return s.image_url; }));
-        if (!forceRebuild && currentData === lastSlideData && document.querySelectorAll('.carousel-slide').length > 0) {
-            // 数据没变，不重建
-            return;
-        }
-        lastSlideData = currentData;
-
-        var slidesHTML = '';
-        var dotsHTML = '';
-
-        activeSlides.forEach(function(slide, index) {
-            var imgSrc = slide.image_url && slide.image_url.startsWith('http') ? slide.image_url : '';
-            
-            slidesHTML += `
-                <div class="carousel-slide">
-                    ${imgSrc ? `<img src="${imgSrc}" alt="">` : `
-                        <div style="position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.05);font-size:3rem;">
-                            <i class="fas fa-image"></i>
-                        </div>
-                    `}
-                </div>
-            `;
-
-            dotsHTML += `<span class="dot ${index === 0 ? 'active' : ''}" data-index="${index}"></span>`;
+        // 生成HTML
+        var html = '';
+        var dots = '';
+        slideImages.forEach(function(url, i) {
+            html += '<div class="carousel-slide"><img src="' + url + '" alt=""></div>';
+            dots += '<span class="dot' + (i === 0 ? ' active' : '') + '" data-index="' + i + '"></span>';
         });
 
-        track.innerHTML = slidesHTML;
+        track.innerHTML = html;
         track.style.transition = 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
-        dotsContainer.innerHTML = dotsHTML;
+        dotsContainer.innerHTML = dots;
 
-        document.querySelectorAll('.dot').forEach(function(dot) {
-            dot.addEventListener('click', function() {
-                if (isAnimating) return;
-                var index = parseInt(this.dataset.index);
-                goToSlide(index);
-            });
+        // 圆点点击
+        document.querySelectorAll('.dot').forEach(function(el) {
+            el.onclick = function() {
+                var idx = parseInt(this.dataset.index);
+                if (idx !== currentIndex) {
+                    goTo(idx);
+                }
+            };
         });
 
-        // ✅ 保持当前索引不变，只确保不超出范围
-var total = getTotalSlides();
-if (currentIndex >= total) {
-    currentIndex = Math.max(0, total - 1);
-}
-// 如果 currentIndex 为 0 且总数为 0，保持 0
-if (total === 0) {
-    currentIndex = 0;
-}
-        updateTrack();
-        
-        // ✅ Priority 4: 重建后延迟重启自动播放
-        stopAutoPlay();
-        setTimeout(function() {
-            if (!isPaused) {
-                startAutoPlay();
-            }
-        }, 1000);
+        // 初始位置
+        currentIndex = 0;
+        track.style.transform = 'translateX(0)';
+        progressBar.style.width = '0%';
+
+        rendered = true;
+        console.log('✅ 轮播图渲染完成，共 ' + total + ' 张');
+
+        // 开始播放
+        startPlay();
     }
 
-    function updateTrack() {
+    // ===== 切换函数 =====
+    function goTo(index) {
+        if (total === 0) return;
+        if (index < 0) index = total - 1;
+        if (index >= total) index = 0;
+        if (index === currentIndex) return;
+
+        currentIndex = index;
         track.style.transform = 'translateX(-' + (currentIndex * 100) + '%)';
-        document.querySelectorAll('.dot').forEach(function(dot, i) {
-            dot.classList.toggle('active', i === currentIndex);
-        });
-    }
 
-    function goToSlide(index) {
-    if (isAnimating) return;
-    var total = getTotalSlides();
-    if (total === 0) return;
-    if (index < 0) index = total - 1;
-    if (index >= total) index = 0;
-    if (currentIndex === index) return;
-    
-    // ✅ 立即停止所有定时器
-    if (progressTimer) {
-        clearInterval(progressTimer);
-        progressTimer = null;
+        document.querySelectorAll('.dot').forEach(function(el, i) {
+            el.classList.toggle('active', i === currentIndex);
+        });
+
+        // 重置进度条
+        progressBar.style.width = '0%';
+        // 重置播放定时器
+        restartPlay();
     }
-    progressBar.style.width = '0%';
-    
-    isAnimating = true;
-    currentIndex = index;
-    updateTrack();
-    
-    // ✅ 手动导航后暂停自动播放3秒
-    isPaused = true;
-    
-    setTimeout(function() {
-        isAnimating = false;
-        // ✅ 3秒后恢复自动播放
-        setTimeout(function() {
-            isPaused = false;
-            // ✅ 只有不处于动画状态时才重启
-            if (!isAnimating) {
-                startAutoPlay();
-            }
-        }, 3000);
-    }, 650);
-}
 
     function nextSlide() {
-        if (isAnimating) return;
-        var total = getTotalSlides();
         if (total === 0) return;
-        goToSlide((currentIndex + 1) % total);
+        goTo((currentIndex + 1) % total);
     }
 
     function prevSlide() {
-        if (isAnimating) return;
-        var total = getTotalSlides();
         if (total === 0) return;
-        goToSlide((currentIndex - 1 + total) % total);
+        goTo((currentIndex - 1 + total) % total);
     }
 
-    // ✅ Priority 2: 确保只有一个定时器
-    function startAutoPlay() {
-        // 先清除所有定时器
-        if (progressTimer) {
-            clearInterval(progressTimer);
-            progressTimer = null;
-        }
-        
-        var total = getTotalSlides();
-        if (total <= 1) return;
-        if (isPaused) return;
-        if (isAnimating) return;
-        
-        var progressValue = 0;
-        progressBar.style.width = '0%';
-        var step = 100 / (AUTO_PLAY_DELAY / 30);
-        
+    // ===== 播放控制 =====
+    function startPlay() {
+        stopPlay();
+        if (total <= 1 || isPaused) return;
+
+        isPlaying = true;
+        var progress = 0;
+        var step = 100 / (4000 / 30);
+
         progressTimer = setInterval(function() {
-            if (isAnimating || isPaused) {
-                return;
-            }
-            
-            progressValue += step;
-            if (progressValue >= 100) {
-                progressValue = 100;
+            if (isPaused) return;
+            progress += step;
+            if (progress >= 100) {
+                progress = 100;
                 progressBar.style.width = '100%';
-                // ✅ Priority 2: 清除当前定时器
-                if (progressTimer) {
-                    clearInterval(progressTimer);
-                    progressTimer = null;
-                }
-                
-                var totalSlidesNow = getTotalSlides();
-                if (!isAnimating && totalSlidesNow > 0) {
-                    var nextIndex = (currentIndex + 1) % totalSlidesNow;
-                    isAnimating = true;
-                    currentIndex = nextIndex;
-                    updateTrack();
-                    
-                    setTimeout(function() {
-                        isAnimating = false;
-                        // ✅ 重启自动播放
-                        if (!isPaused) {
-                            startAutoPlay();
-                        }
-                    }, 650);
-                }
+                clearInterval(progressTimer);
+                progressTimer = null;
+                // 切到下一张
+                setTimeout(function() {
+                    if (!isPaused) {
+                        nextSlide();
+                    }
+                }, 200);
             } else {
-                progressBar.style.width = progressValue + '%';
+                progressBar.style.width = progress + '%';
             }
         }, 30);
+
+        // 备用定时器：如果 progressTimer 卡死，强制切换
+        playTimer = setInterval(function() {
+            // 如果 progressTimer 还在运行，什么都不做
+            if (progressTimer) return;
+            // 如果 progressTimer 没了，说明已经切换了，重新启动
+            if (!progressTimer && !isPaused) {
+                startPlay();
+            }
+        }, 5000);
     }
 
-    function stopAutoPlay() {
+    function stopPlay() {
+        isPlaying = false;
         if (progressTimer) {
             clearInterval(progressTimer);
             progressTimer = null;
         }
-        progressBar.style.width = '0%';
+        if (playTimer) {
+            clearInterval(playTimer);
+            playTimer = null;
+        }
     }
 
-    // 箭头事件
+    function restartPlay() {
+        stopPlay();
+        setTimeout(function() {
+            if (!isPaused) {
+                startPlay();
+            }
+        }, 500);
+    }
+
+    // ===== 事件绑定 =====
     if (prevBtn) {
-        prevBtn.addEventListener('click', function(e) {
+        prevBtn.onclick = function(e) {
             e.stopPropagation();
-            if (!isAnimating) {
-                prevSlide();
-            }
-        });
+            prevSlide();
+        };
     }
-
     if (nextBtn) {
-        nextBtn.addEventListener('click', function(e) {
+        nextBtn.onclick = function(e) {
             e.stopPropagation();
-            if (!isAnimating) {
-                nextSlide();
-            }
-        });
+            nextSlide();
+        };
     }
 
-    // 触摸滑动
-    var touchStartX = 0;
-    var touchEndX = 0;
+    // 触摸
     var container = document.querySelector('.carousel-container');
-
+    var touchX = 0;
     if (container) {
         container.addEventListener('touchstart', function(e) {
-            touchStartX = e.changedTouches[0].screenX;
+            touchX = e.changedTouches[0].screenX;
         }, { passive: true });
 
         container.addEventListener('touchend', function(e) {
-            if (isAnimating) return;
-            touchEndX = e.changedTouches[0].screenX;
-            var diff = touchStartX - touchEndX;
+            var diff = touchX - e.changedTouches[0].screenX;
             if (Math.abs(diff) > 30) {
-                if (diff > 0) {
-                    nextSlide();
-                } else {
-                    prevSlide();
-                }
+                if (diff > 0) nextSlide();
+                else prevSlide();
             }
         }, { passive: true });
 
         container.addEventListener('mouseenter', function() {
             isPaused = true;
-            stopAutoPlay();
+            stopPlay();
         });
 
         container.addEventListener('mouseleave', function() {
             isPaused = false;
-            if (!isAnimating && progressTimer === null) {
-                startAutoPlay();
-            }
+            startPlay();
         });
     }
 
-    // ✅ Priority 3: 停止不必要的Supabase重载
-    var hasLoaded = false;
+    // ===== 数据加载（只执行一次） =====
+    var dataLoaded = false;
 
-    function loadFromSupabase() {
-        if (hasLoaded) {
-            console.log('📢 已加载，跳过重复请求');
+    function loadData() {
+        if (dataLoaded) {
+            console.log('⏭️ 数据已加载，跳过');
             return;
         }
+        dataLoaded = true;
 
+        // 先检查 localStorage
+        var saved = localStorage.getItem('carousel_items');
+        if (saved) {
+            try {
+                var parsed = JSON.parse(saved);
+                if (parsed && parsed.length > 0) {
+                    slideImages = parsed.filter(function(s) { return s.active !== false; }).map(function(s) { return s.image_url; });
+                    if (slideImages.length > 0) {
+                        renderCarousel();
+                        return;
+                    }
+                }
+            } catch (e) {}
+        }
+
+        // 从 Supabase 加载
         if (typeof supabase === 'undefined') {
-            console.warn('⚠️ supabase not loaded');
-            loadFromLocalStorage();
+            renderCarousel();
             return;
         }
 
         var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
         sb.from('carousel_items')
             .select('*')
             .order('order', { ascending: true })
             .then(function(res) {
-                if (res.error) {
-                    console.error('加载轮播图失败:', res.error);
-                    loadFromLocalStorage();
+                if (res.error || !res.data || res.data.length === 0) {
+                    renderCarousel();
                     return;
                 }
-                if (res.data && res.data.length > 0) {
-                    slides = res.data;
-                    console.log('✅ 加载到', slides.length, '张轮播图');
-                } else {
-                    slides = [];
-                    console.log('📢 没有轮播图数据');
-                }
-                hasLoaded = true;
-                renderSlides(true); // 强制重建
+                slideImages = res.data.filter(function(s) { return s.active !== false; }).map(function(s) { return s.image_url; });
+                renderCarousel();
             })
-            .catch(function(err) {
-                console.error('异常:', err);
-                loadFromLocalStorage();
+            .catch(function() {
+                renderCarousel();
             });
     }
 
-    function loadFromLocalStorage() {
-        if (hasLoaded) return;
-        var saved = localStorage.getItem('carousel_items');
-        if (saved) {
-            try {
-                slides = JSON.parse(saved);
-                hasLoaded = true;
-                renderSlides(true);
-                return;
-            } catch (e) {}
-        }
-        slides = [];
-        hasLoaded = true;
-        renderSlides(true);
-    }
-
-    loadFromSupabase();
-
-    window.carousel = { 
-        goToSlide: goToSlide, 
-        nextSlide: nextSlide, 
-        prevSlide: prevSlide, 
+    // ===== 暴露接口 =====
+    window.carousel = {
+        goTo: goTo,
+        next: nextSlide,
+        prev: prevSlide,
         refresh: function() {
-            loadFromSupabase();
+            dataLoaded = false;
+            rendered = false;
+            loadData();
         }
     };
 
-    console.log('✅ Carousel loaded (5个优先级修复版)');
+    // ===== 启动 =====
+    loadData();
+    console.log('✅ 轮播图启动（数据和渲染完全分离）');
 })();
 
 // ============================================================
@@ -1407,32 +1333,35 @@ if (total === 0) {
     var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImprYnBiamhyZ2JuemV4dmp2eGd0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4Mzc3MDcyMSwiZXhwIjoyMDk5MzQ2NzIxfQ.cZumC1R8_pGEfQv-BBfqJXAExCYOC7mdDj4OmkfdjRw';
 
     function renderAnnouncements(items) {
-        var activeItems = items.filter(function(item) {
-            return item.status === 'active' || !item.status;
-        });
+    var activeItems = items.filter(function(item) {
+        return item.status === 'active' || !item.status;
+    });
 
-        if (!activeItems || activeItems.length === 0) {
-            container.classList.add('hidden');
-            console.log('📢 没有活跃公告，已隐藏通告条');
-            return;
-        }
-
-        container.classList.remove('hidden');
-
-        var html = '';
-        for (var repeat = 0; repeat < 2; repeat++) {
-            activeItems.forEach(function(item) {
-                html += '<span class="text-item">' + (item.text || '') + ' <span class="time-tag">· ' + (item.time || '今日') + '</span></span>';
-            });
-        }
-        track.innerHTML = html;
-
-        if (badge && activeItems.length > 0) {
-            badge.textContent = activeItems[0].badge || 'HOT';
-        }
-
-        console.log('✅ 通告条已渲染，共 ' + activeItems.length + ' 条活跃公告');
+    if (!activeItems || activeItems.length === 0) {
+        container.classList.add('hidden');
+        console.log('📢 没有活跃公告，已隐藏通告条');
+        return;
     }
+
+    container.classList.remove('hidden');
+
+    var html = '';
+    for (var repeat = 0; repeat < 2; repeat++) {
+        activeItems.forEach(function(item) {
+            html += '<span class="text-item">' + (item.text || '') + ' <span class="time-tag">· ' + (item.time || '今日') + '</span></span>';
+        });
+    }
+    track.innerHTML = html;
+
+    // ===== 🔥 加这一行：JS直接控制滚动速度 =====
+    track.style.animationDuration = '4s';
+
+    if (badge && activeItems.length > 0) {
+        badge.textContent = activeItems[0].badge || 'HOT';
+    }
+
+    console.log('✅ 通告条已渲染，共 ' + activeItems.length + ' 条活跃公告');
+}
 
     function loadAnnouncements() {
         // 1. 先从 localStorage 快速显示
