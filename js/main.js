@@ -433,17 +433,31 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // 获取当前页面
-    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    // ===== 高亮导航（侧边栏 + 底部导航） =====
+const currentPage = window.location.pathname.split('/').pop() || 'index.html';
 
-    // 高亮导航
-    const navItems = document.querySelectorAll('.nav-item');
-    navItems.forEach(item => {
-        const href = item.getAttribute('href');
-        if (href && currentPage.includes(href.replace('./', ''))) {
+document.querySelectorAll('.nav-item').forEach(item => {
+    const href = item.getAttribute('href');
+    if (href) {
+        // 提取文件名
+        let linkPage = href.replace('./', '').replace('/', '').split('?')[0];
+        if (!linkPage) linkPage = 'index.html';
+        
+        // 匹配当前页面
+        if (linkPage === currentPage) {
             item.classList.add('active');
+        } else {
+            item.classList.remove('active');
         }
+    }
+});
+
+// 特殊处理：如果是根路径 / 或 /index.html
+if (currentPage === 'index.html' || currentPage === '') {
+    document.querySelectorAll('.nav-item[href="/"], .nav-item[href="index.html"]').forEach(el => {
+        el.classList.add('active');
     });
+}
 
     // ============================================================
     //  管理员登录
@@ -533,124 +547,3 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log(`✅ DoktorJudi 平台已加载 (${i18n.currentLang})`);
     console.log(`📄 当前页面: ${currentPage}`);
 });
-
-// ============================================================
-//  轮播图 (Carousel)
-// ============================================================
-(function initCarousel() {
-    const track = document.getElementById('carouselTrack');
-    const dots = document.querySelectorAll('.dot');
-    const prevBtn = document.getElementById('carouselPrev');
-    const nextBtn = document.getElementById('carouselNext');
-
-    if (!track) return;
-
-    let currentIndex = 0;
-    const totalSlides = document.querySelectorAll('.carousel-slide').length;
-    let autoPlayInterval = null;
-    const AUTO_PLAY_DELAY = 4000; // 4秒切换
-
-    function goToSlide(index) {
-        if (index < 0) index = totalSlides - 1;
-        if (index >= totalSlides) index = 0;
-        currentIndex = index;
-        track.style.transform = `translateX(-${currentIndex * 100}%)`;
-
-        // 更新圆点
-        dots.forEach((dot, i) => {
-            dot.classList.toggle('active', i === currentIndex);
-        });
-    }
-
-    function nextSlide() {
-        goToSlide(currentIndex + 1);
-    }
-
-    function prevSlide() {
-        goToSlide(currentIndex - 1);
-    }
-
-    // 点击圆点跳转
-    dots.forEach((dot) => {
-        dot.addEventListener('click', function() {
-            const index = parseInt(this.dataset.index);
-            goToSlide(index);
-            resetAutoPlay();
-        });
-    });
-
-    // 左右按钮
-    if (prevBtn) {
-        prevBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            prevSlide();
-            resetAutoPlay();
-        });
-    }
-
-    if (nextBtn) {
-        nextBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            nextSlide();
-            resetAutoPlay();
-        });
-    }
-
-    // 自动播放
-    function startAutoPlay() {
-        if (autoPlayInterval) clearInterval(autoPlayInterval);
-        autoPlayInterval = setInterval(nextSlide, AUTO_PLAY_DELAY);
-    }
-
-    function resetAutoPlay() {
-        if (autoPlayInterval) {
-            clearInterval(autoPlayInterval);
-            autoPlayInterval = null;
-        }
-        startAutoPlay();
-    }
-
-    // 触摸/滑动支持 (手机)
-    let touchStartX = 0;
-    let touchEndX = 0;
-    const container = document.querySelector('.carousel-container');
-
-    if (container) {
-        container.addEventListener('touchstart', function(e) {
-            touchStartX = e.changedTouches[0].screenX;
-        }, { passive: true });
-
-        container.addEventListener('touchend', function(e) {
-            touchEndX = e.changedTouches[0].screenX;
-            const diff = touchStartX - touchEndX;
-            if (Math.abs(diff) > 30) {
-                if (diff > 0) {
-                    nextSlide();
-                } else {
-                    prevSlide();
-                }
-                resetAutoPlay();
-            }
-        }, { passive: true });
-    }
-
-    // 鼠标悬停暂停自动播放
-    if (container) {
-        container.addEventListener('mouseenter', function() {
-            if (autoPlayInterval) {
-                clearInterval(autoPlayInterval);
-                autoPlayInterval = null;
-            }
-        });
-
-        container.addEventListener('mouseleave', function() {
-            startAutoPlay();
-        });
-    }
-
-    // 启动自动播放
-    startAutoPlay();
-
-    // 暴露方法给控制台调试
-    window.carousel = { goToSlide, nextSlide, prevSlide };
-})();
