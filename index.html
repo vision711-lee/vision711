@@ -663,6 +663,13 @@
             font-weight: 700;
             box-shadow: 0 0 25px rgba(0, 180, 255, 0.2);
         }
+
+/* 手机版隐藏右侧边栏 - 覆盖内联样式 */
+@media (max-width: 767px) {
+    .right-sidebar {
+        display: none !important;
+    }
+}
     </style>
 </head>
 <body>
@@ -1033,14 +1040,37 @@
 <div class="bottom-nav">
     <a href="index.html" class="nav-item"><i class="fas fa-home"></i><span>Home</span></a>
     <a href="promo.html" class="nav-item"><i class="fas fa-gem"></i><span>Promo</span></a>
-    <div class="nav-games-center">
-        <span class="games-metal-rajdhani">GAMES</span>
+    <div class="nav-games-center" id="gamesCenter">
+        <div class="gif-btn-wrapper" id="gifBtn">
+            <img src="https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/animated-button/slot-button.gif" alt="GAMES" draggable="false">
+        </div>
     </div>
     <a href="deposit.html" class="nav-item"><i class="fas fa-wallet"></i><span>Deposit</span></a>
     <a href="withdraw.html" class="nav-item"><i class="fas fa-arrow-up"></i><span>Withdraw</span></a>
 </div>
 
+<!-- 遮罩 + 菜单 -->
+<div class="games-overlay" id="gamesOverlay"></div>
+<div class="games-menu" id="gamesMenu">
+    <div class="games-card" onclick="alert('🎰 Slot Games')"><div class="games-box"><span class="games-icon">🎰</span></div><span class="games-label">Slot Games</span></div>
+    <div class="games-card" onclick="alert('⚡ Fast Games')"><div class="games-box"><span class="games-icon">⚡</span></div><span class="games-label">Fast Games</span></div>
+    <div class="games-card" onclick="alert('🎥 Live Games')"><div class="games-box"><span class="games-icon">🎥</span></div><span class="games-label">Live Games</span></div>
+    <div class="games-card" onclick="alert('🐟 Fish Games')"><div class="games-box"><span class="games-icon">🐟</span></div><span class="games-label">Fish Games</span></div>
+    <div class="games-card" onclick="alert('⚽ Sport Games')"><div class="games-box"><span class="games-icon">⚽</span></div><span class="games-label">Sport Games</span></div>
+    <div class="games-card" onclick="alert('🎮 Other Games')"><div class="games-box"><span class="games-icon">🎮</span></div><span class="games-label">Other Games</span></div>
+</div>
+    <a href="deposit.html" class="nav-item"><i class="fas fa-wallet"></i><span>Deposit</span></a>
+    <a href="withdraw.html" class="nav-item"><i class="fas fa-arrow-up"></i><span>Withdraw</span></a>
+</div>
+
     </div><!-- /main-content -->
+
+<!-- ===== RIGHT SIDEBAR ===== -->
+    <div class="right-sidebar">
+        <div class="sidebar-title">✦ 热门活动 ✦</div>
+        <!-- 内容稍后填充 -->
+    </div>
+
 </div><!-- /app-container -->
 
 <script src="js/main.js"></script>
@@ -1401,6 +1431,104 @@
     loadAnnouncements();
     console.log('✅ 极光呼吸通告条已加载 (无数据则隐藏)');
 })();
+</script>
+
+<script>
+    // ============================================================
+    // GAMES 菜单 - GIF 按钮展开/收拢（全屏大卡片版）
+    // ============================================================
+    (function() {
+        'use strict';
+
+        var menu = document.getElementById('gamesMenu');
+        var overlay = document.getElementById('gamesOverlay');
+        var gifBtn = document.getElementById('gifBtn');
+
+        if (!menu || !overlay || !gifBtn) {
+            console.warn('⚠️ GAMES 菜单元素未找到');
+            return;
+        }
+
+        var isOpen = false;
+        var isAnimating = false;
+        var animationTimer = null;
+        var ANIMATION_DURATION = 700;
+
+        function unlock() {
+            isAnimating = false;
+            gifBtn.classList.remove('locked');
+            if (animationTimer) {
+                clearTimeout(animationTimer);
+                animationTimer = null;
+            }
+        }
+
+        function lock() {
+            isAnimating = true;
+            gifBtn.classList.add('locked');
+            if (animationTimer) {
+                clearTimeout(animationTimer);
+            }
+            animationTimer = setTimeout(function() {
+                unlock();
+            }, ANIMATION_DURATION);
+        }
+
+        function toggleMenu(e) {
+            if (e) e.stopPropagation();
+
+            if (isAnimating) {
+                return;
+            }
+
+            isOpen = !isOpen;
+
+            if (isOpen) {
+                menu.classList.add('active');
+                overlay.classList.add('active');
+            } else {
+                menu.classList.remove('active');
+                overlay.classList.remove('active');
+            }
+
+            lock();
+        }
+
+        // ===== GIF 按钮点击 =====
+        gifBtn.addEventListener('click', toggleMenu);
+
+        // ===== 遮罩点击关闭 =====
+        overlay.addEventListener('click', function(e) {
+            if (isOpen && !isAnimating) {
+                isOpen = true;
+                toggleMenu(e);
+            }
+        });
+
+        // ===== 卡片点击：关闭菜单（延迟350ms让点击事件先触发） =====
+        document.querySelectorAll('.games-card').forEach(function(card) {
+            card.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (isOpen && !isAnimating) {
+                    // 延迟关闭，让卡片自己的 onclick 先执行
+                    setTimeout(function() {
+                        isOpen = true;
+                        toggleMenu(e);
+                    }, 350);
+                }
+            });
+        });
+
+        // ===== ESC 键关闭 =====
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && isOpen && !isAnimating) {
+                isOpen = true;
+                toggleMenu(e);
+            }
+        });
+
+        console.log('✅ GAMES 全屏菜单已加载');
+    })();
 </script>
 </body>
 </html>
