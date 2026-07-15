@@ -2457,170 +2457,6 @@ html, body {
     }
 }
 
-/* ============================================================
-   GAMES 全屏菜单
-   ============================================================ */
-
-/* GIF 按钮 */
-.nav-games-center {
-    position: relative !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    flex: 1 !important;
-    max-width: 76px !important;
-    min-height: 52px !important;
-    overflow: visible !important;
-    z-index: 10000 !important;
-}
-
-.gif-btn-wrapper {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 70px !important;
-    height: 70px !important;
-    cursor: pointer !important;
-    border-radius: 50% !important;
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    outline: none !important;
-    transition: transform 0.3s ease !important;
-}
-.gif-btn-wrapper:hover { transform: scale(1.08) !important; }
-.gif-btn-wrapper:active { transform: scale(0.92) !important; }
-.gif-btn-wrapper.locked { pointer-events: none !important; }
-
-.gif-btn-wrapper img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: contain !important;
-    display: block !important;
-    border-radius: 50% !important;
-    border: none !important;
-    outline: none !important;
-    box-shadow: none !important;
-    background: transparent !important;
-    user-select: none !important;
-    pointer-events: none !important;
-}
-
-/* ===== 页面遮罩 ===== */
-.games-overlay {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    background: rgba(0, 0, 0, 0) !important;
-    backdrop-filter: blur(0px) !important;
-    -webkit-backdrop-filter: blur(0px) !important;
-    pointer-events: none !important;
-    transition: all 0.5s ease !important;
-    z-index: 100 !important;
-}
-.games-overlay.active {
-    background: rgba(0, 0, 0, 0.7) !important;
-    backdrop-filter: blur(8px) !important;
-    -webkit-backdrop-filter: blur(8px) !important;
-    pointer-events: auto !important;
-}
-
-/* ===== 底部导航保持在最上层 ===== */
-.bottom-nav {
-    z-index: 9999 !important;
-    position: fixed !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-}
-
-/* ===== 菜单容器 ===== */
-.games-menu {
-    position: fixed !important;
-    bottom: 110px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    width: 0 !important;
-    height: 0 !important;
-    z-index: 200 !important;
-    pointer-events: none !important;
-}
-
-/* ===== 🔥 长方形大卡片 - 布满全屏 ===== */
-.games-card {
-    position: absolute !important;
-    left: 0 !important;
-    top: 0 !important;
-    width: 140px !important;
-    height: 100px !important;          /* 长方形 */
-    border-radius: 18px !important;
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.10), rgba(0, 0, 0, 0.85)) !important;
-    border: 2px solid rgba(212, 175, 55, 0.5) !important;
-    backdrop-filter: blur(20px) !important;
-    -webkit-backdrop-filter: blur(20px) !important;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8) !important;
-    cursor: pointer !important;
-    user-select: none !important;
-    opacity: 0 !important;
-    transform: translate(-50%, -50%) scale(0.05) rotate(90deg) !important;
-    transition: transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease !important;
-    pointer-events: none !important;
-    /* 卡片内只放图标，居中 */
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-}
-
-.games-card .games-box {
-    width: 64px !important;
-    height: 64px !important;
-    border-radius: 16px !important;
-    background: rgba(255, 255, 255, 0.04) !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    border: 1px solid rgba(212, 175, 55, 0.12) !important;
-}
-.games-card .games-icon {
-    font-size: 34px !important;
-    line-height: 1 !important;
-}
-
-/* 🔥 标题独立在卡片下方 - 新加 */
-.games-label {
-    position: absolute !important;
-    font-size: 12px !important;
-    font-weight: 700 !important;
-    color: #d4af37 !important;
-    letter-spacing: 1px !important;
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9) !important;
-    white-space: nowrap !important;
-    background: rgba(0, 0, 0, 0.5) !important;
-    padding: 4px 16px !important;
-    border-radius: 30px !important;
-    border: 1px solid rgba(212, 175, 55, 0.08) !important;
-    /* 定位在卡片正下方 */
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    top: 108px !important;  /* 卡片高度100px + 8px间距 */
-    pointer-events: none !important;
-}
-
-.games-card:hover {
-    border-color: rgba(212, 175, 55, 0.9) !important;
-    box-shadow: 0 0 50px rgba(212, 175, 55, 0.2), inset 0 0 40px rgba(212, 175, 55, 0.06) !important;
-}
-
-/* ===== 布满全屏 - 上下左右都撑满 ===== */
-.games-card:nth-child(1) { --x: -115px; --y: -400px; }
-.games-card:nth-child(2) { --x: 115px;  --y: -400px; }
-.games-card:nth-child(3) { --x: -115px; --y: -260px; }
-.games-card:nth-child(4) { --x: 115px;  --y: -260px; }
-.games-card:nth-child(5) { --x: -115px; --y: -120px; }
-.games-card:nth-child(6) { --x: 115px;  --y: -120px; }
-
 /* ===== 展开 ===== */
 .games-menu.active { pointer-events: auto !important; }
 .games-menu.active .games-card {
@@ -2693,82 +2529,138 @@ html, body {
 }
 
 /* ============================================================
-   VISION711 MOBILE GIF GAMES FULLSCREEN FIX v4
-   Only affects phones
+   GAMES 全屏圖片菜單 - 純圖片無框架 (手機版)
    ============================================================ */
+.games-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: rgba(0, 0, 0, 0) !important;
+    backdrop-filter: blur(0px) !important;
+    -webkit-backdrop-filter: blur(0px) !important;
+    pointer-events: none !important;
+    transition: all 0.5s ease !important;
+    z-index: 100 !important;
+}
+.games-overlay.active {
+    background: rgba(0, 0, 0, 0.7) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    pointer-events: auto !important;
+}
 
-@media (max-width:767px){
+/* ============================================================
+   GAMES 全屏圖片菜單 - 純圖片無框架 (手機版)
+   ============================================================ */
+.games-menu {
+    position: fixed !important;
+    bottom: 360px !important;  /* ← 從 280px 改為 360px，往上移 */
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 0 !important;
+    height: 0 !important;
+    z-index: 200 !important;
+    pointer-events: none !important;
+}
 
-    body.games-open {
-        overflow:hidden !important;
-    }
+.games-menu .game-item {
+    position: absolute !important;
+    left: 50% !important;
+    top: 50% !important;
+    width: 260px !important;   /* ← 從 200px 改為 260px，更大 */
+    height: 300px !important;  /* ← 從 230px 改為 300px，更大 */
+    border-radius: 0 !important;
+    overflow: visible !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    border: none !important;
+    cursor: pointer !important;
+    user-select: none !important;
+    opacity: 0 !important;
+    transform: translate(-50%, -50%) scale(0.05) !important;
+    transition: transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease !important;
+    pointer-events: none !important;
+}
 
-    .games-overlay{
-        position:fixed !important;
-        inset:0 !important;
-        z-index:9990 !important;
-        opacity:0;
-        pointer-events:none !important;
-        transition:opacity .35s ease !important;
-    }
+.games-menu .game-item img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    display: block !important;
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+}
 
-    .games-overlay.active{
-        opacity:1 !important;
-        pointer-events:auto !important;
-    }
+/* 位置 - 讓圖片更分散，降低 Y 軸 */
+.games-menu .game-item:nth-child(1) { --x: -130px; --y: -380px; }  /* ← 從 -280 改為 -380 */
+.games-menu .game-item:nth-child(2) { --x: 130px;  --y: -380px; }  /* ← 從 -280 改為 -380 */
+.games-menu .game-item:nth-child(3) { --x: -130px; --y: -80px; }   /* ← 從 -40 改為 -80 */
+.games-menu .game-item:nth-child(4) { --x: 130px;  --y: -80px; }   /* ← 從 -40 改為 -80 */
+.games-menu .game-item:nth-child(5) { --x: -130px; --y: 220px; }   /* ← 從 200 改為 220 */
+.games-menu .game-item:nth-child(6) { --x: 130px;  --y: 220px; }   /* ← 從 200 改為 220 */
 
-    .games-menu{
-        position:fixed !important;
-        inset:0 !important;
-        width:100vw !important;
-        height:100dvh !important;
-        left:0 !important;
-        top:0 !important;
-        transform:none !important;
-        z-index:9995 !important;
-        pointer-events:none !important;
-    }
+.games-menu.active {
+    pointer-events: auto !important;
+}
 
-    .games-card{
-        left:50% !important;
-        top:50% !important;
-        width:145px !important;
-        height:115px !important;
-        transform:translate(-50%,-50%) scale(.01) !important;
-        opacity:0 !important;
-        transition:
-          transform .55s cubic-bezier(.34,1.56,.64,1),
-          opacity .35s ease !important;
-    }
+.games-menu.active .game-item {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(1) !important;
+}
 
-    .games-menu.active{
-        pointer-events:auto !important;
-    }
+/* 延遲動畫 */
+.games-menu.active .game-item:nth-child(1) { transition-delay: 0.04s; }
+.games-menu.active .game-item:nth-child(2) { transition-delay: 0.10s; }
+.games-menu.active .game-item:nth-child(3) { transition-delay: 0.16s; }
+.games-menu.active .game-item:nth-child(4) { transition-delay: 0.22s; }
+.games-menu.active .game-item:nth-child(5) { transition-delay: 0.28s; }
+.games-menu.active .game-item:nth-child(6) { transition-delay: 0.34s; }
 
-    .games-menu.active .games-card{
-        opacity:1 !important;
-    }
+.games-menu:not(.active) .game-item:nth-child(6) { transition-delay: 0.04s; }
+.games-menu:not(.active) .game-item:nth-child(5) { transition-delay: 0.10s; }
+.games-menu:not(.active) .game-item:nth-child(4) { transition-delay: 0.16s; }
+.games-menu:not(.active) .game-item:nth-child(3) { transition-delay: 0.22s; }
+.games-menu:not(.active) .game-item:nth-child(2) { transition-delay: 0.28s; }
+.games-menu:not(.active) .game-item:nth-child(1) { transition-delay: 0.34s; }
 
-    .games-menu.active .games-card:nth-child(1){
-        transform:translate(calc(-50% - 90px),calc(-50% - 240px)) scale(1) !important;
+/* ===== 手機適配 - 更小的屏幕 ===== */
+@media (max-width: 440px) {
+    .games-menu {
+        bottom: 320px !important;  /* ← 從 240px 改為 320px */
     }
-    .games-menu.active .games-card:nth-child(2){
-        transform:translate(calc(-50% + 90px),calc(-50% - 240px)) scale(1) !important;
+    .games-menu .game-item {
+        width: 200px !important;   /* ← 從 150px 改為 200px */
+        height: 240px !important;  /* ← 從 180px 改為 240px */
     }
-    .games-menu.active .games-card:nth-child(3){
-        transform:translate(calc(-50% - 90px),calc(-50% - 60px)) scale(1) !important;
-    }
-    .games-menu.active .games-card:nth-child(4){
-        transform:translate(calc(-50% + 90px),calc(-50% - 60px)) scale(1) !important;
-    }
-    .games-menu.active .games-card:nth-child(5){
-        transform:translate(calc(-50% - 90px),calc(-50% + 120px)) scale(1) !important;
-    }
-    .games-menu.active .games-card:nth-child(6){
-        transform:translate(calc(-50% + 90px),calc(-50% + 120px)) scale(1) !important;
-    }
+    .games-menu .game-item:nth-child(1) { --x: -100px; --y: -320px; }  /* ← 從 -240 改為 -320 */
+    .games-menu .game-item:nth-child(2) { --x: 100px;  --y: -320px; }  /* ← 從 -240 改為 -320 */
+    .games-menu .game-item:nth-child(3) { --x: -100px; --y: -60px; }   /* ← 從 -30 改為 -60 */
+    .games-menu .game-item:nth-child(4) { --x: 100px;  --y: -60px; }   /* ← 從 -30 改為 -60 */
+    .games-menu .game-item:nth-child(5) { --x: -100px; --y: 180px; }   /* ← 從 180 改為 200? 保持 180 也可以 */
+    .games-menu .game-item:nth-child(6) { --x: 100px;  --y: 180px; }
+}
 
-    .bottom-nav{
-        z-index:10000 !important;
+@media (max-width: 370px) {
+    .games-menu {
+        bottom: 280px !important;  /* ← 從 200px 改為 280px */
     }
+    .games-menu .game-item {
+        width: 160px !important;   /* ← 從 120px 改為 160px */
+        height: 190px !important;  /* ← 從 140px 改為 190px */
+    }
+    .games-menu .game-item:nth-child(1) { --x: -80px; --y: -260px; }  /* ← 從 -200 改為 -260 */
+    .games-menu .game-item:nth-child(2) { --x: 80px;  --y: -260px; }  /* ← 從 -200 改為 -260 */
+    .games-menu .game-item:nth-child(3) { --x: -80px; --y: -40px; }   /* ← 從 -20 改為 -40 */
+    .games-menu .game-item:nth-child(4) { --x: 80px;  --y: -40px; }   /* ← 從 -20 改為 -40 */
+    .games-menu .game-item:nth-child(5) { --x: -80px; --y: 160px; }   /* ← 從 150 改為 160 */
+    .games-menu .game-item:nth-child(6) { --x: 80px;  --y: 160px; }
+}
+
+body.games-open {
+    overflow: hidden !important;
 }
