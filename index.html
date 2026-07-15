@@ -853,30 +853,32 @@
 
 @media (max-width: 370px) {
     .games-menu {
-        bottom: 390px !important;
+        bottom: 28vh !important;  /* 和 440px 一致，用 vh */
     }
     .games-menu .game-item {
-        width: 210px !important;
-        height: 190px !important;
+        width: 160px !important;   /* 190 × 0.85 ≈ 160 */
+        height: 200px !important;  /* 240 × 0.85 ≈ 200 */
     }
+    /* 拉伸比例稍微調小 */
     .games-menu .game-item:nth-child(1) img,
     .games-menu .game-item:nth-child(3) img,
     .games-menu .game-item:nth-child(5) img {
         transform-origin: left center !important;
-        transform: scaleX(1.10) !important;
+        transform: scaleX(1.10) !important;  /* 1.12 → 1.10 */
     }
     .games-menu .game-item:nth-child(2) img,
     .games-menu .game-item:nth-child(4) img,
     .games-menu .game-item:nth-child(6) img {
         transform-origin: right center !important;
-        transform: scaleX(1.10) !important;
+        transform: scaleX(1.10) !important;  /* 1.12 → 1.10 */
     }
-    .games-menu .game-item:nth-child(1) { --x: -90px; --y: -260px; }
-    .games-menu .game-item:nth-child(2) { --x: 90px;  --y: -260px; }
-    .games-menu .game-item:nth-child(3) { --x: -90px; --y: -40px; }
-    .games-menu .game-item:nth-child(4) { --x: 90px;  --y: -40px; }
-    .games-menu .game-item:nth-child(5) { --x: -90px; --y: 180px; }
-    .games-menu .game-item:nth-child(6) { --x: 90px;  --y: 180px; }
+    /* 位置等比縮小 */
+    .games-menu .game-item:nth-child(1) { --x: -85px; --y: -270px; }  /* -100×0.85, -320×0.85 */
+    .games-menu .game-item:nth-child(2) { --x: 85px;  --y: -270px; }
+    .games-menu .game-item:nth-child(3) { --x: -85px; --y: -50px; }   /* -60×0.85 */
+    .games-menu .game-item:nth-child(4) { --x: 85px;  --y: -50px; }
+    .games-menu .game-item:nth-child(5) { --x: -85px; --y: 170px; }   /* 200×0.85 */
+    .games-menu .game-item:nth-child(6) { --x: 85px;  --y: 170px; }
 }
 
 body.games-open {
