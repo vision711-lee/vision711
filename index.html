@@ -1669,18 +1669,63 @@ body.games-open {
             { name: 'Other Games', img: 'https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/gamelist/other.png' }
         ];
 
-        // ===== 渲染圖片（藍色光暈 + 3D 立體 + CSS 流光層，不動圖片） =====
+        // ===== 渲染圖片（自適應屏幕，完整展示） =====
 function renderGames() {
     if (isRendered) return;
     menu.innerHTML = '';
-    gameList.forEach(function(game) {
+
+    // 獲取屏幕可用空間
+    var menuTop = 70;      // Hamburger 菜單高度
+    var menuBottom = 70;   // Navbar 高度
+    var maxWidth = window.innerWidth - 30;
+    var maxHeight = window.innerHeight - menuTop - menuBottom - 30;
+
+    // 計算圖片大小（2列3行，保持比例）
+    var cols = 2;
+    var rows = 3;
+    var gapX = 20;  // 水平間距
+    var gapY = 20;  // 垂直間距
+
+    var itemWidth = Math.min(200, (maxWidth - (cols + 1) * gapX) / cols);
+    var itemHeight = Math.min(240, (maxHeight - (rows + 1) * gapY) / rows);
+
+    // 確保不超過容器
+    itemWidth = Math.min(itemWidth, itemHeight * 0.85);
+    itemHeight = Math.min(itemHeight, itemWidth * 1.2);
+
+    var totalWidth = cols * itemWidth + (cols + 1) * gapX;
+    var totalHeight = rows * itemHeight + (rows + 1) * gapY;
+
+    // 計算起始位置（居中）
+    var startX = (window.innerWidth - totalWidth) / 2 + gapX;
+    var startY = menuTop + (maxHeight - totalHeight) / 2 + gapY;
+
+    gameList.forEach(function(game, index) {
         var item = document.createElement('div');
         item.className = 'game-item';
-        item.style.position = 'relative';
-        item.style.overflow = 'hidden';
+        item.style.position = 'absolute';
+        item.style.width = itemWidth + 'px';
+        item.style.height = itemHeight + 'px';
+        item.style.left = '0';
+        item.style.top = '0';
+        item.style.transform = 'translate(-50%, -50%) scale(0.05)';
+        item.style.opacity = '0';
+        item.style.transition = 'transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease';
 
-        // 創建 Canvas，尺寸完全由 CSS 控制（和 img 一樣）
+        // 計算目標位置
+        var col = index % 2;
+        var row = Math.floor(index / 2);
+        var targetX = startX + col * (itemWidth + gapX) + itemWidth / 2;
+        var targetY = startY + row * (itemHeight + gapY) + itemHeight / 2;
+        item.dataset.targetX = targetX;
+        item.dataset.targetY = targetY;
+        item.dataset.col = col;
+        item.dataset.row = row;
+
+        // Canvas
         var canvas = document.createElement('canvas');
+        canvas.width = itemWidth;
+        canvas.height = itemHeight;
         canvas.style.cssText = [
             'width:100%',
             'height:100%',
@@ -1688,9 +1733,7 @@ function renderGames() {
             'border-radius:0',
             'border:none',
             'box-shadow:none',
-            'background:transparent',
-            'position:relative',
-            'z-index:1'
+            'background:transparent'
         ].join(';');
 
         var ctx = canvas.getContext('2d', { willReadFrequently: true });
@@ -1701,20 +1744,13 @@ function renderGames() {
         var isReady = false;
         var originalData = null;
         var startTime = performance.now();
-        var displayW = 0, displayH = 0;
 
         img.onload = function() {
-            // 獲取父容器實際尺寸（由 CSS 控制，完全不變）
-            var rect = item.getBoundingClientRect();
-            displayW = rect.width || 260;
-            displayH = rect.height || 300;
-
-            canvas.width = displayW;
-            canvas.height = displayH;
-
+            var w = canvas.width;
+            var h = canvas.height;
             isReady = true;
-            ctx.drawImage(img, 0, 0, displayW, displayH);
-            originalData = ctx.getImageData(0, 0, displayW, displayH);
+            ctx.drawImage(img, 0, 0, w, h);
+            originalData = ctx.getImageData(0, 0, w, h);
             requestAnimationFrame(draw);
         };
 
@@ -1723,23 +1759,23 @@ function renderGames() {
             var elapsed = (timestamp - startTime) / 1000;
 
             var pulse = Math.sin(elapsed * 1.2) * 0.35 + 0.65;
-            var moveX = Math.sin(elapsed * 0.6) * displayW * 0.2 + displayW * 0.4;
-            var moveY = Math.sin(elapsed * 0.45 + 1.2) * displayH * 0.15 + displayH * 0.4;
-            var radius = Math.max(displayW, displayH) * (0.35 + 0.15 * Math.sin(elapsed * 0.3 + 0.5));
+            var moveX = Math.sin(elapsed * 0.6) * canvas.width * 0.2 + canvas.width * 0.4;
+            var moveY = Math.sin(elapsed * 0.45 + 1.2) * canvas.height * 0.15 + canvas.height * 0.4;
+            var radius = Math.max(canvas.width, canvas.height) * (0.35 + 0.15 * Math.sin(elapsed * 0.3 + 0.5));
 
-            ctx.clearRect(0, 0, displayW, displayH);
-            ctx.drawImage(img, 0, 0, displayW, displayH);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-            var imageData = ctx.getImageData(0, 0, displayW, displayH);
+            var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             var data = imageData.data;
             var orig = new Uint8ClampedArray(data);
 
-            // ===== 3D 浮雕效果 =====
-            for (var y = 1; y < displayH - 1; y++) {
-                for (var x = 1; x < displayW - 1; x++) {
-                    var idx = (y * displayW + x) * 4;
-                    var idxTL = ((y - 1) * displayW + (x + 1)) * 4;
-                    var idxBR = ((y + 1) * displayW + (x - 1)) * 4;
+            // 3D 浮雕
+            for (var y = 1; y < canvas.height - 1; y++) {
+                for (var x = 1; x < canvas.width - 1; x++) {
+                    var idx = (y * canvas.width + x) * 4;
+                    var idxTL = ((y - 1) * canvas.width + (x + 1)) * 4;
+                    var idxBR = ((y + 1) * canvas.width + (x - 1)) * 4;
                     for (var c = 0; c < 3; c++) {
                         var diff = orig[idxTL + c] - orig[idxBR + c];
                         data[idx + c] = Math.min(255, Math.max(0, orig[idx + c] + diff * 0.25 + 8));
@@ -1747,13 +1783,13 @@ function renderGames() {
                 }
             }
 
-            // ===== 邊緣加深（立體感） =====
-            for (var y = 0; y < displayH; y++) {
-                for (var x = 0; x < displayW; x++) {
-                    var idx = (y * displayW + x) * 4;
+            // 邊緣加深
+            for (var y = 0; y < canvas.height; y++) {
+                for (var x = 0; x < canvas.width; x++) {
+                    var idx = (y * canvas.width + x) * 4;
                     if (orig[idx + 3] < 128) continue;
-                    var distX = Math.min(x, displayW - 1 - x) / (displayW / 2);
-                    var distY = Math.min(y, displayH - 1 - y) / (displayH / 2);
+                    var distX = Math.min(x, canvas.width - 1 - x) / (canvas.width / 2);
+                    var distY = Math.min(y, canvas.height - 1 - y) / (canvas.height / 2);
                     var edgeFactor = Math.min(distX, distY) * 0.25 + 0.75;
                     data[idx] = Math.min(255, data[idx] * edgeFactor);
                     data[idx + 1] = Math.min(255, data[idx + 1] * edgeFactor);
@@ -1761,11 +1797,12 @@ function renderGames() {
                 }
             }
 
-            // ===== 藍色霓虹光暈（三層） =====
+            // 藍色光暈
             var layers = [
-    { cx: moveX, cy: moveY, radius: radius * 1.0, r: 50, g: 100, b: 255, intensity: 0.5 },
-    { cx: displayW * 0.5 + Math.sin(elapsed * 0.8) * displayW * 0.1, cy: displayH * 0.5 + Math.cos(elapsed * 0.7) * displayH * 0.1, radius: radius * 0.5, r: 100, g: 200, b: 255, intensity: 0.3 }
-];
+                { cx: moveX, cy: moveY, radius: radius * 1.0, r: 50, g: 100, b: 255, intensity: 0.5 },
+                { cx: canvas.width - moveX * 0.6, cy: canvas.height - moveY * 0.6, radius: radius * 0.7, r: 30, g: 150, b: 255, intensity: 0.35 },
+                { cx: canvas.width * 0.5 + Math.sin(elapsed * 0.8) * canvas.width * 0.1, cy: canvas.height * 0.5 + Math.cos(elapsed * 0.7) * canvas.height * 0.1, radius: radius * 0.5, r: 100, g: 200, b: 255, intensity: 0.3 }
+            ];
 
             for (var layer = 0; layer < layers.length; layer++) {
                 var L = layers[layer];
@@ -1773,9 +1810,9 @@ function renderGames() {
                 var r = L.r, g = L.g, b = L.b;
                 var intensity = L.intensity * pulse;
 
-                for (var y = 0; y < displayH; y++) {
-                    for (var x = 0; x < displayW; x++) {
-                        var idx = (y * displayW + x) * 4;
+                for (var y = 0; y < canvas.height; y++) {
+                    for (var x = 0; x < canvas.width; x++) {
+                        var idx = (y * canvas.width + x) * 4;
                         if (orig[idx + 3] < 128) continue;
                         var dx = x - cx;
                         var dy = y - cy;
@@ -1791,15 +1828,15 @@ function renderGames() {
                 }
             }
 
-            // ===== 中心高光 =====
-            var cx2 = displayW * 0.5 + Math.sin(elapsed * 0.9) * displayW * 0.08;
-            var cy2 = displayH * 0.5 + Math.cos(elapsed * 0.8 + 0.5) * displayH * 0.08;
-            var rad2 = Math.max(displayW, displayH) * 0.12;
+            // 中心高光
+            var cx2 = canvas.width * 0.5 + Math.sin(elapsed * 0.9) * canvas.width * 0.08;
+            var cy2 = canvas.height * 0.5 + Math.cos(elapsed * 0.8 + 0.5) * canvas.height * 0.08;
+            var rad2 = Math.max(canvas.width, canvas.height) * 0.12;
             var highlight = 0.3 + 0.2 * Math.sin(elapsed * 1.5);
 
-            for (var y = 0; y < displayH; y++) {
-                for (var x = 0; x < displayW; x++) {
-                    var idx = (y * displayW + x) * 4;
+            for (var y = 0; y < canvas.height; y++) {
+                for (var x = 0; x < canvas.width; x++) {
+                    var idx = (y * canvas.width + x) * 4;
                     if (orig[idx + 3] < 128) continue;
                     var dx = x - cx2;
                     var dy = y - cy2;
@@ -1817,7 +1854,7 @@ function renderGames() {
             requestAnimationFrame(draw);
         }
 
-        // ===== CSS 流光層（和原來一樣） =====
+        // CSS 流光層
         var shimmer = document.createElement('div');
         shimmer.style.cssText = [
             'position:absolute',
@@ -1872,8 +1909,26 @@ function renderGames() {
         item.appendChild(shimmer);
         menu.appendChild(item);
     });
+
     isRendered = true;
-    console.log('✅ 遊戲圖片已渲染（藍色光暈 + 3D + CSS 流光層）');
+
+    // 菜單展開時更新位置
+    menu._updatePositions = function() {
+        var items = menu.querySelectorAll('.game-item');
+        items.forEach(function(item) {
+            var targetX = parseFloat(item.dataset.targetX);
+            var targetY = parseFloat(item.dataset.targetY);
+            if (menu.classList.contains('active')) {
+                item.style.transform = 'translate(' + (targetX - item.offsetWidth / 2) + 'px, ' + (targetY - item.offsetHeight / 2) + 'px) scale(1)';
+                item.style.opacity = '1';
+            } else {
+                item.style.transform = 'translate(-50%, -50%) scale(0.05)';
+                item.style.opacity = '0';
+            }
+        });
+    };
+
+    console.log('✅ 遊戲圖片已渲染（自適應屏幕）');
 }
 
         function unlock() {
@@ -1897,28 +1952,31 @@ function renderGames() {
         }
 
         function toggleMenu(e) {
-            if (e) e.stopPropagation();
-            if (isAnimating) return;
+    if (e) e.stopPropagation();
+    if (isAnimating) return;
 
-            // 首次點擊時渲染
-            if (!isRendered) {
-                renderGames();
-            }
+    if (!isRendered) {
+        renderGames();
+    }
 
-            isOpen = !isOpen;
+    isOpen = !isOpen;
 
-            if (isOpen) {
-                menu.classList.add('active');
-                overlay.classList.add('active');
-                document.body.classList.add('games-open');
-            } else {
-                menu.classList.remove('active');
-                overlay.classList.remove('active');
-                document.body.classList.remove('games-open');
-            }
-
-            lock();
+    if (isOpen) {
+        menu.classList.add('active');
+        overlay.classList.add('active');
+        document.body.classList.add('games-open');
+        // 🔥 更新位置
+        if (menu._updatePositions) {
+            setTimeout(menu._updatePositions, 50);
         }
+    } else {
+        menu.classList.remove('active');
+        overlay.classList.remove('active');
+        document.body.classList.remove('games-open');
+    }
+
+    lock();
+}
 
         // ===== GIF 按鈕點擊 =====
         gifBtn.addEventListener('click', toggleMenu);
