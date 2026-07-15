@@ -697,193 +697,6 @@
     position: relative !important;
     z-index: 1 !important;
 }
-
-/* ============================================================
-   GAMES 全屏圖片菜單 - 純圖片無框架 (手機版)
-   ============================================================ */
-.games-overlay {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    background: rgba(0, 0, 0, 0) !important;
-    backdrop-filter: blur(0px) !important;
-    -webkit-backdrop-filter: blur(0px) !important;
-    pointer-events: none !important;
-    transition: all 0.5s ease !important;
-    z-index: 100 !important;
-}
-.games-overlay.active {
-    background: rgba(0, 0, 0, 0.7) !important;
-    backdrop-filter: blur(8px) !important;
-    -webkit-backdrop-filter: blur(8px) !important;
-    pointer-events: auto !important;
-}
-
-.games-menu {
-    position: fixed !important;
-    bottom: 400px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    width: 0 !important;
-    height: 0 !important;
-    z-index: 200 !important;
-    pointer-events: none !important;
-}
-
-.games-menu .game-item {
-    position: absolute !important;
-    left: 50% !important;
-    top: 50% !important;
-    width: 220px !important;
-    height: 260px !important;
-    border-radius: 0 !important;
-    overflow: visible !important;
-    box-shadow: none !important;
-    background: transparent !important;
-    border: none !important;
-    cursor: pointer !important;
-    user-select: none !important;
-    opacity: 0 !important;
-    transform: translate(-50%, -50%) scale(0.05) !important;
-    transition: transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease !important;
-    pointer-events: none !important;
-}
-
-.games-menu .game-item img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: contain !important;
-    display: block !important;
-    border-radius: 0 !important;
-    border: none !important;
-    box-shadow: none !important;
-    background: transparent !important;
-}
-
-/* 🔥 新增：優化渲染清晰度 */
-    image-rendering: -webkit-optimize-contrast !important;
-    image-rendering: crisp-edges !important;
-    -webkit-transform: translateZ(0) !important;
-    transform: translateZ(0) !important;
-    backface-visibility: hidden !important;
-}
-
-/* ===== 🔥 左邊三張圖（1,3,5）向右變寬 ===== */
-.games-menu .game-item:nth-child(1) img,
-.games-menu .game-item:nth-child(3) img,
-.games-menu .game-item:nth-child(5) img {
-    transform-origin: left center !important;
-    transform: scaleX(1.15) !important;  /* ← 1.15 = 變寬 15%，溫和 */
-}
-
-/* ===== 🔥 右邊三張圖（2,4,6）向左變寬 ===== */
-.games-menu .game-item:nth-child(2) img,
-.games-menu .game-item:nth-child(4) img,
-.games-menu .game-item:nth-child(6) img {
-    transform-origin: right center !important;
-    transform: scaleX(1.15) !important;  /* ← 1.15 = 變寬 15%，溫和 */
-}
-
-.games-menu .game-item:hover {
-    transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(1.05) !important;
-    box-shadow: none !important;
-}
-
-.games-menu .game-item:nth-child(1) { --x: -150px; --y: -400px; }
-.games-menu .game-item:nth-child(2) { --x: 150px;  --y: -400px; }
-.games-menu .game-item:nth-child(3) { --x: -150px; --y: -80px; }
-.games-menu .game-item:nth-child(4) { --x: 150px;  --y: -80px; }
-.games-menu .game-item:nth-child(5) { --x: -150px; --y: 240px; }
-.games-menu .game-item:nth-child(6) { --x: 150px;  --y: 240px; }
-
-.games-menu.active {
-    pointer-events: auto !important;
-}
-
-.games-menu.active .game-item {
-    opacity: 1 !important;
-    pointer-events: auto !important;
-    transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(1) !important;
-}
-
-.games-menu.active .game-item:nth-child(1) { transition-delay: 0.04s; }
-.games-menu.active .game-item:nth-child(2) { transition-delay: 0.10s; }
-.games-menu.active .game-item:nth-child(3) { transition-delay: 0.16s; }
-.games-menu.active .game-item:nth-child(4) { transition-delay: 0.22s; }
-.games-menu.active .game-item:nth-child(5) { transition-delay: 0.28s; }
-.games-menu.active .game-item:nth-child(6) { transition-delay: 0.34s; }
-
-.games-menu:not(.active) .game-item:nth-child(6) { transition-delay: 0.04s; }
-.games-menu:not(.active) .game-item:nth-child(5) { transition-delay: 0.10s; }
-.games-menu:not(.active) .game-item:nth-child(4) { transition-delay: 0.16s; }
-.games-menu:not(.active) .game-item:nth-child(3) { transition-delay: 0.22s; }
-.games-menu:not(.active) .game-item:nth-child(2) { transition-delay: 0.28s; }
-.games-menu:not(.active) .game-item:nth-child(1) { transition-delay: 0.34s; }
-
-@media (max-width: 440px) {
-    .games-menu {
-        bottom: 430px !important;
-    }
-    .games-menu .game-item {
-        width: 160px !important;
-        height: 200px !important;
-    }
-    /* 小手機也拉伸，稍微小一點 */
-    .games-menu .game-item:nth-child(1) img,
-    .games-menu .game-item:nth-child(3) img,
-    .games-menu .game-item:nth-child(5) img {
-        transform-origin: left center !important;
-        transform: scaleX(1.12) !important;
-    }
-    .games-menu .game-item:nth-child(2) img,
-    .games-menu .game-item:nth-child(4) img,
-    .games-menu .game-item:nth-child(6) img {
-        transform-origin: right center !important;
-        transform: scaleX(1.12) !important;
-    }
-    .games-menu .game-item:nth-child(1) { --x: -100px; --y: -320px; }
-    .games-menu .game-item:nth-child(2) { --x: 100px;  --y: -320px; }
-    .games-menu .game-item:nth-child(3) { --x: -100px; --y: -60px; }
-    .games-menu .game-item:nth-child(4) { --x: 100px;  --y: -60px; }
-    .games-menu .game-item:nth-child(5) { --x: -100px; --y: 200px; }
-    .games-menu .game-item:nth-child(6) { --x: 100px;  --y: 200px; }
-}
-
-@media (max-width: 370px) {
-    .games-menu {
-        bottom: 28vh !important;
-    }
-    .games-menu .game-item {
-        width: 130px !important;
-        height: 160px !important;
-    }
-    /* 拉伸比例稍微調小 */
-    .games-menu .game-item:nth-child(1) img,
-    .games-menu .game-item:nth-child(3) img,
-    .games-menu .game-item:nth-child(5) img {
-        transform-origin: left center !important;
-        transform: scaleX(1.10) !important;  /* 1.12 → 1.10 */
-    }
-    .games-menu .game-item:nth-child(2) img,
-    .games-menu .game-item:nth-child(4) img,
-    .games-menu .game-item:nth-child(6) img {
-        transform-origin: right center !important;
-        transform: scaleX(1.10) !important;  /* 1.12 → 1.10 */
-    }
-    /* 位置等比縮小 */
-    .games-menu .game-item:nth-child(1) { --x: -85px; --y: -270px; }  /* -100×0.85, -320×0.85 */
-    .games-menu .game-item:nth-child(2) { --x: 85px;  --y: -270px; }
-    .games-menu .game-item:nth-child(3) { --x: -85px; --y: -50px; }   /* -60×0.85 */
-    .games-menu .game-item:nth-child(4) { --x: 85px;  --y: -50px; }
-    .games-menu .game-item:nth-child(5) { --x: -85px; --y: 170px; }   /* 200×0.85 */
-    .games-menu .game-item:nth-child(6) { --x: 85px;  --y: 170px; }
-}
-
-body.games-open {
-    overflow: hidden !important;
-}
     </style>
 </head>
 <body>
@@ -1669,16 +1482,67 @@ body.games-open {
             { name: 'Other Games', img: 'https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/gamelist/other.png' }
         ];
 
-// ===== 渲染圖片（純 img，無 Canvas，保持原有佈局） =====
+// ===== 渲染圖片（純淨自適應） =====
 function renderGames() {
     if (isRendered) return;
     menu.innerHTML = '';
 
+    // 等待 DOM 渲染完成獲取尺寸
+    var rect = menu.getBoundingClientRect();
+    var availW = rect.width;
+    var availH = rect.height;
+
+    // 2列3行
+    var cols = 2;
+    var rows = 3;
+    var gap = 6;
+
+    // 計算圖片尺寸
+    var itemW = (availW - (cols + 1) * gap) / cols;
+    var itemH = (availH - (rows + 1) * gap) / rows;
+
+    // 保持比例 (寬:高 = 0.75)
+    var ratio = 0.75;
+    if (itemW / itemH > ratio) {
+        itemW = itemH * ratio;
+    } else {
+        itemH = itemW / ratio;
+    }
+
+    // 限制大小
+    itemW = Math.max(70, Math.min(180, itemW));
+    itemH = Math.max(95, Math.min(240, itemH));
+
+    var totalW = cols * itemW + (cols - 1) * gap;
+    var totalH = rows * itemH + (rows - 1) * gap;
+    var startX = (availW - totalW) / 2;
+    var startY = (availH - totalH) / 2;
+
     gameList.forEach(function(game, index) {
+        var col = index % 2;
+        var row = Math.floor(index / 2);
+
         var item = document.createElement('div');
         item.className = 'game-item';
+        item.style.cssText = [
+            'position:absolute',
+            'width:' + itemW + 'px',
+            'height:' + itemH + 'px',
+            'left:' + (startX + col * (itemW + gap)) + 'px',
+            'top:' + (startY + row * (itemH + gap)) + 'px',
+            'transform:scale(0.1)',
+            'opacity:0',
+            'transition:all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
+            'border-radius:0',
+            'overflow:visible',
+            'box-shadow:none',
+            'background:transparent',
+            'border:none',
+            'cursor:pointer',
+            'user-select:none',
+            'pointer-events:none'
+        ].join(';');
 
-        // 直接用 img，不用 Canvas
         var img = document.createElement('img');
         img.src = game.img;
         img.alt = game.name;
@@ -1697,7 +1561,6 @@ function renderGames() {
             'image-rendering:crisp-edges'
         ].join(';');
 
-        // 點擊事件
         item.addEventListener('click', function(e) {
             e.stopPropagation();
             alert('🎮 ' + game.name);
@@ -1714,7 +1577,18 @@ function renderGames() {
     });
 
     isRendered = true;
-    console.log('✅ 遊戲圖片已渲染（純 img）');
+
+    menu._updatePositions = function() {
+        var items = menu.querySelectorAll('.game-item');
+        var active = menu.classList.contains('active');
+        items.forEach(function(item) {
+            item.style.transform = active ? 'scale(1)' : 'scale(0.1)';
+            item.style.opacity = active ? '1' : '0';
+            item.style.pointerEvents = active ? 'auto' : 'none';
+        });
+    };
+
+    console.log('✅ GAMES 渲染完成');
 }
 
         function unlock() {
@@ -1751,10 +1625,16 @@ function renderGames() {
         menu.classList.add('active');
         overlay.classList.add('active');
         document.body.classList.add('games-open');
+        if (menu._updatePositions) {
+            setTimeout(menu._updatePositions, 30);
+        }
     } else {
         menu.classList.remove('active');
         overlay.classList.remove('active');
         document.body.classList.remove('games-open');
+        if (menu._updatePositions) {
+            menu._updatePositions();
+        }
     }
 
     lock();
