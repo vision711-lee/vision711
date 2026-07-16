@@ -1578,7 +1578,7 @@ html, body {
 
     /* ===== 左侧边栏 ===== */
     .sidebar {
-        width: 300px !important;
+        width: 340px !important;
         flex-shrink: 0 !important;
         position: fixed !important;
         top: 0 !important;
@@ -1590,7 +1590,7 @@ html, body {
         backdrop-filter: blur(16px) !important;
         -webkit-backdrop-filter: blur(16px) !important;
         border-right: 1px solid rgba(255, 255, 255, 0.06) !important;
-        padding: 24px 16px 30px !important;
+        padding: 24px 20px 30px !important;
         overflow-y: auto !important;
         z-index: 100 !important;
         scrollbar-width: none;
@@ -1767,7 +1767,7 @@ html, body {
 
     /* ===== 右侧边栏 ===== */
     .right-sidebar {
-        width: 220px !important;
+        width: 340px !important;
         flex-shrink: 0 !important;
         position: fixed !important;
         top: 0 !important;
@@ -1779,7 +1779,7 @@ html, body {
         backdrop-filter: blur(16px) !important;
         -webkit-backdrop-filter: blur(16px) !important;
         border-left: 1px solid rgba(255, 255, 255, 0.06) !important;
-        padding: 24px 16px 30px !important;
+        padding: 24px 20px 30px !important;
         overflow-y: auto !important;
         z-index: 100 !important;
         scrollbar-width: none;
@@ -1824,11 +1824,12 @@ html, body {
     display: block !important;
     padding: 24px 40px 30px 40px !important;
     min-height: 100vh;
-    max-width: 800px !important;
-    margin: 0 auto !important;
+    max-width: 1300px !important;
+    width: 100% !important;
+    flex: none !important;
+    margin-left: 320px !important;     /* 改这个值控制右移距离，数值越大越靠右 */
+    margin-right: auto !important;
     overflow-x: hidden;
-    width: 100%;
-    flex: 1;
 }
 
 .main-content > *,
@@ -1840,7 +1841,7 @@ html, body {
 .main-content .input-group-metal,
 .main-content .carousel-container,
 .main-content .announcement-wrapper {
-    max-width: 800px;
+    max-width: 1300px;  /* 1120 → 1300 */
     margin-left: auto;
     margin-right: auto;
 }
@@ -1934,8 +1935,8 @@ html, body {
     }
 
     .sidebar {
-        width: 260px !important;
-        padding: 28px 20px 30px !important;
+        width: 340px !important;
+        padding: 28px 24px 30px !important;
     }
 
     .sidebar .logo-metal {
@@ -1943,30 +1944,29 @@ html, body {
     }
 
     .right-sidebar {
-        width: 260px !important;
-        padding: 28px 20px 30px !important;
+        width: 340px !important;
+        padding: 28px 24px 30px !important;
     }
 
-    .main-content {
-        margin-left: 300px !important;
-        margin-right: 300px !important;
-        max-width: 900px !important;
-        padding: 28px 50px 35px 50px !important;
-    }
+            .main-content {
+    margin-left: auto !important;     /* 同步调整 */
+    margin-right: auto !important;
+    max-width: 1285px !important;
+    padding: 28px 50px 35px 50px !important;
+}
 
-    .main-content > *,
-    .main-content .card-metal,
-    .main-content .card-welcome,
-    .main-content .live-transaction,
-    .main-content .lucky-draw,
-    .main-content .admin-entry,
-    .main-content .input-group-metal,
-    .main-content .carousel-container,
-    .main-content .announcement-wrapper,
-    .main-content .stats-grid,
-    .banner-fixed-desktop {
-        max-width: 900px;
-    }
+.main-content > *,
+.main-content .card-metal,
+.main-content .card-welcome,
+.main-content .live-transaction,
+.main-content .lucky-draw,
+.main-content .admin-entry,
+.main-content .input-group-metal,
+.main-content .carousel-container,
+.main-content .announcement-wrapper,
+.banner-fixed-desktop {
+    max-width: 1300px;  /* 1120 → 1300 */
+}
 
     .main-content .stat-card-metal {
         padding: 24px 20px;
