@@ -2724,3 +2724,166 @@ html, body {
     border-radius: 0 3px 3px 0;
     box-shadow: 0 0 20px rgba(0, 180, 255, 0.3);
 }
+
+/* ============================================================
+   🔥 統一頁面佈局 - 與 index 一致
+   ============================================================ */
+
+/* 移除所有頁面的背景圖 */
+body {
+    background: #0a0a1a !important;
+    background-image: none !important;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* 統一 app-container */
+.app-container {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 0 !important;
+    background: transparent !important;
+    display: flex !important;
+    min-height: 100vh;
+}
+
+/* 統一 main-content 寬度 */
+.main-content {
+    flex: 1 !important;
+    padding: 24px 40px 30px 40px !important;
+    max-width: 1300px !important;
+    width: 100% !important;
+    min-height: 100vh;
+    margin-left: 320px !important;
+    margin-right: auto !important;
+    margin-top: 0 !important;
+    background: transparent !important;
+}
+
+/* 統一左側邊欄 */
+.sidebar {
+    width: 320px !important;
+    flex-shrink: 0 !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    height: 100vh !important;
+    background: rgba(10, 10, 32, 0.85) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.06) !important;
+    padding: 24px 20px 30px !important;
+    overflow-y: auto !important;
+    z-index: 100 !important;
+}
+
+/* 統一右側邊欄 */
+.right-sidebar {
+    width: 320px !important;
+    flex-shrink: 0 !important;
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    height: 100vh !important;
+    background: rgba(10, 10, 32, 0.85) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border-left: 1px solid rgba(255, 255, 255, 0.06) !important;
+    padding: 24px 20px 30px !important;
+    overflow-y: auto !important;
+    z-index: 100 !important;
+}
+
+/* 手機版隱藏右側邊欄 */
+@media (max-width: 767px) {
+    .right-sidebar {
+        display: none !important;
+    }
+    .main-content {
+        margin-left: 0 !important;
+        padding: 12px 12px 80px !important;
+        max-width: 100% !important;
+    }
+    .sidebar {
+        display: none !important;
+    }
+    body {
+        background: #0a0a1a !important;
+    }
+}
+
+/* 電腦版顯示 */
+@media (min-width: 768px) {
+    .mobile-header {
+        display: none !important;
+    }
+    .bottom-nav {
+        display: none !important;
+    }
+}
+
+/* ============================================================
+   🔥 右側邊欄 - 統一內容
+   ============================================================ */
+
+.right-sidebar .section-title {
+    font-size: 0.85rem;
+    text-transform: none;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.35);
+    margin: 16px 0 6px 0;
+    padding: 8px 4px 6px 4px;
+    font-weight: 700;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.right-sidebar .section-title:first-of-type {
+    margin-top: 0;
+}
+
+.right-sidebar .sidebar-nav-item {
+    display: flex !important;
+    align-items: center;
+    gap: 14px;
+    color: rgba(255, 255, 255, 0.3);
+    text-decoration: none;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    position: relative;
+    cursor: pointer;
+}
+
+.right-sidebar .sidebar-nav-item:hover {
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* 🟡 金屬發亮金色圖標 */
+.right-sidebar .sidebar-nav-item i {
+    font-size: 1.2rem;
+    width: 24px;
+    text-align: center;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, #ffd700 0%, #fff4a0 15%, #ffb800 30%, #ffd700 45%, #ffe44d 60%, #ffb800 75%, #ffd700 90%, #fff4a0 100%);
+    background-size: 300% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.4)) drop-shadow(0 0 20px rgba(255, 215, 0, 0.1));
+    animation: goldShineIcon 3s ease-in-out infinite;
+}
+
+.right-sidebar .sidebar-nav-item:hover i {
+    filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.7)) drop-shadow(0 0 50px rgba(255, 215, 0, 0.25));
+    animation-duration: 1.2s;
+}
+
+@keyframes goldShineIcon {
+    0% { background-position: 0% center; filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.3)) drop-shadow(0 0 20px rgba(255, 215, 0, 0.08)); }
+    50% { background-position: 100% center; filter: drop-shadow(0 0 16px rgba(255, 215, 0, 0.6)) drop-shadow(0 0 50px rgba(255, 215, 0, 0.2)); }
+    100% { background-position: 0% center; filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.3)) drop-shadow(0 0 20px rgba(255, 215, 0, 0.08)); }
+}
