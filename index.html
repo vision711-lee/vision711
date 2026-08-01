@@ -202,7 +202,7 @@
         }
 
         /* ============================================================
-           🔥 轮播图样式 - 自适应高度，完整显示图片（无裁剪、无黑边）
+           🔥 轮播图 - 16:9 完美填滿，無縫隙
            ============================================================ */
         .carousel-container {
             position: relative;
@@ -225,17 +225,19 @@
             overflow: hidden;
             border-radius: 20px;
             background: #0a0a20;
-            /* 高度由图片自动决定，不设固定 padding */
-            height: auto;
+            /* 16:9 比例 - 配合 1600x900 圖片 */
+            padding-bottom: 56.25%;
         }
 
         .carousel-slide img {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            height: auto;           /* 高度自适应，保持比例 */
-            display: block;
+            height: 100%;
+            object-fit: cover;
             border-radius: 20px;
-            object-fit: contain;    /* 完整显示图片，不裁剪 */
-            background: #0a0a20;
+            display: block;
         }
 
         .carousel-progress {
@@ -331,6 +333,8 @@
             }
             .carousel-slide {
                 border-radius: 12px;
+                /* 手機版也是 16:9，保持一致 */
+                padding-bottom: 56.25%;
             }
             .carousel-slide img {
                 border-radius: 12px;
@@ -1000,7 +1004,7 @@
 
 <script>
 // ============================================================
-// 🔥 轮播图 - 自适应高度，完整显示图片（无裁剪、无黑边）
+// 🔥 轮播图 - 16:9 完美填满，无缝隙
 // ============================================================
 (function loadCarousel() {
     var SUPABASE_URL = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co';
@@ -1026,7 +1030,7 @@
     // ===== 只渲染一次 =====
     var rendered = false;
 
-    // ===== 🔥 渲染函数（图片完整显示，高度自适应） =====
+    // ===== 🔥 渲染函数（16:9 完美填满） =====
     function renderCarousel() {
         if (rendered) {
             console.log('⏭️ 已渲染，跳过');
@@ -1034,14 +1038,14 @@
         }
 
         if (slideImages.length === 0) {
-            track.innerHTML = '<div class="carousel-slide" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#0a0a25,#181845);min-height:200px;"><i class="fas fa-crown" style="color:rgba(255,255,255,0.05);font-size:3rem;"></i></div>';
+            track.innerHTML = '<div class="carousel-slide" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#0a0a25,#181845);"><i class="fas fa-crown" style="color:rgba(255,255,255,0.05);font-size:3rem;"></i></div>';
             dotsContainer.innerHTML = '';
             return;
         }
 
         total = slideImages.length;
 
-        // 生成HTML - 使用 img 標籤，讓瀏覽器自動決定高度
+        // 生成HTML
         var html = '';
         var dots = '';
         slideImages.forEach(function(url, i) {
@@ -1069,7 +1073,7 @@
         progressBar.style.width = '0%';
 
         rendered = true;
-        console.log('✅ 轮播图渲染完成，共 ' + total + ' 张（自适应高度，完整显示）');
+        console.log('✅ 轮播图渲染完成，共 ' + total + ' 张（16:9 完美填满）');
 
         // 开始播放
         startPlay();
@@ -1266,7 +1270,7 @@
 
     // ===== 启动 =====
     loadData();
-    console.log('✅ 轮播图启动（自适应高度，完整显示图片，无裁剪无黑边）');
+    console.log('✅ 轮播图启动（16:9 完美填满，无缝隙）');
 })();
 
 // ============================================================
