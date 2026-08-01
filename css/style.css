@@ -2638,15 +2638,59 @@ html, body {
 
 .right-sidebar .sidebar-nav-item i {
     font-size: 1.2rem;
-    color: rgba(255, 255, 255, 0.25);
     width: 24px;
     text-align: center;
-    transition: 0.3s;
-    background: linear-gradient(135deg, #00b4ff 0%, #4dc8ff 30%, #ffd700 60%, #ffed4a 100%);
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    
+    /* 🟡 金屬發亮金色 */
+    background: linear-gradient(
+        135deg, 
+        #ffd700 0%, 
+        #fff4a0 15%, 
+        #ffb800 30%, 
+        #ffd700 45%, 
+        #ffe44d 60%, 
+        #ffb800 75%, 
+        #ffd700 90%,
+        #fff4a0 100%
+    );
+    background-size: 300% auto;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    filter: drop-shadow(0 0 12px rgba(0, 180, 255, 0.15));
+    
+    /* ✨ 發光光暈 */
+    filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.4)) 
+            drop-shadow(0 0 20px rgba(255, 215, 0, 0.1));
+    
+    animation: goldShineIcon 3s ease-in-out infinite;
+}
+
+/* 🟡 懸停時更亮 */
+.right-sidebar .sidebar-nav-item:hover i {
+    filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.7)) 
+            drop-shadow(0 0 50px rgba(255, 215, 0, 0.25));
+    animation-duration: 1.2s;
+}
+
+/* 🟡 金色流光動畫 - 加到 style.css 最底下或 @keyframes 區塊 */
+@keyframes goldShineIcon {
+    0% { 
+        background-position: 0% center;
+        filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.3)) 
+                drop-shadow(0 0 20px rgba(255, 215, 0, 0.08));
+    }
+    50% { 
+        background-position: 100% center;
+        filter: drop-shadow(0 0 16px rgba(255, 215, 0, 0.6)) 
+                drop-shadow(0 0 50px rgba(255, 215, 0, 0.2));
+    }
+    100% { 
+        background-position: 0% center;
+        filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.3)) 
+                drop-shadow(0 0 20px rgba(255, 215, 0, 0.08));
+    }
 }
 
 .right-sidebar .sidebar-nav-item:hover {
