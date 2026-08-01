@@ -202,7 +202,7 @@
         }
 
         /* ============================================================
-           🔥 轮播图 - 16:9 完美填滿，無縫隙
+           🔥 轮播图 - 16:9 完美匹配 1600x900 圖片
            ============================================================ */
         .carousel-container {
             position: relative;
@@ -225,7 +225,7 @@
             overflow: hidden;
             border-radius: 20px;
             background: #0a0a20;
-            /* 16:9 比例 - 配合 1600x900 圖片 */
+            /* 16:9 = 56.25% - 完美匹配 1600x900 */
             padding-bottom: 56.25%;
         }
 
@@ -326,14 +326,14 @@
             right: 12px;
         }
 
-        /* ===== 手機版輪播圖微調 ===== */
+        /* ===== 手機版 ===== */
         @media (max-width: 767px) {
             .carousel-container {
                 border-radius: 12px;
             }
             .carousel-slide {
                 border-radius: 12px;
-                /* 手機版也是 16:9，保持一致 */
+                /* 手機版一樣 16:9 */
                 padding-bottom: 56.25%;
             }
             .carousel-slide img {
@@ -1004,7 +1004,7 @@
 
 <script>
 // ============================================================
-// 🔥 轮播图 - 16:9 完美填满，无缝隙
+// 🔥 轮播图 - 16:9 完美匹配，零裁剪
 // ============================================================
 (function loadCarousel() {
     var SUPABASE_URL = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co';
@@ -1018,7 +1018,6 @@
 
     if (!track) return;
 
-    // ===== 核心数据 =====
     var slideImages = [];
     var currentIndex = 0;
     var total = 0;
@@ -1026,16 +1025,10 @@
     var playTimer = null;
     var progressTimer = null;
     var isPaused = false;
-
-    // ===== 只渲染一次 =====
     var rendered = false;
 
-    // ===== 🔥 渲染函数（16:9 完美填满） =====
     function renderCarousel() {
-        if (rendered) {
-            console.log('⏭️ 已渲染，跳过');
-            return;
-        }
+        if (rendered) return;
 
         if (slideImages.length === 0) {
             track.innerHTML = '<div class="carousel-slide" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#0a0a25,#181845);"><i class="fas fa-crown" style="color:rgba(255,255,255,0.05);font-size:3rem;"></i></div>';
@@ -1045,7 +1038,6 @@
 
         total = slideImages.length;
 
-        // 生成HTML
         var html = '';
         var dots = '';
         slideImages.forEach(function(url, i) {
@@ -1057,29 +1049,23 @@
         track.style.transition = 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
         dotsContainer.innerHTML = dots;
 
-        // 圆点点击
         document.querySelectorAll('.dot').forEach(function(el) {
             el.onclick = function() {
                 var idx = parseInt(this.dataset.index);
-                if (idx !== currentIndex) {
-                    goTo(idx);
-                }
+                if (idx !== currentIndex) goTo(idx);
             };
         });
 
-        // 初始位置
         currentIndex = 0;
         track.style.transform = 'translateX(0)';
         progressBar.style.width = '0%';
 
         rendered = true;
-        console.log('✅ 轮播图渲染完成，共 ' + total + ' 张（16:9 完美填满）');
+        console.log('✅ 轮播图渲染完成，共 ' + total + ' 张（16:9 完美匹配）');
 
-        // 开始播放
         startPlay();
     }
 
-    // ===== 切换函数 =====
     function goTo(index) {
         if (total === 0) return;
         if (index < 0) index = total - 1;
@@ -1093,9 +1079,7 @@
             el.classList.toggle('active', i === currentIndex);
         });
 
-        // 重置进度条
         progressBar.style.width = '0%';
-        // 重置播放定时器
         restartPlay();
     }
 
@@ -1109,7 +1093,6 @@
         goTo((currentIndex - 1 + total) % total);
     }
 
-    // ===== 播放控制 =====
     function startPlay() {
         stopPlay();
         if (total <= 1 || isPaused) return;
@@ -1126,151 +1109,84 @@
                 progressBar.style.width = '100%';
                 clearInterval(progressTimer);
                 progressTimer = null;
-                // 切到下一张
                 setTimeout(function() {
-                    if (!isPaused) {
-                        nextSlide();
-                    }
+                    if (!isPaused) nextSlide();
                 }, 200);
             } else {
                 progressBar.style.width = progress + '%';
             }
         }, 30);
 
-        // 备用定时器：如果 progressTimer 卡死，强制切换
         playTimer = setInterval(function() {
             if (progressTimer) return;
-            if (!progressTimer && !isPaused) {
-                startPlay();
-            }
+            if (!progressTimer && !isPaused) startPlay();
         }, 5000);
     }
 
     function stopPlay() {
         isPlaying = false;
-        if (progressTimer) {
-            clearInterval(progressTimer);
-            progressTimer = null;
-        }
-        if (playTimer) {
-            clearInterval(playTimer);
-            playTimer = null;
-        }
+        if (progressTimer) { clearInterval(progressTimer); progressTimer = null; }
+        if (playTimer) { clearInterval(playTimer); playTimer = null; }
     }
 
     function restartPlay() {
         stopPlay();
-        setTimeout(function() {
-            if (!isPaused) {
-                startPlay();
-            }
-        }, 500);
+        setTimeout(function() { if (!isPaused) startPlay(); }, 500);
     }
 
-    // ===== 事件绑定 =====
-    if (prevBtn) {
-        prevBtn.onclick = function(e) {
-            e.stopPropagation();
-            prevSlide();
-        };
-    }
-    if (nextBtn) {
-        nextBtn.onclick = function(e) {
-            e.stopPropagation();
-            nextSlide();
-        };
-    }
+    if (prevBtn) prevBtn.onclick = function(e) { e.stopPropagation(); prevSlide(); };
+    if (nextBtn) nextBtn.onclick = function(e) { e.stopPropagation(); nextSlide(); };
 
-    // 触摸
     var container = document.querySelector('.carousel-container');
     var touchX = 0;
     if (container) {
-        container.addEventListener('touchstart', function(e) {
-            touchX = e.changedTouches[0].screenX;
-        }, { passive: true });
-
+        container.addEventListener('touchstart', function(e) { touchX = e.changedTouches[0].screenX; }, { passive: true });
         container.addEventListener('touchend', function(e) {
             var diff = touchX - e.changedTouches[0].screenX;
-            if (Math.abs(diff) > 30) {
-                if (diff > 0) nextSlide();
-                else prevSlide();
-            }
+            if (Math.abs(diff) > 30) diff > 0 ? nextSlide() : prevSlide();
         }, { passive: true });
-
-        container.addEventListener('mouseenter', function() {
-            isPaused = true;
-            stopPlay();
-        });
-
-        container.addEventListener('mouseleave', function() {
-            isPaused = false;
-            startPlay();
-        });
+        container.addEventListener('mouseenter', function() { isPaused = true; stopPlay(); });
+        container.addEventListener('mouseleave', function() { isPaused = false; startPlay(); });
     }
 
-    // ===== 数据加载（只执行一次） =====
     var dataLoaded = false;
 
     function loadData() {
-        if (dataLoaded) {
-            console.log('⏭️ 数据已加载，跳过');
-            return;
-        }
+        if (dataLoaded) return;
         dataLoaded = true;
 
-        // 先检查 localStorage
         var saved = localStorage.getItem('carousel_items');
         if (saved) {
             try {
                 var parsed = JSON.parse(saved);
                 if (parsed && parsed.length > 0) {
                     slideImages = parsed.filter(function(s) { return s.active !== false; }).map(function(s) { return s.image_url; });
-                    if (slideImages.length > 0) {
-                        renderCarousel();
-                        return;
-                    }
+                    if (slideImages.length > 0) { renderCarousel(); return; }
                 }
             } catch (e) {}
         }
 
-        // 从 Supabase 加载
-        if (typeof supabase === 'undefined') {
-            renderCarousel();
-            return;
-        }
+        if (typeof supabase === 'undefined') { renderCarousel(); return; }
 
         var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        sb.from('carousel_items')
-            .select('*')
-            .order('order', { ascending: true })
+        sb.from('carousel_items').select('*').order('order', { ascending: true })
             .then(function(res) {
-                if (res.error || !res.data || res.data.length === 0) {
-                    renderCarousel();
-                    return;
-                }
+                if (res.error || !res.data || res.data.length === 0) { renderCarousel(); return; }
                 slideImages = res.data.filter(function(s) { return s.active !== false; }).map(function(s) { return s.image_url; });
                 renderCarousel();
             })
-            .catch(function() {
-                renderCarousel();
-            });
+            .catch(function() { renderCarousel(); });
     }
 
-    // ===== 暴露接口 =====
     window.carousel = {
         goTo: goTo,
         next: nextSlide,
         prev: prevSlide,
-        refresh: function() {
-            dataLoaded = false;
-            rendered = false;
-            loadData();
-        }
+        refresh: function() { dataLoaded = false; rendered = false; loadData(); }
     };
 
-    // ===== 启动 =====
     loadData();
-    console.log('✅ 轮播图启动（16:9 完美填满，无缝隙）');
+    console.log('✅ 轮播图启动（16:9 完美匹配，零裁剪）');
 })();
 
 // ============================================================
