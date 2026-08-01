@@ -2887,3 +2887,114 @@ body {
     50% { background-position: 100% center; filter: drop-shadow(0 0 16px rgba(255, 215, 0, 0.6)) drop-shadow(0 0 50px rgba(255, 215, 0, 0.2)); }
     100% { background-position: 0% center; filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.3)) drop-shadow(0 0 20px rgba(255, 215, 0, 0.08)); }
 }
+
+/* ============================================================
+   🔥 統一頁面佈局 - 修正 main-content 靠右問題
+   ============================================================ */
+
+/* 移除所有頁面的背景圖 */
+body {
+    background: #0a0a1a !important;
+    background-image: none !important;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* 統一 app-container */
+.app-container {
+    max-width: 100% !important;
+    margin: 0 auto;
+    padding: 0 !important;
+    background: transparent !important;
+    display: flex !important;
+    min-height: 100vh;
+    position: relative;
+}
+
+/* 🔥 統一 main-content - 修正靠右問題 */
+.main-content {
+    flex: 1 !important;
+    padding: 24px 40px 30px 40px !important;
+    max-width: calc(100% - 640px) !important;  /* 減去左右側邊欄總寬度 */
+    width: 100% !important;
+    min-height: 100vh;
+    margin-left: 320px !important;  /* 等於左側邊欄寬度 */
+    margin-right: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    background: transparent !important;
+    box-sizing: border-box !important;
+}
+
+/* 內層內容置中 */
+.main-content > * {
+    max-width: 1300px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* 統一左側邊欄 */
+.sidebar {
+    width: 320px !important;
+    flex-shrink: 0 !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    height: 100vh !important;
+    background: rgba(10, 10, 32, 0.85) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.06) !important;
+    padding: 24px 20px 30px !important;
+    overflow-y: auto !important;
+    z-index: 100 !important;
+}
+
+/* 統一右側邊欄 */
+.right-sidebar {
+    width: 320px !important;
+    flex-shrink: 0 !important;
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    height: 100vh !important;
+    background: rgba(10, 10, 32, 0.85) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border-left: 1px solid rgba(255, 255, 255, 0.06) !important;
+    padding: 24px 20px 30px !important;
+    overflow-y: auto !important;
+    z-index: 100 !important;
+}
+
+/* 手機版 */
+@media (max-width: 767px) {
+    .right-sidebar {
+        display: none !important;
+    }
+    .main-content {
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        padding: 12px 12px 80px !important;
+    }
+    .sidebar {
+        display: none !important;
+    }
+    body {
+        background: #0a0a1a !important;
+    }
+    .app-container {
+        display: block !important;
+        padding: 12px 12px 80px !important;
+    }
+}
+
+/* 電腦版 */
+@media (min-width: 768px) {
+    .mobile-header {
+        display: none !important;
+    }
+    .bottom-nav {
+        display: none !important;
+    }
+}
