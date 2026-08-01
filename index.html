@@ -592,7 +592,7 @@
         }
 
 /* ============================================================
-   🔥 GAMES 2×3 大卡片 - 手機版全屏（新增）
+   🔥 GAMES 2×3 大卡片 - 手機版全屏（無標題，完整佈滿）
    ============================================================ */
 
 /* 遮罩層 - 全屏 */
@@ -628,15 +628,15 @@
     height: 100% !important;
     z-index: 200 !important;
     pointer-events: none !important;
-    background: rgba(10, 10, 32, 0.92) !important;
-    backdrop-filter: blur(16px) !important;
-    -webkit-backdrop-filter: blur(16px) !important;
+    background: rgba(10, 10, 32, 0.95) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
     opacity: 0 !important;
     transition: opacity 0.4s ease !important;
     display: flex !important;
-    flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
+    padding: 20px !important;
 }
 
 .games-menu.active {
@@ -644,43 +644,13 @@
     pointer-events: auto !important;
 }
 
-/* 標題 */
-.games-menu .games-header {
-    text-align: center;
-    margin-bottom: 4px;
-    padding-bottom: 8px;
-    flex-shrink: 0;
-    z-index: 10;
-    position: relative;
-}
-
-.games-menu .games-header h3 {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: #fff;
-    letter-spacing: 2px;
-}
-
-.games-menu .games-header h3 span {
-    background: linear-gradient(135deg, #ffd700, #ffed4a);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.games-menu .games-header p {
-    font-size: 0.65rem;
-    color: rgba(255, 255, 255, 0.12);
-    letter-spacing: 3px;
-    margin-top: 2px;
-}
-
-/* 卡片網格容器 */
+/* 卡片網格容器 - 佔滿全屏 */
 .games-menu .games-grid {
     position: relative;
-    flex: 1;
     width: 100%;
     height: 100%;
-    max-height: 500px;
+    max-width: 500px;
+    max-height: 600px;
 }
 
 /* 單個卡片 */
@@ -689,7 +659,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    border-radius: 16px;
+    border-radius: 18px;
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid rgba(255, 255, 255, 0.06);
     text-decoration: none;
@@ -698,10 +668,11 @@
     transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     position: absolute;
     opacity: 0;
-    transform: scale(0.6) translateY(20px);
+    transform: scale(0.5) translateY(30px);
     pointer-events: none;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 .games-menu .game-card.show {
@@ -715,51 +686,51 @@
 }
 
 .games-menu .game-card i {
-    font-size: 2rem;
-    margin-bottom: 4px;
-    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.05));
+    font-size: 2.2rem;
+    margin-bottom: 6px;
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.06));
 }
 
 .games-menu .game-card .card-name {
-    font-size: 0.65rem;
+    font-size: 0.7rem;
     font-weight: 600;
     color: rgba(255, 255, 255, 0.5);
     letter-spacing: 0.5px;
 }
 
 .games-menu .game-card .card-sub {
-    font-size: 0.45rem;
+    font-size: 0.5rem;
     color: rgba(255, 255, 255, 0.12);
-    margin-top: 1px;
+    margin-top: 2px;
 }
 
 .games-menu .game-card .card-tag {
     position: absolute;
-    top: 6px;
-    right: 6px;
-    font-size: 0.4rem;
+    top: 8px;
+    right: 8px;
+    font-size: 0.45rem;
     font-weight: 700;
-    padding: 1px 8px;
-    border-radius: 8px;
+    padding: 2px 10px;
+    border-radius: 10px;
 }
 
 .games-menu .game-card .card-tag.hot {
-    background: rgba(255, 107, 107, 0.12);
+    background: rgba(255, 107, 107, 0.15);
     color: #ff6b6b;
-    border: 1px solid rgba(255, 107, 107, 0.06);
+    border: 1px solid rgba(255, 107, 107, 0.08);
 }
 
 .games-menu .game-card .card-tag.live {
-    background: rgba(255, 215, 0, 0.12);
+    background: rgba(255, 215, 0, 0.15);
     color: #ffd700;
-    border: 1px solid rgba(255, 215, 0, 0.06);
+    border: 1px solid rgba(255, 215, 0, 0.08);
 }
 
-/* 懸停效果（電腦版滑鼠） */
+/* 懸停效果 */
 @media (hover: hover) {
     .games-menu .game-card:hover {
-        background: rgba(255, 255, 255, 0.07);
-        border-color: rgba(255, 215, 0, 0.12);
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 215, 0, 0.15);
         transform: scale(1.04) !important;
     }
 }
@@ -772,18 +743,27 @@
     }
 }
 
-/* ===== 超小屏適配 ===== */
-@media (max-width: 380px) {
-    .games-menu .game-card i { font-size: 1.4rem; }
-    .games-menu .game-card .card-name { font-size: 0.5rem; }
+/* ===== 小屏手機 (320px-374px) ===== */
+@media (max-width: 374px) {
+    .games-menu { padding: 12px !important; }
+    .games-menu .game-card i { font-size: 1.6rem; }
+    .games-menu .game-card .card-name { font-size: 0.55rem; }
     .games-menu .game-card .card-sub { font-size: 0.4rem; }
-    .games-menu .games-header h3 { font-size: 0.9rem; }
+    .games-menu .game-card .card-tag { font-size: 0.35rem; padding: 1px 6px; top: 4px; right: 4px; }
+    .games-menu .game-card { border-radius: 14px; }
 }
 
-/* ===== 大屏手機適配 ===== */
-@media (min-width: 420px) {
-    .games-menu .game-card i { font-size: 2.2rem; }
-    .games-menu .game-card .card-name { font-size: 0.7rem; }
+/* ===== 中屏手機 (375px-414px) ===== */
+@media (min-width: 375px) and (max-width: 414px) {
+    .games-menu .game-card i { font-size: 2rem; }
+    .games-menu .game-card .card-name { font-size: 0.65rem; }
+}
+
+/* ===== 大屏手機 (415px+) ===== */
+@media (min-width: 415px) {
+    .games-menu .game-card i { font-size: 2.6rem; }
+    .games-menu .game-card .card-name { font-size: 0.8rem; }
+    .games-menu .game-card .card-sub { font-size: 0.55rem; }
 }
     </style>
 </head>
@@ -1503,105 +1483,105 @@
         { name: 'Other Games', icon: 'fa-cubes', color: '#f472b6', tag: '' }
     ];
 
-    // ===== 渲染 2×3 大卡片 =====
-    function renderGames() {
-        if (isRendered) return;
-        menu.innerHTML = '';
+    // ===== 渲染 2×3 大卡片（無標題） =====
+function renderGames() {
+    if (isRendered) return;
+    menu.innerHTML = '';
 
-        // 面板標題
-        var header = document.createElement('div');
-        header.className = 'games-header';
-        header.innerHTML = `
-            <h3>✦ <span>GAMES</span> ✦</h3>
-            <p>SELECT CATEGORY</p>
+    // 卡片網格（直接全屏，無標題）
+    var grid = document.createElement('div');
+    grid.className = 'games-grid';
+
+    gameList.forEach(function(game, index) {
+        var card = document.createElement('a');
+        card.className = 'game-card';
+        card.href = '#';
+        card.dataset.index = index;
+
+        var tagHTML = game.tag ? `<span class="card-tag ${game.tag.toLowerCase()}">${game.tag}</span>` : '';
+
+        card.innerHTML = `
+            <i class="fas ${game.icon}" style="color:${game.color};"></i>
+            <span class="card-name">${game.name}</span>
+            <span class="card-sub">${(index + 1) * 8 + 8} games</span>
+            ${tagHTML}
         `;
-        menu.appendChild(header);
 
-        // 卡片網格
-        var grid = document.createElement('div');
-        grid.className = 'games-grid';
-
-        gameList.forEach(function(game, index) {
-            var card = document.createElement('a');
-            card.className = 'game-card';
-            card.href = '#';
-            card.dataset.index = index;
-
-            var tagHTML = game.tag ? `<span class="card-tag ${game.tag.toLowerCase()}">${game.tag}</span>` : '';
-
-            card.innerHTML = `
-                <i class="fas ${game.icon}" style="color:${game.color};"></i>
-                <span class="card-name">${game.name}</span>
-                <span class="card-sub">${(index + 1) * 8 + 8} games</span>
-                ${tagHTML}
-            `;
-
-            card.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                alert('🎮 ' + game.name);
-            });
-
-            grid.appendChild(card);
+        card.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            alert('🎮 ' + game.name);
         });
 
-        menu.appendChild(grid);
-        isRendered = true;
+        grid.appendChild(card);
+    });
 
-        setTimeout(updateCardPositions, 50);
-        console.log('✅ 2×3 大卡片渲染完成 (屏幕寬度: ' + window.innerWidth + 'px)');
+    menu.appendChild(grid);
+    isRendered = true;
+
+    setTimeout(updateCardPositions, 50);
+    console.log('✅ 2×3 大卡片渲染完成');
+}
+
+// ===== 更新卡片位置（全屏佈滿，頂底一致縫隙） =====
+function updateCardPositions() {
+    var cards = menu.querySelectorAll('.game-card');
+    var menuWidth = menu.offsetWidth || window.innerWidth;
+    var menuHeight = menu.offsetHeight || window.innerHeight;
+
+    // 計算可用空間（去掉 padding）
+    var padding = 20;
+    var availW = menuWidth - padding * 2;
+    var availH = menuHeight - padding * 2;
+
+    var gap = 14;
+    var cols = 2;
+    var rows = 3;
+
+    // 計算卡片尺寸（讓卡片盡可能大，但保持比例）
+    var cardW = (availW - gap) / cols;
+    var cardH = (availH - gap * 2) / rows;
+
+    // 限制最大尺寸，防止在超大屏上過大
+    var maxW = Math.min(cardW, 190);
+    var maxH = Math.min(cardH, 150);
+    var minW = 75;
+    var minH = 75;
+
+    cardW = Math.max(minW, Math.min(maxW, cardW));
+    cardH = Math.max(minH, Math.min(maxH, cardH));
+
+    // 保持卡片比例美觀（寬度略大於高度或接近正方形）
+    var targetRatio = 1.1; // 寬/高
+    if (cardW / cardH > targetRatio + 0.2) {
+        cardW = cardH * targetRatio;
+    } else if (cardH / cardW > targetRatio + 0.2) {
+        cardH = cardW / targetRatio;
     }
 
-    // ===== 更新卡片位置（響應式） =====
-    function updateCardPositions() {
-        var cards = menu.querySelectorAll('.game-card');
-        var menuWidth = menu.offsetWidth || window.innerWidth;
-        var menuHeight = menu.offsetHeight || window.innerHeight;
+    // 重新計算總寬高，居中對齊
+    var totalW = cols * cardW + (cols - 1) * gap;
+    var totalH = rows * cardH + (rows - 1) * gap;
 
-        var gap = 12;
-        var cols = 2;
-        var rows = 3;
-        var padding = 16;
+    // 計算起始位置（確保頂部和底部縫隙一致）
+    var startX = (menuWidth - totalW) / 2;
+    var startY = (menuHeight - totalH) / 2;
 
-        var availW = menuWidth - padding * 2;
-        var availH = menuHeight - padding * 2 - 70;
+    cards.forEach(function(card, index) {
+        var col = index % 2;
+        var row = Math.floor(index / 2);
 
-        var cardW = (availW - gap) / cols;
-        var cardH = (availH - gap * 2) / rows;
+        var x = startX + col * (cardW + gap);
+        var y = startY + row * (cardH + gap);
 
-        var maxW = Math.min(cardW, 180);
-        var maxH = Math.min(cardH, 140);
-        var minW = 80;
-        var minH = 80;
-
-        cardW = Math.max(minW, Math.min(maxW, cardW));
-        cardH = Math.max(minH, Math.min(maxH, cardH));
-
-        if (cardW / cardH > 1.4) {
-            cardW = cardH * 1.3;
-        } else if (cardH / cardW > 1.2) {
-            cardH = cardW * 1.1;
-        }
-
-        var totalW = cols * cardW + (cols - 1) * gap;
-        var totalH = rows * cardH + (rows - 1) * gap;
-        var startX = (menuWidth - totalW) / 2;
-        var startY = (menuHeight - totalH - 60) / 2 + 30;
-
-        cards.forEach(function(card, index) {
-            var col = index % 2;
-            var row = Math.floor(index / 2);
-
-            var x = startX + col * (cardW + gap);
-            var y = startY + row * (cardH + gap);
-
-            card.style.width = cardW + 'px';
-            card.style.height = cardH + 'px';
-            card.style.left = x + 'px';
-            card.style.top = y + 'px';
-            card.style.position = 'absolute';
-        });
-    }
+        card.style.width = cardW + 'px';
+        card.style.height = cardH + 'px';
+        card.style.left = x + 'px';
+        card.style.top = y + 'px';
+        card.style.position = 'absolute';
+        card.style.borderRadius = '18px';
+    });
+}
 
     // ===== 展開/收攏動畫 =====
     function unlock() {
