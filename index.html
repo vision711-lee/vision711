@@ -202,7 +202,7 @@
         }
 
         /* ============================================================
-           轮播图样式 - 电脑版 21:9 / 手机版 16:9
+           🔥 轮播图样式 - 自适应高度，完整显示图片（无裁剪、无黑边）
            ============================================================ */
         .carousel-container {
             position: relative;
@@ -225,28 +225,17 @@
             overflow: hidden;
             border-radius: 20px;
             background: #0a0a20;
-        }
-
-        @media (min-width: 768px) {
-            .carousel-slide {
-                padding-bottom: 42.85% !important;
-            }
-        }
-
-        @media (max-width: 767px) {
-            .carousel-slide {
-                padding-bottom: 56.25% !important;
-            }
+            /* 高度由图片自动决定，不设固定 padding */
+            height: auto;
         }
 
         .carousel-slide img {
-            position: absolute;
-            top: 0;
-            left: 0;
             width: 100%;
-            height: 100%;
-            object-fit: cover;
+            height: auto;           /* 高度自适应，保持比例 */
+            display: block;
             border-radius: 20px;
+            object-fit: contain;    /* 完整显示图片，不裁剪 */
+            background: #0a0a20;
         }
 
         .carousel-progress {
@@ -335,7 +324,17 @@
             right: 12px;
         }
 
+        /* ===== 手機版輪播圖微調 ===== */
         @media (max-width: 767px) {
+            .carousel-container {
+                border-radius: 12px;
+            }
+            .carousel-slide {
+                border-radius: 12px;
+            }
+            .carousel-slide img {
+                border-radius: 12px;
+            }
             .carousel-dots {
                 bottom: 10px;
                 padding: 4px 10px;
@@ -1001,7 +1000,7 @@
 
 <script>
 // ============================================================
-// 轮播图 - 数据加载和播放完全分离
+// 🔥 轮播图 - 自适应高度，完整显示图片（无裁剪、无黑边）
 // ============================================================
 (function loadCarousel() {
     var SUPABASE_URL = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co';
@@ -1027,7 +1026,7 @@
     // ===== 只渲染一次 =====
     var rendered = false;
 
-    // ===== 渲染函数（只执行一次） =====
+    // ===== 🔥 渲染函数（图片完整显示，高度自适应） =====
     function renderCarousel() {
         if (rendered) {
             console.log('⏭️ 已渲染，跳过');
@@ -1035,18 +1034,18 @@
         }
 
         if (slideImages.length === 0) {
-            track.innerHTML = '<div class="carousel-slide" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#0a0a25,#181845);"><i class="fas fa-crown" style="color:rgba(255,255,255,0.05);font-size:3rem;"></i></div>';
+            track.innerHTML = '<div class="carousel-slide" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#0a0a25,#181845);min-height:200px;"><i class="fas fa-crown" style="color:rgba(255,255,255,0.05);font-size:3rem;"></i></div>';
             dotsContainer.innerHTML = '';
             return;
         }
 
         total = slideImages.length;
 
-        // 生成HTML
+        // 生成HTML - 使用 img 標籤，讓瀏覽器自動決定高度
         var html = '';
         var dots = '';
         slideImages.forEach(function(url, i) {
-            html += '<div class="carousel-slide"><img src="' + url + '" alt=""></div>';
+            html += '<div class="carousel-slide"><img src="' + url + '" alt="Slide ' + (i+1) + '" loading="lazy"></div>';
             dots += '<span class="dot' + (i === 0 ? ' active' : '') + '" data-index="' + i + '"></span>';
         });
 
@@ -1070,7 +1069,7 @@
         progressBar.style.width = '0%';
 
         rendered = true;
-        console.log('✅ 轮播图渲染完成，共 ' + total + ' 张');
+        console.log('✅ 轮播图渲染完成，共 ' + total + ' 张（自适应高度，完整显示）');
 
         // 开始播放
         startPlay();
@@ -1267,7 +1266,7 @@
 
     // ===== 启动 =====
     loadData();
-    console.log('✅ 轮播图启动（数据和渲染完全分离）');
+    console.log('✅ 轮播图启动（自适应高度，完整显示图片，无裁剪无黑边）');
 })();
 
 // ============================================================
