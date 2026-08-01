@@ -1004,7 +1004,7 @@
 
 <script>
 // ============================================================
-// 🔥 轮播图 - 16:9 完美匹配，零裁剪
+// 🔥 轮播图 - 支援 CTA 連結
 // ============================================================
 (function loadCarousel() {
     var SUPABASE_URL = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co';
@@ -1018,7 +1018,7 @@
 
     if (!track) return;
 
-    var slideImages = [];
+    var slideItems = [];
     var currentIndex = 0;
     var total = 0;
     var isPlaying = false;
@@ -1030,18 +1030,22 @@
     function renderCarousel() {
         if (rendered) return;
 
-        if (slideImages.length === 0) {
+        if (slideItems.length === 0) {
             track.innerHTML = '<div class="carousel-slide" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#0a0a25,#181845);"><i class="fas fa-crown" style="color:rgba(255,255,255,0.05);font-size:3rem;"></i></div>';
             dotsContainer.innerHTML = '';
             return;
         }
 
-        total = slideImages.length;
+        total = slideItems.length;
 
         var html = '';
         var dots = '';
-        slideImages.forEach(function(url, i) {
-            html += '<div class="carousel-slide"><img src="' + url + '" alt="Slide ' + (i+1) + '" loading="lazy"></div>';
+        slideItems.forEach(function(item, i) {
+            var imgUrl = item.image_url || '';
+            var link = item.cta_link || '';
+            var linkAttr = link ? 'href="' + link + '"' : '';
+            var targetAttr = link && (link.startsWith('http') || link.startsWith('https')) ? 'target="_blank"' : '';
+            html += '<div class="carousel-slide"><a ' + linkAttr + ' ' + targetAttr + ' style="display:block;width:100%;height:100%;text-decoration:none;cursor:pointer;"><img src="' + imgUrl + '" alt="Slide ' + (i+1) + '" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:20px;"></a></div>';
             dots += '<span class="dot' + (i === 0 ? ' active' : '') + '" data-index="' + i + '"></span>';
         });
 
@@ -1061,7 +1065,7 @@
         progressBar.style.width = '0%';
 
         rendered = true;
-        console.log('✅ 轮播图渲染完成，共 ' + total + ' 张（16:9 完美匹配）');
+        console.log('✅ 轮播图渲染完成，共 ' + total + ' 张（支援 CTA 連結）');
 
         startPlay();
     }
@@ -1160,8 +1164,8 @@
             try {
                 var parsed = JSON.parse(saved);
                 if (parsed && parsed.length > 0) {
-                    slideImages = parsed.filter(function(s) { return s.active !== false; }).map(function(s) { return s.image_url; });
-                    if (slideImages.length > 0) { renderCarousel(); return; }
+                    slideItems = parsed.filter(function(s) { return s.active !== false; });
+                    if (slideItems.length > 0) { renderCarousel(); return; }
                 }
             } catch (e) {}
         }
@@ -1172,7 +1176,7 @@
         sb.from('carousel_items').select('*').order('order', { ascending: true })
             .then(function(res) {
                 if (res.error || !res.data || res.data.length === 0) { renderCarousel(); return; }
-                slideImages = res.data.filter(function(s) { return s.active !== false; }).map(function(s) { return s.image_url; });
+                slideItems = res.data.filter(function(s) { return s.active !== false; });
                 renderCarousel();
             })
             .catch(function() { renderCarousel(); });
@@ -1186,7 +1190,7 @@
     };
 
     loadData();
-    console.log('✅ 轮播图启动（16:9 完美匹配，零裁剪）');
+    console.log('✅ 轮播图启动（支援 CTA 連結）');
 })();
 
 // ============================================================
