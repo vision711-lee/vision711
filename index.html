@@ -590,6 +590,201 @@
             position: relative !important;
             z-index: 1 !important;
         }
+
+/* ============================================================
+   🔥 GAMES 2×3 大卡片 - 手機版全屏（新增）
+   ============================================================ */
+
+/* 遮罩層 - 全屏 */
+.games-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: rgba(0, 0, 0, 0) !important;
+    backdrop-filter: blur(0px) !important;
+    -webkit-backdrop-filter: blur(0px) !important;
+    pointer-events: none !important;
+    transition: all 0.5s ease !important;
+    z-index: 100 !important;
+}
+
+.games-overlay.active {
+    background: rgba(0, 0, 0, 0.75) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    pointer-events: auto !important;
+}
+
+/* 菜單容器 - 全屏 */
+.games-menu {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 200 !important;
+    pointer-events: none !important;
+    background: rgba(10, 10, 32, 0.92) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    opacity: 0 !important;
+    transition: opacity 0.4s ease !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.games-menu.active {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
+/* 標題 */
+.games-menu .games-header {
+    text-align: center;
+    margin-bottom: 4px;
+    padding-bottom: 8px;
+    flex-shrink: 0;
+    z-index: 10;
+    position: relative;
+}
+
+.games-menu .games-header h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 2px;
+}
+
+.games-menu .games-header h3 span {
+    background: linear-gradient(135deg, #ffd700, #ffed4a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.games-menu .games-header p {
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.12);
+    letter-spacing: 3px;
+    margin-top: 2px;
+}
+
+/* 卡片網格容器 */
+.games-menu .games-grid {
+    position: relative;
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    max-height: 500px;
+}
+
+/* 單個卡片 */
+.games-menu .game-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    text-decoration: none;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: absolute;
+    opacity: 0;
+    transform: scale(0.6) translateY(20px);
+    pointer-events: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.games-menu .game-card.show {
+    opacity: 1 !important;
+    transform: scale(1) translateY(0) !important;
+    pointer-events: auto !important;
+}
+
+.games-menu .game-card:active {
+    transform: scale(0.95) !important;
+}
+
+.games-menu .game-card i {
+    font-size: 2rem;
+    margin-bottom: 4px;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.05));
+}
+
+.games-menu .game-card .card-name {
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 0.5px;
+}
+
+.games-menu .game-card .card-sub {
+    font-size: 0.45rem;
+    color: rgba(255, 255, 255, 0.12);
+    margin-top: 1px;
+}
+
+.games-menu .game-card .card-tag {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    font-size: 0.4rem;
+    font-weight: 700;
+    padding: 1px 8px;
+    border-radius: 8px;
+}
+
+.games-menu .game-card .card-tag.hot {
+    background: rgba(255, 107, 107, 0.12);
+    color: #ff6b6b;
+    border: 1px solid rgba(255, 107, 107, 0.06);
+}
+
+.games-menu .game-card .card-tag.live {
+    background: rgba(255, 215, 0, 0.12);
+    color: #ffd700;
+    border: 1px solid rgba(255, 215, 0, 0.06);
+}
+
+/* 懸停效果（電腦版滑鼠） */
+@media (hover: hover) {
+    .games-menu .game-card:hover {
+        background: rgba(255, 255, 255, 0.07);
+        border-color: rgba(255, 215, 0, 0.12);
+        transform: scale(1.04) !important;
+    }
+}
+
+/* ===== 手機版顯示，電腦版隱藏 ===== */
+@media (min-width: 768px) {
+    .games-overlay,
+    .games-menu {
+        display: none !important;
+    }
+}
+
+/* ===== 超小屏適配 ===== */
+@media (max-width: 380px) {
+    .games-menu .game-card i { font-size: 1.4rem; }
+    .games-menu .game-card .card-name { font-size: 0.5rem; }
+    .games-menu .game-card .card-sub { font-size: 0.4rem; }
+    .games-menu .games-header h3 { font-size: 0.9rem; }
+}
+
+/* ===== 大屏手機適配 ===== */
+@media (min-width: 420px) {
+    .games-menu .game-card i { font-size: 2.2rem; }
+    .games-menu .game-card .card-name { font-size: 0.7rem; }
+}
     </style>
 </head>
 <body>
@@ -969,8 +1164,10 @@
 
 <!-- ===== GAMES 遮罩 + 6張圖片 (手機版) ===== -->
 <div class="games-overlay" id="gamesOverlay"></div>
+<!-- ===== GAMES 遮罩 + 2×3 大卡片 (手機版) ===== -->
+<div class="games-overlay" id="gamesOverlay"></div>
 <div class="games-menu" id="gamesMenu">
-    <!-- 由 JavaScript 動態生成 -->
+    <!-- 由 JavaScript 動態生成 2×3 大卡片 -->
 </div>
 
     </div><!-- /main-content -->
@@ -1275,8 +1472,8 @@
 </script>
 
 <script>
-    // ============================================================
-// GAMES 菜单 - GIF 按钮展开/收拢（全屏圖片版）
+// ============================================================
+// GAMES 菜单 - 2×3 大卡片（手機版）
 // ============================================================
 (function() {
     'use strict';
@@ -1296,211 +1493,202 @@
     var ANIMATION_DURATION = 700;
     var isRendered = false;
 
-    function getGameList() {
-        var screenWidth = window.innerWidth;
-        var useSmall = screenWidth < 430;
-        
-        var baseUrl = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/gamelist/';
-        
-        if (useSmall) {
-            return [
-                { name: 'Slot Games', img: baseUrl + 'slot_400x530.png' },
-                { name: 'Fast Games', img: baseUrl + 'fast_400x530.png' },
-                { name: 'Live Games', img: baseUrl + 'live_400x530.png' },
-                { name: 'Fish Games', img: baseUrl + 'fish_400x530.png' },
-                { name: 'Sport Games', img: baseUrl + 'sport_400x530.png' },
-                { name: 'Other Games', img: baseUrl + 'other_400x530.png' }
-            ];
-        } else {
-            return [
-                { name: 'Slot Games', img: baseUrl + 'slot.png' },
-                { name: 'Fast Games', img: baseUrl + 'fast.png' },
-                { name: 'Live Games', img: baseUrl + 'live.png' },
-                { name: 'Fish Games', img: baseUrl + 'fish.png' },
-                { name: 'Sport Games', img: baseUrl + 'sport.png' },
-                { name: 'Other Games', img: baseUrl + 'other.png' }
-            ];
-        }
-    }
+    // ===== 遊戲列表 =====
+    var gameList = [
+        { name: 'Slot Games', icon: 'fa-gamepad', color: '#4dc8ff', tag: 'HOT' },
+        { name: 'Fast Games', icon: 'fa-bolt', color: '#ff6b6b', tag: '' },
+        { name: 'Live Games', icon: 'fa-tv', color: '#4cd9a0', tag: 'LIVE' },
+        { name: 'Fish Games', icon: 'fa-fish', color: '#ffd700', tag: '' },
+        { name: 'Sport Games', icon: 'fa-futbol', color: '#a855f7', tag: '' },
+        { name: 'Other Games', icon: 'fa-cubes', color: '#f472b6', tag: '' }
+    ];
 
+    // ===== 渲染 2×3 大卡片 =====
     function renderGames() {
         if (isRendered) return;
         menu.innerHTML = '';
-        
-        var gameList = getGameList();
 
-        var rect = menu.getBoundingClientRect();
-        var availW = rect.width;
-        var availH = rect.height;
+        // 面板標題
+        var header = document.createElement('div');
+        header.className = 'games-header';
+        header.innerHTML = `
+            <h3>✦ <span>GAMES</span> ✦</h3>
+            <p>SELECT CATEGORY</p>
+        `;
+        menu.appendChild(header);
 
-        var cols = 2;
-        var rows = 3;
-        var gap = 6;
-
-        var itemW = (availW - (cols + 1) * gap) / cols;
-        var itemH = (availH - (rows + 1) * gap) / rows;
-
-        var ratio = 0.75;
-        if (itemW / itemH > ratio) {
-            itemW = itemH * ratio;
-        } else {
-            itemH = itemW / ratio;
-        }
-
-        var screenWidth = window.innerWidth;
-        var maxW = screenWidth < 430 ? 130 : 180;
-        var maxH = screenWidth < 430 ? 175 : 240;
-        var minW = screenWidth < 430 ? 60 : 70;
-        var minH = screenWidth < 430 ? 80 : 95;
-        
-        itemW = Math.max(minW, Math.min(maxW, itemW));
-        itemH = Math.max(minH, Math.min(maxH, itemH));
-
-        var totalW = cols * itemW + (cols - 1) * gap;
-        var totalH = rows * itemH + (rows - 1) * gap;
-        var startX = (availW - totalW) / 2;
-        var startY = (availH - totalH) / 2;
+        // 卡片網格
+        var grid = document.createElement('div');
+        grid.className = 'games-grid';
 
         gameList.forEach(function(game, index) {
+            var card = document.createElement('a');
+            card.className = 'game-card';
+            card.href = '#';
+            card.dataset.index = index;
+
+            var tagHTML = game.tag ? `<span class="card-tag ${game.tag.toLowerCase()}">${game.tag}</span>` : '';
+
+            card.innerHTML = `
+                <i class="fas ${game.icon}" style="color:${game.color};"></i>
+                <span class="card-name">${game.name}</span>
+                <span class="card-sub">${(index + 1) * 8 + 8} games</span>
+                ${tagHTML}
+            `;
+
+            card.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                alert('🎮 ' + game.name);
+            });
+
+            grid.appendChild(card);
+        });
+
+        menu.appendChild(grid);
+        isRendered = true;
+
+        setTimeout(updateCardPositions, 50);
+        console.log('✅ 2×3 大卡片渲染完成 (屏幕寬度: ' + window.innerWidth + 'px)');
+    }
+
+    // ===== 更新卡片位置（響應式） =====
+    function updateCardPositions() {
+        var cards = menu.querySelectorAll('.game-card');
+        var menuWidth = menu.offsetWidth || window.innerWidth;
+        var menuHeight = menu.offsetHeight || window.innerHeight;
+
+        var gap = 12;
+        var cols = 2;
+        var rows = 3;
+        var padding = 16;
+
+        var availW = menuWidth - padding * 2;
+        var availH = menuHeight - padding * 2 - 70;
+
+        var cardW = (availW - gap) / cols;
+        var cardH = (availH - gap * 2) / rows;
+
+        var maxW = Math.min(cardW, 180);
+        var maxH = Math.min(cardH, 140);
+        var minW = 80;
+        var minH = 80;
+
+        cardW = Math.max(minW, Math.min(maxW, cardW));
+        cardH = Math.max(minH, Math.min(maxH, cardH));
+
+        if (cardW / cardH > 1.4) {
+            cardW = cardH * 1.3;
+        } else if (cardH / cardW > 1.2) {
+            cardH = cardW * 1.1;
+        }
+
+        var totalW = cols * cardW + (cols - 1) * gap;
+        var totalH = rows * cardH + (rows - 1) * gap;
+        var startX = (menuWidth - totalW) / 2;
+        var startY = (menuHeight - totalH - 60) / 2 + 30;
+
+        cards.forEach(function(card, index) {
             var col = index % 2;
             var row = Math.floor(index / 2);
 
-            var item = document.createElement('div');
-            item.className = 'game-item';
-            item.style.cssText = [
-                'position:absolute',
-                'width:' + itemW + 'px',
-                'height:' + itemH + 'px',
-                'left:' + (startX + col * (itemW + gap)) + 'px',
-                'top:' + (startY + row * (itemH + gap)) + 'px',
-                'transform:scale(0.1)',
-                'opacity:0',
-                'transition:all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                'border-radius:0',
-                'overflow:visible',
-                'box-shadow:none',
-                'background:transparent',
-                'border:none',
-                'cursor:pointer',
-                'user-select:none',
-                'pointer-events:none'
-            ].join(';');
+            var x = startX + col * (cardW + gap);
+            var y = startY + row * (cardH + gap);
 
-            var img = document.createElement('img');
-            img.src = game.img;
-            img.alt = game.name;
-            img.loading = 'lazy';
-            img.draggable = false;
-            img.style.cssText = [
-                'width:100%',
-                'height:100%',
-                'object-fit:contain',
-                'display:block',
-                'border-radius:0',
-                'border:none',
-                'box-shadow:none',
-                'background:transparent',
-                'image-rendering:-webkit-optimize-contrast',
-                'image-rendering:crisp-edges'
-            ].join(';');
+            card.style.width = cardW + 'px';
+            card.style.height = cardH + 'px';
+            card.style.left = x + 'px';
+            card.style.top = y + 'px';
+            card.style.position = 'absolute';
+        });
+    }
 
-            item.addEventListener('click', function(e) {
-                e.stopPropagation();
-                alert('🎮 ' + game.name);
-                if (isOpen && !isAnimating) {
-                    setTimeout(function() {
-                        isOpen = true;
-                        toggleMenu(e);
-                    }, 300);
-                }
+    // ===== 展開/收攏動畫 =====
+    function unlock() {
+        isAnimating = false;
+        gifBtn.classList.remove('locked');
+        if (animationTimer) {
+            clearTimeout(animationTimer);
+            animationTimer = null;
+        }
+    }
+
+    function lock() {
+        isAnimating = true;
+        gifBtn.classList.add('locked');
+        if (animationTimer) {
+            clearTimeout(animationTimer);
+        }
+        animationTimer = setTimeout(function() {
+            unlock();
+        }, ANIMATION_DURATION);
+    }
+
+    function toggleMenu(e) {
+        if (e) e.stopPropagation();
+        if (isAnimating) return;
+
+        if (!isRendered) {
+            renderGames();
+            setTimeout(updateCardPositions, 50);
+        }
+
+        isOpen = !isOpen;
+
+        if (isOpen) {
+            menu.classList.add('active');
+            overlay.classList.add('active');
+            document.body.classList.add('games-open');
+            setTimeout(updateCardPositions, 30);
+            var cards = menu.querySelectorAll('.game-card');
+            cards.forEach(function(card, i) {
+                card.style.transitionDelay = (0.04 + i * 0.06) + 's';
+                card.classList.add('show');
             });
-
-            item.appendChild(img);
-            menu.appendChild(item);
-        });
-
-        isRendered = true;
-
-        menu._updatePositions = function() {
-            var items = menu.querySelectorAll('.game-item');
-            var active = menu.classList.contains('active');
-            items.forEach(function(item) {
-                item.style.transform = active ? 'scale(1)' : 'scale(0.1)';
-                item.style.opacity = active ? '1' : '0';
-                item.style.pointerEvents = active ? 'auto' : 'none';
+        } else {
+            menu.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.classList.remove('games-open');
+            var cards = menu.querySelectorAll('.game-card');
+            cards.forEach(function(card, i) {
+                card.style.transitionDelay = ((5 - i) * 0.06) + 's';
+                card.classList.remove('show');
             });
-        };
+        }
 
-        console.log('✅ GAMES 渲染完成 (屏幕宽度: ' + window.innerWidth + 'px)');
+        lock();
     }
 
-        function unlock() {
-            isAnimating = false;
-            gifBtn.classList.remove('locked');
-            if (animationTimer) {
-                clearTimeout(animationTimer);
-                animationTimer = null;
-            }
+    // ===== 事件綁定 =====
+    gifBtn.addEventListener('click', toggleMenu);
+
+    overlay.addEventListener('click', function(e) {
+        if (isOpen && !isAnimating) {
+            isOpen = true;
+            toggleMenu(e);
         }
+    });
 
-        function lock() {
-            isAnimating = true;
-            gifBtn.classList.add('locked');
-            if (animationTimer) {
-                clearTimeout(animationTimer);
-            }
-            animationTimer = setTimeout(function() {
-                unlock();
-            }, ANIMATION_DURATION);
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && isOpen && !isAnimating) {
+            isOpen = true;
+            toggleMenu(e);
         }
+    });
 
-        function toggleMenu(e) {
-    if (e) e.stopPropagation();
-    if (isAnimating) return;
-
-    if (!isRendered) {
-        renderGames();
-    }
-
-    isOpen = !isOpen;
-
-    if (isOpen) {
-        menu.classList.add('active');
-        overlay.classList.add('active');
-        document.body.classList.add('games-open');
-        if (menu._updatePositions) {
-            setTimeout(menu._updatePositions, 30);
-        }
-    } else {
-        menu.classList.remove('active');
-        overlay.classList.remove('active');
-        document.body.classList.remove('games-open');
-        if (menu._updatePositions) {
-            menu._updatePositions();
-        }
-    }
-
-    lock();
-}
-
-        gifBtn.addEventListener('click', toggleMenu);
-
-        overlay.addEventListener('click', function(e) {
-            if (isOpen && !isAnimating) {
-                isOpen = true;
-                toggleMenu(e);
+    // ===== 窗口大小變化時更新卡片位置 =====
+    var resizeTimer;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function() {
+            if (isRendered && menu.classList.contains('active')) {
+                updateCardPositions();
             }
-        });
+        }, 150);
+    });
 
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && isOpen && !isAnimating) {
-                isOpen = true;
-                toggleMenu(e);
-            }
-        });
-
-        console.log('✅ GAMES 全屏圖片菜單已加載');
-    })();
+    console.log('✅ GAMES 2×3 大卡片菜單已加載');
+})();
 </script>
 </body>
 </html>
