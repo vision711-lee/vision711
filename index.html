@@ -592,10 +592,9 @@
         }
 
 /* ============================================================
-   🔥 GAMES 2×3 大卡片 - 手機版全屏（無標題，完整佈滿）
+   🔥 GAMES 2×3 大卡片 - 手機版全屏
    ============================================================ */
 
-/* 遮罩層 - 全屏 */
 .games-overlay {
     position: fixed !important;
     top: 0 !important;
@@ -617,7 +616,6 @@
     pointer-events: auto !important;
 }
 
-/* 菜單容器 - 全屏 */
 .games-menu {
     position: fixed !important;
     top: 0 !important;
@@ -636,7 +634,7 @@
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    padding: 20px !important;
+    padding: 16px !important;
 }
 
 .games-menu.active {
@@ -644,7 +642,6 @@
     pointer-events: auto !important;
 }
 
-/* 卡片網格容器 - 佔滿全屏 */
 .games-menu .games-grid {
     position: relative;
     width: 100%;
@@ -653,13 +650,12 @@
     max-height: 600px;
 }
 
-/* 單個卡片 */
 .games-menu .game-card {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    border-radius: 18px;
+    border-radius: 16px;
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid rgba(255, 255, 255, 0.06);
     text-decoration: none;
@@ -687,7 +683,7 @@
 
 .games-menu .game-card i {
     font-size: 2.2rem;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
     filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.06));
 }
 
@@ -699,19 +695,19 @@
 }
 
 .games-menu .game-card .card-sub {
-    font-size: 0.5rem;
+    font-size: 0.45rem;
     color: rgba(255, 255, 255, 0.12);
-    margin-top: 2px;
+    margin-top: 1px;
 }
 
 .games-menu .game-card .card-tag {
     position: absolute;
-    top: 8px;
-    right: 8px;
-    font-size: 0.45rem;
+    top: 6px;
+    right: 6px;
+    font-size: 0.4rem;
     font-weight: 700;
-    padding: 2px 10px;
-    border-radius: 10px;
+    padding: 1px 8px;
+    border-radius: 8px;
 }
 
 .games-menu .game-card .card-tag.hot {
@@ -726,7 +722,6 @@
     border: 1px solid rgba(255, 215, 0, 0.08);
 }
 
-/* 懸停效果 */
 @media (hover: hover) {
     .games-menu .game-card:hover {
         background: rgba(255, 255, 255, 0.08);
@@ -735,7 +730,6 @@
     }
 }
 
-/* ===== 手機版顯示，電腦版隱藏 ===== */
 @media (min-width: 768px) {
     .games-overlay,
     .games-menu {
@@ -743,23 +737,16 @@
     }
 }
 
-/* ===== 小屏手機 (320px-374px) ===== */
+/* 小屏手機 */
 @media (max-width: 374px) {
-    .games-menu { padding: 12px !important; }
-    .games-menu .game-card i { font-size: 1.6rem; }
-    .games-menu .game-card .card-name { font-size: 0.55rem; }
+    .games-menu { padding: 10px !important; }
+    .games-menu .game-card i { font-size: 1.5rem; }
+    .games-menu .game-card .card-name { font-size: 0.5rem; }
     .games-menu .game-card .card-sub { font-size: 0.4rem; }
     .games-menu .game-card .card-tag { font-size: 0.35rem; padding: 1px 6px; top: 4px; right: 4px; }
-    .games-menu .game-card { border-radius: 14px; }
 }
 
-/* ===== 中屏手機 (375px-414px) ===== */
-@media (min-width: 375px) and (max-width: 414px) {
-    .games-menu .game-card i { font-size: 2rem; }
-    .games-menu .game-card .card-name { font-size: 0.65rem; }
-}
-
-/* ===== 大屏手機 (415px+) ===== */
+/* 大屏手機 */
 @media (min-width: 415px) {
     .games-menu .game-card i { font-size: 2.6rem; }
     .games-menu .game-card .card-name { font-size: 0.8rem; }
@@ -1453,7 +1440,7 @@
 
 <script>
 // ============================================================
-// GAMES 菜单 - 2×3 大卡片（手機版）
+// GAMES 菜单 - 2×3 大卡片（手機版，全屏自動適應）
 // ============================================================
 (function() {
     'use strict';
@@ -1483,107 +1470,154 @@
         { name: 'Other Games', icon: 'fa-cubes', color: '#f472b6', tag: '' }
     ];
 
-    // ===== 渲染 2×3 大卡片（無標題） =====
-function renderGames() {
-    if (isRendered) return;
-    menu.innerHTML = '';
+    // ===== 渲染卡片 =====
+    function renderGames() {
+        if (isRendered) return;
+        menu.innerHTML = '';
 
-    // 卡片網格（直接全屏，無標題）
-    var grid = document.createElement('div');
-    grid.className = 'games-grid';
+        var grid = document.createElement('div');
+        grid.className = 'games-grid';
 
-    gameList.forEach(function(game, index) {
-        var card = document.createElement('a');
-        card.className = 'game-card';
-        card.href = '#';
-        card.dataset.index = index;
+        gameList.forEach(function(game, index) {
+            var card = document.createElement('a');
+            card.className = 'game-card';
+            card.href = '#';
+            card.dataset.index = index;
 
-        var tagHTML = game.tag ? `<span class="card-tag ${game.tag.toLowerCase()}">${game.tag}</span>` : '';
+            var tagHTML = game.tag ? `<span class="card-tag ${game.tag.toLowerCase()}">${game.tag}</span>` : '';
 
-        card.innerHTML = `
-            <i class="fas ${game.icon}" style="color:${game.color};"></i>
-            <span class="card-name">${game.name}</span>
-            <span class="card-sub">${(index + 1) * 8 + 8} games</span>
-            ${tagHTML}
-        `;
+            card.innerHTML = `
+                <i class="fas ${game.icon}" style="color:${game.color};"></i>
+                <span class="card-name">${game.name}</span>
+                <span class="card-sub">${(index + 1) * 8 + 8} games</span>
+                ${tagHTML}
+            `;
 
-        card.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            alert('🎮 ' + game.name);
+            card.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                alert('🎮 ' + game.name);
+            });
+
+            grid.appendChild(card);
         });
 
-        grid.appendChild(card);
-    });
+        menu.appendChild(grid);
+        isRendered = true;
 
-    menu.appendChild(grid);
-    isRendered = true;
+        // 等 DOM 渲染完成後計算位置
+        requestAnimationFrame(function() {
+            setTimeout(updateCardPositions, 30);
+        });
 
-    setTimeout(updateCardPositions, 50);
-    console.log('✅ 2×3 大卡片渲染完成');
-}
-
-// ===== 更新卡片位置（全屏佈滿，頂底一致縫隙） =====
-function updateCardPositions() {
-    var cards = menu.querySelectorAll('.game-card');
-    var menuWidth = menu.offsetWidth || window.innerWidth;
-    var menuHeight = menu.offsetHeight || window.innerHeight;
-
-    // 計算可用空間（去掉 padding）
-    var padding = 20;
-    var availW = menuWidth - padding * 2;
-    var availH = menuHeight - padding * 2;
-
-    var gap = 14;
-    var cols = 2;
-    var rows = 3;
-
-    // 計算卡片尺寸（讓卡片盡可能大，但保持比例）
-    var cardW = (availW - gap) / cols;
-    var cardH = (availH - gap * 2) / rows;
-
-    // 限制最大尺寸，防止在超大屏上過大
-    var maxW = Math.min(cardW, 190);
-    var maxH = Math.min(cardH, 150);
-    var minW = 75;
-    var minH = 75;
-
-    cardW = Math.max(minW, Math.min(maxW, cardW));
-    cardH = Math.max(minH, Math.min(maxH, cardH));
-
-    // 保持卡片比例美觀（寬度略大於高度或接近正方形）
-    var targetRatio = 1.1; // 寬/高
-    if (cardW / cardH > targetRatio + 0.2) {
-        cardW = cardH * targetRatio;
-    } else if (cardH / cardW > targetRatio + 0.2) {
-        cardH = cardW / targetRatio;
+        console.log('✅ 2×3 大卡片渲染完成');
     }
 
-    // 重新計算總寬高，居中對齊
-    var totalW = cols * cardW + (cols - 1) * gap;
-    var totalH = rows * cardH + (rows - 1) * gap;
+    // ===== 核心：計算卡片位置（全屏居中，自動適應） =====
+    function updateCardPositions() {
+        var cards = menu.querySelectorAll('.game-card');
+        if (!cards || cards.length === 0) return;
 
-    // 計算起始位置（確保頂部和底部縫隙一致）
-    var startX = (menuWidth - totalW) / 2;
-    var startY = (menuHeight - totalH) / 2;
+        // 獲取實際可用空間
+        var rect = menu.getBoundingClientRect();
+        var menuWidth = rect.width;
+        var menuHeight = rect.height;
 
-    cards.forEach(function(card, index) {
-        var col = index % 2;
-        var row = Math.floor(index / 2);
+        // 如果尺寸為 0，使用 window 尺寸
+        if (menuWidth === 0) menuWidth = window.innerWidth;
+        if (menuHeight === 0) menuHeight = window.innerHeight;
 
-        var x = startX + col * (cardW + gap);
-        var y = startY + row * (cardH + gap);
+        // 設定參數
+        var cols = 2;
+        var rows = 3;
+        var gap = 14;
+        var padding = 24;
 
-        card.style.width = cardW + 'px';
-        card.style.height = cardH + 'px';
-        card.style.left = x + 'px';
-        card.style.top = y + 'px';
-        card.style.position = 'absolute';
-        card.style.borderRadius = '18px';
-    });
-}
+        // 可用空間
+        var availW = menuWidth - padding * 2;
+        var availH = menuHeight - padding * 2;
 
-    // ===== 展開/收攏動畫 =====
+        // 計算理想卡片尺寸（讓卡片盡可能大）
+        var idealW = (availW - gap) / cols;
+        var idealH = (availH - gap * 2) / rows;
+
+        // 限制最大尺寸（防止超大屏卡片過大）
+        var maxW = 200;
+        var maxH = 150;
+        var minW = 80;
+        var minH = 80;
+
+        // 取理想值和最大值的較小值
+        var cardW = Math.min(idealW, maxW);
+        var cardH = Math.min(idealH, maxH);
+
+        // 確保不小於最小值
+        cardW = Math.max(cardW, minW);
+        cardH = Math.max(cardH, minH);
+
+        // 🔥 關鍵：讓卡片比例保持在 1:1 ~ 1.3:1 之間（美觀）
+        var ratio = cardW / cardH;
+        if (ratio > 1.4) {
+            cardW = cardH * 1.2;
+        } else if (ratio < 0.9) {
+            cardH = cardW / 1.1;
+        }
+
+        // 重新計算實際總寬高
+        var totalW = cols * cardW + (cols - 1) * gap;
+        var totalH = rows * cardH + (rows - 1) * gap;
+
+        // 🔥 如果總高度超過可用空間，縮小卡片
+        if (totalH > availH) {
+            var scaleH = availH / totalH;
+            cardH = cardH * scaleH;
+            cardW = cardW * scaleH;
+            // 重新計算總寬高
+            totalW = cols * cardW + (cols - 1) * gap;
+            totalH = rows * cardH + (rows - 1) * gap;
+        }
+
+        // 🔥 如果總寬度超過可用空間，縮小卡片
+        if (totalW > availW) {
+            var scaleW = availW / totalW;
+            cardW = cardW * scaleW;
+            cardH = cardH * scaleW;
+            totalW = cols * cardW + (cols - 1) * gap;
+            totalH = rows * cardH + (rows - 1) * gap;
+        }
+
+        // 🔥 計算居中起始位置（確保頂部和底部縫隙一致）
+        var startX = (menuWidth - totalW) / 2;
+        var startY = (menuHeight - totalH) / 2;
+
+        // 確保不超出邊界
+        startX = Math.max(startX, padding);
+        startY = Math.max(startY, padding);
+
+        // 應用位置到每個卡片
+        cards.forEach(function(card, index) {
+            var col = index % 2;
+            var row = Math.floor(index / 2);
+
+            var x = startX + col * (cardW + gap);
+            var y = startY + row * (cardH + gap);
+
+            card.style.width = cardW + 'px';
+            card.style.height = cardH + 'px';
+            card.style.left = x + 'px';
+            card.style.top = y + 'px';
+            card.style.position = 'absolute';
+            card.style.borderRadius = '16px';
+
+            // 調整字體大小根據卡片尺寸
+            var fontSize = Math.min(cardW, cardH) / 5.5;
+            card.style.setProperty('--card-font-size', fontSize + 'px');
+        });
+
+        console.log('📐 卡片位置已更新: 寬=' + cardW.toFixed(1) + 'px, 高=' + cardH.toFixed(1) + 'px, 總寬=' + totalW.toFixed(1) + 'px, 總高=' + totalH.toFixed(1) + 'px');
+    }
+
+    // ===== 展開/收攏 =====
     function unlock() {
         isAnimating = false;
         gifBtn.classList.remove('locked');
@@ -1610,7 +1644,9 @@ function updateCardPositions() {
 
         if (!isRendered) {
             renderGames();
+            // 多次嘗試確保位置正確
             setTimeout(updateCardPositions, 50);
+            setTimeout(updateCardPositions, 200);
         }
 
         isOpen = !isOpen;
@@ -1619,19 +1655,23 @@ function updateCardPositions() {
             menu.classList.add('active');
             overlay.classList.add('active');
             document.body.classList.add('games-open');
-            setTimeout(updateCardPositions, 30);
+
+            // 展開前先更新位置
+            setTimeout(updateCardPositions, 20);
+
             var cards = menu.querySelectorAll('.game-card');
             cards.forEach(function(card, i) {
-                card.style.transitionDelay = (0.04 + i * 0.06) + 's';
+                card.style.transitionDelay = (0.03 + i * 0.05) + 's';
                 card.classList.add('show');
             });
         } else {
             menu.classList.remove('active');
             overlay.classList.remove('active');
             document.body.classList.remove('games-open');
+
             var cards = menu.querySelectorAll('.game-card');
             cards.forEach(function(card, i) {
-                card.style.transitionDelay = ((5 - i) * 0.06) + 's';
+                card.style.transitionDelay = ((5 - i) * 0.05) + 's';
                 card.classList.remove('show');
             });
         }
@@ -1656,18 +1696,27 @@ function updateCardPositions() {
         }
     });
 
-    // ===== 窗口大小變化時更新卡片位置 =====
+    // ===== 窗口變化時自動更新 =====
     var resizeTimer;
     window.addEventListener('resize', function() {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(function() {
-            if (isRendered && menu.classList.contains('active')) {
+            if (isRendered) {
                 updateCardPositions();
             }
-        }, 150);
+        }, 100);
     });
 
-    console.log('✅ GAMES 2×3 大卡片菜單已加載');
+    // ===== 屏幕方向變化時更新 =====
+    window.addEventListener('orientationchange', function() {
+        setTimeout(function() {
+            if (isRendered) {
+                updateCardPositions();
+            }
+        }, 300);
+    });
+
+    console.log('✅ GAMES 2×3 大卡片菜單已加載（全屏自動適應）');
 })();
 </script>
 </body>
