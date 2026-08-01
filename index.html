@@ -662,13 +662,14 @@
     color: #fff;
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    position: absolute;
+    position: fixed !important;  /* 🔥 強制 fixed */
     opacity: 0;
     transform: scale(0.5) translateY(30px);
     pointer-events: none;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    margin: 0 !important;
 }
 
 .games-menu .game-card.show {
@@ -1440,7 +1441,7 @@
 
 <script>
 // ============================================================
-// GAMES 菜单 - 2×3 大卡片（手機版，全屏自動適應）
+// GAMES 菜单 - 2×3 大卡片（手機版，完美居中）
 // ============================================================
 (function() {
     'use strict';
@@ -1477,6 +1478,7 @@
 
         var grid = document.createElement('div');
         grid.className = 'games-grid';
+        grid.style.cssText = 'position:relative;width:100%;height:100%;';
 
         gameList.forEach(function(game, index) {
             var card = document.createElement('a');
@@ -1505,94 +1507,74 @@
         menu.appendChild(grid);
         isRendered = true;
 
-        // 等 DOM 渲染完成後計算位置
-        requestAnimationFrame(function() {
-            setTimeout(updateCardPositions, 30);
-        });
-
         console.log('✅ 2×3 大卡片渲染完成');
     }
 
-    // ===== 核心：計算卡片位置（全屏居中，自動適應） =====
+    // ===== 🔥 核心：計算卡片位置（使用 window 尺寸，完美居中） =====
     function updateCardPositions() {
         var cards = menu.querySelectorAll('.game-card');
         if (!cards || cards.length === 0) return;
 
-        // 獲取實際可用空間
-        var rect = menu.getBoundingClientRect();
-        var menuWidth = rect.width;
-        var menuHeight = rect.height;
+        // 🔥 直接使用 window 尺寸，避免 getBoundingClientRect 偏移問題
+        var screenW = window.innerWidth;
+        var screenH = window.innerHeight;
 
-        // 如果尺寸為 0，使用 window 尺寸
-        if (menuWidth === 0) menuWidth = window.innerWidth;
-        if (menuHeight === 0) menuHeight = window.innerHeight;
-
-        // 設定參數
+        // 設定參數（左右上下 padding 一致）
+        var padding = 20;
+        var gap = 14;
         var cols = 2;
         var rows = 3;
-        var gap = 14;
-        var padding = 24;
 
         // 可用空間
-        var availW = menuWidth - padding * 2;
-        var availH = menuHeight - padding * 2;
+        var availW = screenW - padding * 2;
+        var availH = screenH - padding * 2;
 
-        // 計算理想卡片尺寸（讓卡片盡可能大）
-        var idealW = (availW - gap) / cols;
-        var idealH = (availH - gap * 2) / rows;
+        // 計算理想卡片尺寸
+        var idealW = (availW - gap * (cols - 1)) / cols;
+        var idealH = (availH - gap * (rows - 1)) / rows;
 
-        // 限制最大尺寸（防止超大屏卡片過大）
-        var maxW = 200;
-        var maxH = 150;
-        var minW = 80;
-        var minH = 80;
+        // 限制最大尺寸
+        var maxW = Math.min(idealW, 200);
+        var maxH = Math.min(idealH, 150);
+        var minW = 70;
+        var minH = 70;
 
-        // 取理想值和最大值的較小值
-        var cardW = Math.min(idealW, maxW);
-        var cardH = Math.min(idealH, maxH);
+        var cardW = Math.max(minW, maxW);
+        var cardH = Math.max(minH, maxH);
 
-        // 確保不小於最小值
-        cardW = Math.max(cardW, minW);
-        cardH = Math.max(cardH, minH);
-
-        // 🔥 關鍵：讓卡片比例保持在 1:1 ~ 1.3:1 之間（美觀）
-        var ratio = cardW / cardH;
-        if (ratio > 1.4) {
-            cardW = cardH * 1.2;
-        } else if (ratio < 0.9) {
-            cardH = cardW / 1.1;
+        // 🔥 保持卡片比例美觀（寬略大於高，約 1.1:1）
+        var targetRatio = 1.1;
+        if (cardW / cardH > targetRatio + 0.2) {
+            cardW = cardH * targetRatio;
+        } else if (cardH / cardW > targetRatio + 0.2) {
+            cardH = cardW / targetRatio;
         }
 
-        // 重新計算實際總寬高
-        var totalW = cols * cardW + (cols - 1) * gap;
-        var totalH = rows * cardH + (rows - 1) * gap;
+        // 計算總寬高
+        var totalW = cols * cardW + gap * (cols - 1);
+        var totalH = rows * cardH + gap * (rows - 1);
 
-        // 🔥 如果總高度超過可用空間，縮小卡片
+        // 🔥 如果總高超出可用高度，按比例縮小
         if (totalH > availH) {
-            var scaleH = availH / totalH;
-            cardH = cardH * scaleH;
-            cardW = cardW * scaleH;
-            // 重新計算總寬高
-            totalW = cols * cardW + (cols - 1) * gap;
-            totalH = rows * cardH + (rows - 1) * gap;
+            var scale = availH / totalH;
+            cardW = cardW * scale;
+            cardH = cardH * scale;
+            totalW = cols * cardW + gap * (cols - 1);
+            totalH = rows * cardH + gap * (rows - 1);
         }
 
-        // 🔥 如果總寬度超過可用空間，縮小卡片
+        // 🔥 如果總寬超出可用寬度，按比例縮小
         if (totalW > availW) {
-            var scaleW = availW / totalW;
-            cardW = cardW * scaleW;
-            cardH = cardH * scaleW;
-            totalW = cols * cardW + (cols - 1) * gap;
-            totalH = rows * cardH + (rows - 1) * gap;
+            var scale2 = availW / totalW;
+            cardW = cardW * scale2;
+            cardH = cardH * scale2;
+            totalW = cols * cardW + gap * (cols - 1);
+            totalH = rows * cardH + gap * (rows - 1);
         }
 
-        // 🔥 計算居中起始位置（確保頂部和底部縫隙一致）
-        var startX = (menuWidth - totalW) / 2;
-        var startY = (menuHeight - totalH) / 2;
-
-        // 確保不超出邊界
-        startX = Math.max(startX, padding);
-        startY = Math.max(startY, padding);
+        // 🔥🔥🔥 計算居中起始位置（關鍵：使用 window 尺寸計算）
+        var startX = (screenW - totalW) / 2;
+        var startY = (screenH - totalH) / 2;
 
         // 應用位置到每個卡片
         cards.forEach(function(card, index) {
@@ -1606,15 +1588,12 @@
             card.style.height = cardH + 'px';
             card.style.left = x + 'px';
             card.style.top = y + 'px';
-            card.style.position = 'absolute';
+            card.style.position = 'fixed'; // 🔥 使用 fixed 避免偏移
             card.style.borderRadius = '16px';
-
-            // 調整字體大小根據卡片尺寸
-            var fontSize = Math.min(cardW, cardH) / 5.5;
-            card.style.setProperty('--card-font-size', fontSize + 'px');
+            card.style.margin = '0';
         });
 
-        console.log('📐 卡片位置已更新: 寬=' + cardW.toFixed(1) + 'px, 高=' + cardH.toFixed(1) + 'px, 總寬=' + totalW.toFixed(1) + 'px, 總高=' + totalH.toFixed(1) + 'px');
+        console.log('📐 屏幕: ' + screenW + 'x' + screenH + ', 卡片: ' + cardW.toFixed(0) + 'x' + cardH.toFixed(0) + ', 起始: (' + startX.toFixed(0) + ', ' + startY.toFixed(0) + ')');
     }
 
     // ===== 展開/收攏 =====
@@ -1644,9 +1623,6 @@
 
         if (!isRendered) {
             renderGames();
-            // 多次嘗試確保位置正確
-            setTimeout(updateCardPositions, 50);
-            setTimeout(updateCardPositions, 200);
         }
 
         isOpen = !isOpen;
@@ -1656,14 +1632,20 @@
             overlay.classList.add('active');
             document.body.classList.add('games-open');
 
-            // 展開前先更新位置
-            setTimeout(updateCardPositions, 20);
+            // 🔥 展開後立即計算位置，延遲多次確保準確
+            requestAnimationFrame(function() {
+                updateCardPositions();
+                setTimeout(updateCardPositions, 50);
+                setTimeout(updateCardPositions, 150);
+            });
 
             var cards = menu.querySelectorAll('.game-card');
             cards.forEach(function(card, i) {
                 card.style.transitionDelay = (0.03 + i * 0.05) + 's';
+                // 強制先設置位置再顯示
                 card.classList.add('show');
             });
+
         } else {
             menu.classList.remove('active');
             overlay.classList.remove('active');
@@ -1701,7 +1683,7 @@
     window.addEventListener('resize', function() {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(function() {
-            if (isRendered) {
+            if (isRendered && menu.classList.contains('active')) {
                 updateCardPositions();
             }
         }, 100);
@@ -1710,13 +1692,13 @@
     // ===== 屏幕方向變化時更新 =====
     window.addEventListener('orientationchange', function() {
         setTimeout(function() {
-            if (isRendered) {
+            if (isRendered && menu.classList.contains('active')) {
                 updateCardPositions();
             }
-        }, 300);
+        }, 400);
     });
 
-    console.log('✅ GAMES 2×3 大卡片菜單已加載（全屏自動適應）');
+    console.log('✅ GAMES 2×3 大卡片菜單已加載（完美居中）');
 })();
 </script>
 </body>
