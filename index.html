@@ -1029,7 +1029,7 @@
         }
 
         /* ============================================================
-           🔥 新增：电脑版 Tab Bar（放在 .app-container 顶部）
+           🔥 新增：电脑版 Tab Bar（放在 .app-container 顶部，不破坏原有布局）
            ============================================================ */
         @media (min-width: 768px) {
             .top-tabbar {
@@ -1037,7 +1037,7 @@
                 align-items: center;
                 justify-content: space-between;
                 flex-shrink: 0;
-                padding: 0 20px;
+                padding: 0 24px;
                 height: 56px;
                 background: rgba(10, 12, 24, 0.92);
                 backdrop-filter: blur(16px);
@@ -1045,11 +1045,10 @@
                 border-bottom: 1px solid rgba(255, 255, 255, 0.06);
                 position: sticky;
                 top: 0;
-                z-index: 100;
+                z-index: 1000;
                 box-shadow: 0 2px 30px rgba(0, 0, 0, 0.2);
                 width: 100%;
                 box-sizing: border-box;
-                /* 无圆角，无缝连接 */
             }
 
             /* Logo 左侧 */
@@ -1099,7 +1098,7 @@
                 padding: 0 14px;
                 height: 36px;
                 border-radius: 6px;
-                font-size: 12px;
+                font-size: 13px;
                 font-weight: 500;
                 color: rgba(255, 255, 255, 0.35);
                 cursor: pointer;
@@ -1112,7 +1111,7 @@
                 text-decoration: none;
             }
             .top-tabbar .tab-item i {
-                font-size: 13px;
+                font-size: 14px;
                 color: rgba(255, 255, 255, 0.15);
                 transition: 0.25s;
             }
@@ -1137,7 +1136,7 @@
             .top-tabbar .tab-right {
                 display: flex;
                 align-items: center;
-                gap: 8px;
+                gap: 10px;
                 flex-shrink: 0;
                 padding-left: 12px;
                 border-left: 1px solid rgba(255, 255, 255, 0.06);
@@ -1292,12 +1291,24 @@
                 display: none !important;
             }
 
-            /* 侧边栏和右侧边栏无圆角 */
+            /* 移除侧边栏和右侧边栏的圆角，无缝连接 */
             .sidebar {
                 border-radius: 0 !important;
             }
             .right-sidebar {
                 border-radius: 0 !important;
+            }
+
+            /* 调整 main-content 的 padding 以匹配 Tab Bar */
+            .main-content {
+                padding-top: 0 !important;
+            }
+        }
+
+        /* 手机版：Tab Bar 隐藏 */
+        @media (max-width: 767px) {
+            .top-tabbar {
+                display: none !important;
             }
         }
     </style>
@@ -1353,7 +1364,7 @@
 </div>
 
 <!-- ============================================================
-🔥 新增：电脑版 Tab Bar
+🔥 新增：电脑版 Tab Bar（放在最顶部，不破坏原有布局）
 ============================================================ -->
 <header class="top-tabbar" id="topTabBar">
     <!-- Logo 左侧 -->
@@ -2455,7 +2466,7 @@
         }
     });
 
-    console.log('✅ VISION711 加载完成 (Tab Bar 已添加)');
+    console.log('✅ VISION711 加载完成 (Tab Bar 已添加，所有内容完整保留)');
 </script>
 </body>
 </html>
