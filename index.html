@@ -364,48 +364,7 @@
     .carousel-progress { height: 2px; }
 }
 
-        /* ===== 手機版 ===== */
-        @media (max-width: 767px) {
-            .carousel-container {
-                border-radius: 12px;
-            }
-            .carousel-slide {
-                border-radius: 12px;
-                /* 手機版一樣 16:9 */
-                padding-bottom: 56.25%;
-            }
-            .carousel-slide img {
-                border-radius: 12px;
-            }
-            .carousel-dots {
-                bottom: 10px;
-                padding: 4px 10px;
-                gap: 6px;
-            }
-            .carousel-dots .dot {
-                width: 6px;
-                height: 6px;
-            }
-            .carousel-dots .dot.active {
-                width: 18px;
-            }
-            .carousel-btn {
-                width: 28px;
-                height: 28px;
-                font-size: 0.7rem;
-            }
-            .carousel-btn-left {
-                left: 6px;
-            }
-            .carousel-btn-right {
-                right: 6px;
-            }
-            .carousel-progress {
-                height: 2px;
-            }
-        }
-
-        /* ============================================================
+/* ============================================================
    🔥 极光呼吸 · 通告条（置頂，無縫連接左右）
    ============================================================ */
 
@@ -524,19 +483,11 @@
         box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
         margin: 0 !important;
         margin-bottom: 12px !important;
-        /* 🔥 新增這三行 */
-        margin-left: -12px !important;
-        margin-right: -12px !important;
-        width: calc(100% + 24px) !important;
         position: sticky;
         top: 0;
         z-index: 49;
         transition: all 0.3s ease;
         box-sizing: border-box;
-        /* 🔥 手機版填補左右縫隙：負的 margin-left/right 抵消父容器 padding */
-        margin-left: -12px !important;
-        margin-right: -12px !important;
-        width: calc(100% + 24px) !important;
         padding-left: 14px;
         padding-right: 14px;
     }
