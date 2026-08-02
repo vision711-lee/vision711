@@ -1075,7 +1075,9 @@
     <!-- Logo 左侧 -->
     <div class="tab-logo">
         <canvas id="tabLogoCanvas" width="400" height="200"></canvas>
-        <span class="brand">VISION711</span>
+        <img src="https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/vision-partner/logoname.png" 
+     alt="VISION711" 
+     style="height:28px; width:auto; display:block; object-fit:contain;">
     </div>
 
     <!-- Tab 选项 - 居中 -->
@@ -1118,15 +1120,64 @@
     <!-- 卡片1 - Promotions -->
     <div class="sidebar-card">
         <img src="https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/vision-partner/lsb.promotions.png" 
-             alt="Promotions" 
-             style="width:100%; height:100%; object-fit:cover; border-radius:8px;">
+             alt="Promotions">
+        <span class="card-text">PROMOTIONS</span>
+        <div class="glow-overlay"></div>
     </div>
 
     <!-- 卡片2 - Event -->
     <div class="sidebar-card">
         <img src="https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/vision-partner/lsb.event.png" 
-             alt="Event" 
-             style="width:100%; height:100%; object-fit:cover; border-radius:8px;">
+             alt="Event">
+        <span class="card-text">EVENT</span>
+        <div class="glow-overlay"></div>
+    </div>
+
+    <!-- 卡片3 - Invitations -->
+    <div class="sidebar-card">
+        <img src="https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/vision-partner/lsb.invitation.png" 
+             alt="Invitations">
+        <span class="card-text">INVITATIONS</span>
+        <div class="glow-overlay"></div>
+    </div>
+
+    <!-- ===== 卡片4: Daily Rewards ===== -->
+    <div class="sidebar-big-card">
+        <div class="card-header">
+            <span class="card-title">Daily Rewards</span>
+        </div>
+        <div class="card-items">
+            <div class="item"><i class="fas fa-calendar-check"></i> <span class="item-text">Check In Credit</span></div>
+            <div class="item"><i class="fas fa-gift"></i> <span class="item-text">Vision711 Giveaway</span></div>
+            <div class="item"><i class="fas fa-coins"></i> <span class="item-text">Free Spins</span></div>
+            <div class="item"><i class="fas fa-award"></i> <span class="item-text">My Progress</span></div>
+            <div class="item"><i class="fas fa-trophy"></i> <span class="item-text">Leaderboard</span></div>
+        </div>
+    </div>
+
+    <!-- ===== 卡片5: Casino ===== -->
+    <div class="sidebar-big-card">
+        <div class="card-header">
+            <span class="card-title">Casino</span>
+        </div>
+        <div class="card-items">
+            <div class="item"><i class="fas fa-gamepad"></i> <span class="item-text">Slot Games</span></div>
+            <div class="item"><i class="fas fa-rocket"></i> <span class="item-text">Fast Games</span></div>
+            <div class="item"><i class="fas fa-tv"></i> <span class="item-text">Live Games</span></div>
+            <div class="item"><i class="fas fa-fish"></i> <span class="item-text">Fish Games</span></div>
+        </div>
+    </div>
+
+    <!-- ===== 卡片6: Sports ===== -->
+    <div class="sidebar-big-card">
+        <div class="card-header">
+            <span class="card-title">Sports</span>
+        </div>
+        <div class="card-items">
+            <div class="item"><i class="fas fa-futbol"></i> <span class="item-text">Football</span></div>
+            <div class="item"><i class="fas fa-basketball-ball"></i> <span class="item-text">Basketball</span></div>
+            <div class="item"><i class="fas fa-gamepad"></i> <span class="item-text">E-Sports</span></div>
+        </div>
     </div>
 </div>
 
@@ -1163,6 +1214,43 @@
             <div class="carousel-progress-bar" id="carouselProgressBar"></div>
         </div>
     </div>
+
+<!-- ===== 轮播图下方卡片 ===== -->
+<div class="carousel-bottom-card">
+    <!-- 背景图片 -->
+    <img src="https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/vision-partner/mainvipprogram.png" 
+         alt="VIP Program">
+    
+    <!-- 左侧 - VIP PROGRAM -->
+    <div class="card-btn-left" onclick="location.href='#'">
+        <div class="btn-content">
+            <span class="btn-title">VIP PROGRAM</span>
+            <span class="btn-sub">VIP Bonuses &amp; Exclusive Rewards.</span>
+        </div>
+    </div>
+    
+    <!-- 中间分割线 -->
+    <div class="card-divider"></div>
+    
+    <!-- 右侧 - PARTNERSHIP -->
+    <div class="card-btn-right" onclick="location.href='#'">
+        <div class="btn-content">
+            <span class="btn-title">PARTNERSHIP</span>
+            <span class="btn-sub">Rewards For Members From Our Partners.</span>
+        </div>
+    </div>
+</div>
+
+<!-- ===== Latest Withdrawal ===== -->
+<div class="latest-withdrawal">
+    <div class="latest-header">
+        <span class="title"><i class="fas fa-clock"></i> Latest Withdrawal</span>
+        <span class="badge">LIVE</span>
+    </div>
+    <div class="withdrawal-grid" id="withdrawalGrid">
+        <!-- 由 JavaScript 动态生成 -->
+    </div>
+</div>
 
     <!-- ===== 欢迎卡片 ===== -->
     <div class="card-welcome">
@@ -1433,24 +1521,17 @@
 
 <!-- ===== RIGHT SIDEBAR ===== -->
 <div class="right-sidebar">
-    <!-- DAILY REWARDS -->
-    <div class="section-title">✦ Daily Rewards</div>
-    <a href="#" class="sidebar-nav-item"><i class="fas fa-calendar-check"></i> Check In Credit</a>
-    <a href="#" class="sidebar-nav-item"><i class="fas fa-gift"></i> Vision711 Giveaway</a>
-    <a href="#" class="sidebar-nav-item"><i class="fas fa-coins"></i> Free Spins</a>
-
-    <!-- CASINO -->
-    <div class="section-title">✦ Casino</div>
-    <a href="#" class="sidebar-nav-item"><i class="fas fa-gamepad"></i> Slot Games</a>
-    <a href="#" class="sidebar-nav-item"><i class="fas fa-rocket"></i> Fast Games</a>
-    <a href="#" class="sidebar-nav-item"><i class="fas fa-tv"></i> Live Games</a>
-    <a href="#" class="sidebar-nav-item"><i class="fas fa-fish"></i> Fish Games</a>
-
-    <!-- SPORTS -->
-    <div class="section-title">✦ Sports</div>
-    <a href="#" class="sidebar-nav-item"><i class="fas fa-futbol"></i> Football</a>
-    <a href="#" class="sidebar-nav-item"><i class="fas fa-basketball-ball"></i> Basketball</a>
-    <a href="#" class="sidebar-nav-item"><i class="fas fa-gamepad"></i> E-Sports</a>
+    <!-- Betslip -->
+    <div class="sidebar-betslip">
+        <div class="betslip-header">
+            <span class="betslip-title">Betslip</span>
+        </div>
+        <div class="betslip-divider"></div>
+        <div class="betslip-empty">
+            <i class="fas fa-ticket"></i>
+            <span>No bets placed yet.</span>
+        </div>
+    </div>
 </div>
 
 </div><!-- /app-container -->
@@ -1845,8 +1926,7 @@ function goTo(index) {
 
     var container = document.querySelector('.carousel-container');
     if (container) {
-        container.addEventListener('mouseenter', function() { isPaused = true; stopPlay(); });
-        container.addEventListener('mouseleave', function() { isPaused = false; startPlay(); });
+        
         // 手机触摸滑动支持
         var touchX = 0;
         container.addEventListener('touchstart', function(e) { touchX = e.changedTouches[0].screenX; }, { passive: true });
@@ -2142,6 +2222,211 @@ function goTo(index) {
     });
 
     console.log('✅ VISION711 加载完成 (Tab Bar 样式已移至 style.css)');
+
+// ============================================================
+// Latest Withdrawal 数据生成与更新
+// ============================================================
+(function() {
+    'use strict';
+
+    const TOTAL_ITEMS_DESKTOP = 12;
+    const TOTAL_ITEMS_MOBILE = 6;
+
+    function randomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function generateRandomId() {
+        const chars = '0123456789';
+        let id = '60****';
+        for (let i = 0; i < 2; i++) {
+            id += chars[Math.floor(Math.random() * chars.length)];
+        }
+        return id;
+    }
+
+    function generateWithdrawal() {
+        let deposit = 20;
+        const r = Math.random();
+        if (r < 0.35) {
+            deposit = randomInt(4, 10) * 5;
+        } else if (r < 0.65) {
+            deposit = randomInt(11, 30) * 5;
+        } else if (r < 0.85) {
+            deposit = randomInt(31, 80) * 5;
+        } else if (r < 0.95) {
+            deposit = randomInt(81, 200) * 5;
+        } else {
+            deposit = randomInt(201, 2000) * 5;
+        }
+
+        const multiplier = Math.round((1.5 + Math.random() * 18.5) * 10) / 10;
+        const withdraw = Math.round(deposit * multiplier);
+
+        let colorClass = 'color-1';
+        if (multiplier < 4) colorClass = 'color-1';
+        else if (multiplier < 8) colorClass = 'color-2';
+        else if (multiplier < 13) colorClass = 'color-3';
+        else if (multiplier < 18) colorClass = 'color-4';
+        else colorClass = 'color-5';
+
+        const multiplierDisplay = 'x' + multiplier.toFixed(1);
+
+        return {
+            id: generateRandomId(),
+            deposit: deposit,
+            withdraw: withdraw,
+            multiplierDisplay: multiplierDisplay,
+            colorClass: colorClass
+        };
+    }
+
+    function getTotalItems() {
+        return window.innerWidth >= 768 ? TOTAL_ITEMS_DESKTOP : TOTAL_ITEMS_MOBILE;
+    }
+
+    // 🔥 根据设备返回不同更新间隔
+    function getUpdateInterval() {
+        const isMobile = window.innerWidth < 768;
+        if (isMobile) {
+            const minMs = 30 * 1000;
+            const maxMs = 3 * 60 * 1000;
+            return Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs;
+        } else {
+            const minMs = 2 * 60 * 1000;
+            const maxMs = 7 * 60 * 1000;
+            return Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs;
+        }
+    }
+
+    let items = [];
+
+    // 🔥 localStorage 存储/读取
+    function getStoredItems() {
+        const stored = localStorage.getItem('latest_withdrawal_items');
+        if (stored) {
+            try {
+                const parsed = JSON.parse(stored);
+                if (parsed.timestamp && (Date.now() - parsed.timestamp < 30 * 60 * 1000)) {
+                    return parsed.data;
+                }
+            } catch (e) {}
+        }
+        return null;
+    }
+
+    function storeItems(data) {
+        try {
+            localStorage.setItem('latest_withdrawal_items', JSON.stringify({
+                timestamp: Date.now(),
+                data: data
+            }));
+        } catch (e) {}
+    }
+
+    function generateInitialData() {
+        const total = getTotalItems();
+        const stored = getStoredItems();
+        if (stored && stored.length === total) {
+            items = stored;
+            return;
+        }
+        items = [];
+        for (let i = 0; i < total; i++) {
+            items.push(generateWithdrawal());
+        }
+        storeItems(items);
+    }
+
+    function render() {
+        const grid = document.getElementById('withdrawalGrid');
+        if (!grid) return;
+
+        const total = getTotalItems();
+        while (items.length < total) {
+            items.unshift(generateWithdrawal());
+        }
+        if (items.length > total) {
+            items = items.slice(0, total);
+        }
+
+        let html = '';
+        items.forEach(function(item) {
+            html += `
+                <div class="item">
+                    <div class="badge ${item.colorClass}">
+                        <span>${item.multiplierDisplay}</span>
+                    </div>
+                    <div class="info">
+                        <div class="id">ID: ${item.id}</div>
+                        <div class="amount">RM ${item.withdraw.toLocaleString()} <span class="arrow">→</span></div>
+                        <div class="deposit">Deposit RM ${item.deposit.toLocaleString()}</div>
+                    </div>
+                </div>
+            `;
+        });
+
+        grid.innerHTML = html;
+        storeItems(items);  // 🔥 每次渲染后保存
+    }
+
+    function updateOneItem() {
+        const total = getTotalItems();
+        items.pop();
+        items.unshift(generateWithdrawal());
+        storeItems(items);
+        render();
+    }
+
+    let updateTimer = null;
+
+    function scheduleNextUpdate() {
+        if (updateTimer) {
+            clearTimeout(updateTimer);
+        }
+        const delay = getUpdateInterval();
+        const isMobile = window.innerWidth < 768;
+        console.log(`⏱️ Latest Withdrawal 下次更新: ${Math.round(delay / 1000)} 秒 (${isMobile ? '手机版' : '电脑版'})`);
+        updateTimer = setTimeout(function() {
+            updateOneItem();
+            scheduleNextUpdate();
+        }, delay);
+    }
+
+    let resizeTimeout = null;
+
+    function handleResize() {
+        if (resizeTimeout) {
+            clearTimeout(resizeTimeout);
+        }
+        resizeTimeout = setTimeout(function() {
+            const total = getTotalItems();
+            while (items.length < total) {
+                items.unshift(generateWithdrawal());
+            }
+            if (items.length > total) {
+                items = items.slice(0, total);
+            }
+            render();
+            // 🔥 重置计时器
+            if (updateTimer) {
+                clearTimeout(updateTimer);
+                scheduleNextUpdate();
+            }
+        }, 300);
+    }
+
+    // ===== 启动 =====
+    const grid = document.getElementById('withdrawalGrid');
+    if (grid) {
+        generateInitialData();
+        render();
+        scheduleNextUpdate();
+        window.addEventListener('resize', handleResize);
+        console.log('✅ Latest Withdrawal 已启动');
+        console.log(`📊 电脑版 ${TOTAL_ITEMS_DESKTOP} 项 (2x6) | 手机版 ${TOTAL_ITEMS_MOBILE} 项 (2x3)`);
+    }
+})();
 </script>
 </body>
 </html>

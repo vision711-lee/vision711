@@ -1591,7 +1591,7 @@ html, body {
         position: relative;
     }
 
-    /* ===== 左侧边栏 - fixed 固定 ===== */
+    /* ===== 左侧边栏 - 隐藏滚动条 ===== */
 .sidebar {
     width: 340px !important;
     flex-shrink: 0 !important;
@@ -1600,6 +1600,7 @@ html, body {
     left: 0 !important;
     height: calc(100vh - 56px) !important;
     overflow-y: auto !important;
+    overflow-x: hidden !important;  /* 🔥 禁止左右滚动 */
     background: rgba(10, 10, 32, 0.85) !important;
     backdrop-filter: blur(16px) !important;
     -webkit-backdrop-filter: blur(16px) !important;
@@ -1608,41 +1609,97 @@ html, body {
     padding: 16px 18px 24px !important;
     margin: 0 !important;
     box-shadow: none !important;
-    scrollbar-width: thin;
+    scrollbar-width: none !important;  /* 🔥 Firefox 隐藏滚动条 */
     z-index: 50;
     display: flex !important;
     flex-direction: column !important;
-    gap: 8px !important;      /* ← 间距改小 */
+    gap: 8px !important;
 }
 
+/* 🔥 Chrome/Safari/Edge 隐藏滚动条 */
 .sidebar::-webkit-scrollbar {
-    width: 3px;
-}
-.sidebar::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.06);
-    border-radius: 4px;
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
 }
 
-/* 🔥 侧边栏卡片 - 自适应图片高度 */
+.sidebar::-webkit-scrollbar-track {
+    display: none !important;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    display: none !important;
+}
+
+/* 🔥 侧边栏卡片 */
 .sidebar .sidebar-card {
     background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.04);
+    border: 1.5px solid rgba(60, 140, 255, 0.15);
     border-radius: 16px;
     padding: 0 !important;
+    height: 78px;
     width: calc(100% + 18px) !important;
     margin-left: -10px !important;
     flex: 0 0 auto;
     min-height: 0;
     transition: all 0.3s ease;
     position: relative;
-    overflow: hidden;
+    overflow: hidden;          /* 保持裁剪，让放大图片不溢出边框 */
+    box-shadow: 0 0 20px rgba(60, 140, 255, 0.03), inset 0 0 20px rgba(60, 140, 255, 0.02);
 }
 
 .sidebar .sidebar-card img {
     width: 100%;
-    height: auto;           /* 高度自适应 */
+    height: 100%;
+    object-fit: cover;
     display: block;
     border-radius: 16px;
+    transition: transform 0.4s ease;  /* 平滑过渡 */
+}
+
+/* 🔥 鼠标悬停时图片放大 */
+.sidebar .sidebar-card:hover img {
+    transform: scale(1.08);   /* 放大 8% */
+}
+
+.sidebar .sidebar-card:hover {
+    border-color: rgba(60, 180, 255, 0.3);
+    box-shadow: 0 0 40px rgba(60, 140, 255, 0.08), inset 0 0 30px rgba(60, 140, 255, 0.04);
+}
+
+/* 🔥 新增：卡片文字样式 */
+.sidebar .sidebar-card .card-text {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 900;
+    font-style: italic;
+    color: #ffffff;
+    text-shadow:
+        0 2px 12px rgba(0, 0, 0, 0.7),
+        0 4px 24px rgba(0, 0, 0, 0.5),
+        0 0 50px rgba(0, 0, 0, 0.3);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    pointer-events: none;
+    z-index: 2;
+    line-height: 1.2;
+}
+
+/* 🔥 新增：底部微光 */
+.sidebar .sidebar-card .glow-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 45%;
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.35), transparent);
+    pointer-events: none;
+    z-index: 1;
+    border-radius: 0 0 16px 16px;
 }
 
 .sidebar .sidebar-card::before {
@@ -1652,8 +1709,9 @@ html, body {
     left: 0;
     right: 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(60, 140, 255, 0.06), rgba(60, 140, 255, 0.02), transparent);
+    background: linear-gradient(90deg, transparent, rgba(60, 140, 255, 0.06), transparent);
     pointer-events: none;
+    z-index: 1;
 }
 
 .sidebar .sidebar-card:hover {
@@ -1661,26 +1719,29 @@ html, body {
     border-color: rgba(60, 140, 255, 0.06);
 }
 
-    /* ===== 右侧边栏 - fixed 固定 ===== */
-    .right-sidebar {
-        width: 340px !important;
-        flex-shrink: 0 !important;
-        position: fixed !important;
-        top: 56px !important;
-        right: 0 !important;
-        height: calc(100vh - 56px) !important;
-        overflow-y: auto !important;
-        background: rgba(10, 10, 32, 0.85) !important;
-        backdrop-filter: blur(16px) !important;
-        -webkit-backdrop-filter: blur(16px) !important;
-        border-left: 1px solid rgba(255, 255, 255, 0.06) !important;
-        border-radius: 0 !important;
-        padding: 20px 18px 24px !important;
-        margin: 0 !important;
-        box-shadow: -4px 0 30px rgba(0, 0, 0, 0.3);
-        scrollbar-width: thin;
-        z-index: 50;
-    }
+    /* ===== 右侧边栏 ===== */
+.right-sidebar {
+    width: 340px !important;
+    flex-shrink: 0 !important;
+    position: fixed !important;
+    top: 56px !important;
+    right: 0 !important;
+    height: calc(100vh - 56px) !important;
+    overflow-y: auto !important;
+    background: rgba(10, 10, 32, 0.85) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border-left: 1px solid rgba(255, 255, 255, 0.06) !important;
+    border-radius: 0 !important;
+    padding: 16px 18px 24px !important;
+    margin: 0 !important;
+    box-shadow: -4px 0 30px rgba(0, 0, 0, 0.3);
+    scrollbar-width: thin;
+    z-index: 50;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+}
 
     .right-sidebar::-webkit-scrollbar {
         width: 3px;
@@ -2314,57 +2375,45 @@ html, body {
     cursor: pointer;
 }
 
+/* ============================================================
+   🔥 右侧边栏图标 - DIAMOND × GOLD 混合静态渐变（钻石为主）
+   ============================================================ */
+
 .right-sidebar .sidebar-nav-item i {
     font-size: 1.2rem;
     width: 24px;
     text-align: center;
     transition: all 0.3s ease;
     flex-shrink: 0;
-    
-    background: linear-gradient(
-        135deg, 
-        #ffd700 0%, 
-        #fff4a0 15%, 
-        #ffb800 30%, 
-        #ffd700 45%, 
-        #ffe44d 60%, 
-        #ffb800 75%, 
-        #ffd700 90%,
-        #fff4a0 100%
+
+    /* DIAMOND 为主 · 金色点缀 */
+    background: linear-gradient(135deg, 
+        #e8e8f0 0%, 
+        #f0f0f8 15%, 
+        #ffffff 35%, 
+        #d0d0e0 50%, 
+        #ffd700 58%, 
+        #ffffff 68%, 
+        #e0e0ec 80%, 
+        #c8c8d8 100%
     );
-    background-size: 300% auto;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    
-    filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.4)) 
-            drop-shadow(0 0 20px rgba(255, 215, 0, 0.1));
-    
-    animation: goldShineIcon 3s ease-in-out infinite;
+
+    /* 静态光晕，偏钻石冷色调 */
+    filter: drop-shadow(0 0 6px rgba(200, 200, 255, 0.10));
 }
 
+/* 悬停时微微增亮，无震动 */
 .right-sidebar .sidebar-nav-item:hover i {
-    filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.7)) 
-            drop-shadow(0 0 50px rgba(255, 215, 0, 0.25));
-    animation-duration: 1.2s;
+    filter: drop-shadow(0 0 18px rgba(255, 215, 0, 0.12)) 
+            drop-shadow(0 0 30px rgba(200, 200, 255, 0.08));
 }
 
-@keyframes goldShineIcon {
-    0% { 
-        background-position: 0% center;
-        filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.3)) 
-                drop-shadow(0 0 20px rgba(255, 215, 0, 0.08));
-    }
-    50% { 
-        background-position: 100% center;
-        filter: drop-shadow(0 0 16px rgba(255, 215, 0, 0.6)) 
-                drop-shadow(0 0 50px rgba(255, 215, 0, 0.2));
-    }
-    100% { 
-        background-position: 0% center;
-        filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.3)) 
-                drop-shadow(0 0 20px rgba(255, 215, 0, 0.08));
-    }
+/* 禁用所有动画 */
+.right-sidebar .sidebar-nav-item i {
+    animation: none !important;
 }
 
 .right-sidebar .sidebar-nav-item:hover {
@@ -2740,47 +2789,29 @@ html, body {
     }
 
     .tab-auth-buttons .register-btn {
-        font-family: 'Inter', sans-serif;
-        font-weight: 600;
-        font-size: 12px;
-        padding: 6px 20px;
-        border-radius: 30px;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        white-space: nowrap;
-        background:
-            repeating-linear-gradient(75deg,
-                transparent 0px,
-                transparent 3px,
-                rgba(255, 255, 255, 0.015) 3px,
-                rgba(255, 255, 255, 0.015) 4px),
-            repeating-linear-gradient(15deg,
-                transparent 0px,
-                transparent 5px,
-                rgba(255, 255, 255, 0.01) 5px,
-                rgba(255, 255, 255, 0.01) 6px),
-            linear-gradient(145deg, #121230, #0a0a1a);
-        border: 1px solid rgba(60, 140, 255, 0.03);
-        color: rgba(180, 215, 255, 0.55) !important;
-        box-shadow: inset 0 1px 0 rgba(60, 140, 255, 0.02);
-    }
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    padding: 6px 20px;
+    border-radius: 30px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    background: transparent;
+    border: 2px solid rgba(0, 150, 255, 0.3);
+    color: #66bbff;
+    /* GPU 加速，流畅呼吸 */
+    will-change: transform, box-shadow, border-color;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+    animation: breatheGlowRegister 3s ease-in-out infinite;
+}
 
-    .tab-auth-buttons .register-btn:hover {
-        background:
-            repeating-linear-gradient(75deg,
-                transparent 0px,
-                transparent 3px,
-                rgba(255, 255, 255, 0.025) 3px,
-                rgba(255, 255, 255, 0.025) 4px),
-            repeating-linear-gradient(15deg,
-                transparent 0px,
-                transparent 5px,
-                rgba(255, 255, 255, 0.015) 5px,
-                rgba(255, 255, 255, 0.015) 6px),
-            linear-gradient(145deg, #1a1a40, #0d0d28);
-        border-color: rgba(60, 140, 255, 0.05);
-        color: rgba(200, 225, 255, 0.80) !important;
-    }
+.tab-auth-buttons .register-btn:hover {
+    transform: translateY(-2px);
+    animation-play-state: paused;
+    background: rgba(0, 150, 255, 0.05);
+}
 
     .tab-user-avatar {
         display: none;
@@ -2832,5 +2863,645 @@ html, body {
     .app-layout {
         display: block !important;
         padding: 0 !important;
+    }
+}
+
+/* ============================================================
+   Register 按钮 · 边框呼吸发光动画
+   ============================================================ */
+@keyframes breatheGlowRegister {
+    0%, 100% {
+        box-shadow: 0 0 8px rgba(0, 120, 255, 0.04);
+        border-color: rgba(0, 150, 255, 0.2);
+        color: #66bbff;
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(0, 150, 255, 0.20), 0 0 60px rgba(0, 100, 255, 0.06);
+        border-color: rgba(0, 200, 255, 0.6);
+        color: #88ddff;
+    }
+}
+
+/* ============================================================
+   轮播图下方 · 左右按钮卡片
+   ============================================================ */
+.carousel-bottom-card {
+    width: 100%;
+    height: 80px;
+    border-radius: 16px;
+    background: rgba(10, 10, 32, 0.4);
+    border: 1.5px solid rgba(60, 230, 255, 0.7);
+    box-shadow: 
+        0 0 30px rgba(60, 210, 255, 0.20),
+        0 0 60px rgba(60, 190, 255, 0.08),
+        inset 0 0 20px rgba(60, 210, 255, 0.06);
+    margin: 12px 0 16px 0;
+    padding: 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+/* 背景图片 */
+.carousel-bottom-card img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    border-radius: 16px;
+    transform: scale(1.04);
+    z-index: 0;
+}
+
+/* 左右按钮区域 - 居中 */
+.carousel-bottom-card .card-btn-left,
+.carousel-bottom-card .card-btn-right {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;      /* ← 居中 */
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 2;
+    user-select: none;
+    padding: 0 12px;
+}
+
+/* 按钮内容容器 - 左对齐 */
+.carousel-bottom-card .btn-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;      /* ← 左对齐 */
+    justify-content: center;
+    gap: 2px;
+    line-height: 1.3;
+    width: 100%;
+    max-width: 140px;             /* 限制宽度，让文字不贴边 */
+}
+
+/* 主标题 - BOLD 倾斜 */
+.carousel-bottom-card .btn-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 900;
+    font-style: italic;
+    color: #ffffff;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    text-shadow: 
+        0 2px 12px rgba(0, 0, 0, 0.6),
+        0 4px 24px rgba(0, 0, 0, 0.4);
+    transition: all 0.3s ease;
+}
+
+/* 副标题 */
+.carousel-bottom-card .btn-sub {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.45);
+    letter-spacing: 0.3px;
+    text-shadow: 
+        0 1px 8px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+    /* 手机版保持原有换行行为，不加 white-space */
+}
+
+/* 🔥 电脑版：副标题一行显示 */
+@media (min-width: 768px) {
+    .carousel-bottom-card .btn-sub {
+        white-space: nowrap;
+    }
+}
+
+/* 悬停时文字变亮 */
+.carousel-bottom-card .card-btn-left:hover .btn-title,
+.carousel-bottom-card .card-btn-right:hover .btn-title {
+    color: #ffffff;
+    text-shadow: 
+        0 0 30px rgba(60, 200, 255, 0.15),
+        0 2px 12px rgba(0, 0, 0, 0.6);
+}
+
+.carousel-bottom-card .card-btn-left:hover .btn-sub,
+.carousel-bottom-card .card-btn-right:hover .btn-sub {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* 中间分割线 */
+.carousel-bottom-card .card-divider {
+    width: 1px;
+    height: 50%;
+    background: linear-gradient(
+        180deg,
+        transparent 0%,
+        rgba(60, 230, 255, 0.15) 30%,
+        rgba(60, 230, 255, 0.25) 50%,
+        rgba(60, 230, 255, 0.15) 70%,
+        transparent 100%
+    );
+    flex-shrink: 0;
+    z-index: 2;
+}
+
+/* 顶部光晕装饰线 */
+.carousel-bottom-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(60, 230, 255, 0.2), transparent);
+    pointer-events: none;
+    z-index: 3;
+}
+
+/* 悬停边框增强 */
+.carousel-bottom-card:hover {
+    border-color: rgba(60, 240, 255, 0.9);
+    box-shadow: 
+        0 0 50px rgba(60, 220, 255, 0.30),
+        0 0 100px rgba(60, 200, 255, 0.12),
+        inset 0 0 30px rgba(60, 220, 255, 0.08);
+}
+
+/* 电脑版 - 鼠标悬停字体放大 */
+@media (min-width: 768px) {
+    .carousel-bottom-card .card-btn-left:hover .btn-title,
+    .carousel-bottom-card .card-btn-right:hover .btn-title {
+        transform: scale(1.50);
+        color: #ffffff;
+        text-shadow: 
+            0 0 30px rgba(60, 200, 255, 0.15),
+            0 2px 12px rgba(0, 0, 0, 0.6);
+    }
+
+    .carousel-bottom-card .card-btn-left:hover .btn-sub,
+    .carousel-bottom-card .card-btn-right:hover .btn-sub {
+        transform: scale(1.20);
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    /* 过渡平滑 */
+    .carousel-bottom-card .btn-title,
+    .carousel-bottom-card .btn-sub {
+        transition: all 0.3s ease;
+    }
+}
+
+/* ============================================================
+   Latest Withdrawal 样式
+   ============================================================ */
+
+.latest-withdrawal {
+    background: rgba(10, 10, 32, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 16px;
+    padding: 14px 20px 16px;
+    margin: 16px 0;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.latest-withdrawal::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(60, 140, 255, 0.06), transparent);
+    pointer-events: none;
+}
+
+.latest-withdrawal:hover {
+    border-color: rgba(60, 140, 255, 0.06);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.latest-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.latest-header .title {
+    font-size: 13px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.25);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/* 🔥 LIVE 徽章 - 仅红点闪烁 */
+.latest-header .badge {
+    font-size: 10px;
+    font-weight: 700;
+    color: #ff4757;
+    background: rgba(255, 71, 87, 0.08);
+    padding: 3px 12px;
+    border-radius: 30px;
+    border: 1px solid rgba(255, 71, 87, 0.15);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.latest-header .badge::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #ff4757;
+    animation: dotBlink 1s step-end infinite;
+    box-shadow: 0 0 10px rgba(255, 71, 87, 0.3);
+    flex-shrink: 0;
+}
+
+@keyframes dotBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.1; }
+}
+
+/* ===== 网格容器 ===== */
+.withdrawal-grid {
+    display: grid;
+    gap: 6px 10px;
+}
+
+/* ===== 每个条目 - 无卡片背景 ===== */
+.withdrawal-grid .item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 4px;
+    transition: all 0.3s ease;
+    animation: fadeIn 0.5s ease;
+}
+
+.withdrawal-grid .item:hover {
+    /* 悬停效果改为轻微文字变亮，不加背景 */
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; transform: scale(0.95); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+/* ===== 六边形 - 霓虹光晕 ===== */
+.withdrawal-grid .badge {
+    width: 38px;
+    height: 38px;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+.withdrawal-grid .badge span {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 900;
+    color: #ffffff;
+    line-height: 1;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.withdrawal-grid .badge:hover {
+    transform: scale(1.08);
+}
+
+.withdrawal-grid .badge.color-1 { background: linear-gradient(135deg, #2d8f5a, #4ad9a0); box-shadow: 0 0 20px rgba(45, 143, 90, 0.12); }
+.withdrawal-grid .badge.color-2 { background: linear-gradient(135deg, #1a6bb3, #4a9bff); box-shadow: 0 0 20px rgba(26, 107, 179, 0.12); }
+.withdrawal-grid .badge.color-3 { background: linear-gradient(135deg, #6a4fa8, #aa8aff); box-shadow: 0 0 20px rgba(106, 79, 168, 0.12); }
+.withdrawal-grid .badge.color-4 { background: linear-gradient(135deg, #b87a2a, #ffb83d); box-shadow: 0 0 20px rgba(184, 122, 42, 0.12); }
+.withdrawal-grid .badge.color-5 { background: linear-gradient(135deg, #b33a3a, #ff6666); box-shadow: 0 0 20px rgba(179, 58, 58, 0.12); animation: legendPulse 2s ease-in-out infinite; }
+
+@keyframes legendPulse {
+    0%, 100% { box-shadow: 0 0 15px rgba(179, 58, 58, 0.10); }
+    50% { box-shadow: 0 0 35px rgba(179, 58, 58, 0.20); }
+}
+
+/* ===== 信息区 ===== */
+.withdrawal-grid .info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+    flex: 1;
+}
+
+.withdrawal-grid .id {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.withdrawal-grid .id span {
+    color: rgba(255, 255, 255, 0.65);
+}
+
+.withdrawal-grid .amount {
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 900;
+    line-height: 1.2;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    letter-spacing: 0.3px;
+}
+
+.withdrawal-grid .amount .arrow {
+    color: rgba(255, 255, 255, 0.06);
+    font-size: 11px;
+}
+
+.withdrawal-grid .deposit {
+    color: rgba(255, 255, 255, 0.35);
+    font-size: 8px;
+    font-weight: 500;
+}
+
+/* ============================================================
+   电脑版：2行 x 6列
+   ============================================================ */
+@media (min-width: 768px) {
+    .withdrawal-grid {
+        grid-template-columns: repeat(6, 1fr);
+    }
+    .withdrawal-grid .item {
+        flex-direction: row;
+        padding: 6px 8px;
+        gap: 8px;
+    }
+    .withdrawal-grid .badge {
+        width: 40px;
+        height: 40px;
+    }
+    .withdrawal-grid .badge span {
+        font-size: 14px;
+    }
+    .withdrawal-grid .amount {
+        font-size: 13px;
+    }
+    .withdrawal-grid .id {
+        font-size: 9px;
+    }
+    .withdrawal-grid .deposit {
+        font-size: 8px;
+    }
+    .withdrawal-grid .info {
+        align-items: flex-start;
+    }
+}
+
+/* ============================================================
+   手机版：2行 x 3列（饱满无卡片）
+   ============================================================ */
+@media (max-width: 767px) {
+    .withdrawal-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px 8px;
+        padding: 2px 0;
+    }
+    .withdrawal-grid .item {
+        flex-direction: row;
+        padding: 6px 4px;
+        gap: 8px;
+        /* 🔥 删除背景和边框 */
+        /* background: rgba(255, 255, 255, 0.02); */
+        /* border-radius: 10px; */
+        /* border: 1px solid rgba(255, 255, 255, 0.03); */
+    }
+    .withdrawal-grid .badge {
+        width: 38px;
+        height: 38px;
+    }
+    .withdrawal-grid .badge span {
+        font-size: 12px;
+    }
+    .withdrawal-grid .amount {
+        font-size: 13px;
+    }
+    .withdrawal-grid .amount .arrow {
+        font-size: 10px;
+    }
+    .withdrawal-grid .id {
+        font-size: 8px;
+    }
+    .withdrawal-grid .deposit {
+        font-size: 8px;
+    }
+    .withdrawal-grid .info {
+        align-items: flex-start;
+        gap: 1px;
+    }
+    .latest-withdrawal {
+        padding: 12px 12px 14px;
+    }
+    .latest-header .title {
+        font-size: 11px;
+    }
+    .latest-header .badge {
+        font-size: 8px;
+        padding: 2px 10px;
+    }
+}
+
+/* ============================================================
+   右侧边栏 · Betslip（无卡片）
+   ============================================================ */
+
+.sidebar-betslip {
+    padding: 4px 0;
+}
+
+.sidebar-betslip .betslip-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.sidebar-betslip .betslip-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.7);
+    letter-spacing: 0.5px;
+}
+
+.sidebar-betslip .betslip-divider {
+    width: 100%;
+    height: 1.5px;
+    background: linear-gradient(90deg, transparent, rgba(60, 140, 255, 0.35), transparent);
+    margin-bottom: 16px;
+}
+
+.sidebar-betslip .betslip-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 0 8px;
+    gap: 10px;
+}
+
+.sidebar-betslip .betslip-empty i {
+    font-size: 30px;
+    color: rgba(255, 255, 255, 0.06);
+
+    /* 钻石色 + 亮蓝渐变 */
+    background: linear-gradient(135deg, 
+        #e8e8f0 0%, 
+        #c8d8ff 15%, 
+        #ffffff 30%, 
+        #a0c4ff 45%, 
+        #d0e0ff 60%, 
+        #ffffff 75%, 
+        #b8d0ff 90%, 
+        #d8e8f8 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 12px rgba(100, 180, 255, 0.06));
+}
+
+.sidebar-betslip .betslip-empty span {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.4);
+    font-weight: 400;
+}
+
+/* ============================================================
+   🔥 左侧边栏 - 卡片样式（从右侧移入）
+   ============================================================ */
+
+.sidebar .sidebar-big-card {
+    width: calc(100% + 18px) !important;
+    margin-left: -10px !important;
+    padding: 16px 18px !important;
+    border-radius: 16px !important;
+    background: rgba(255, 255, 255, 0.02) !important;
+    border: 1.5px solid rgba(60, 140, 255, 0.08) !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 0 20px rgba(60, 140, 255, 0.02) !important;
+    flex: 0 0 auto !important;
+    min-height: 0 !important;
+}
+
+.sidebar .sidebar-big-card:hover {
+    border-color: rgba(60, 180, 255, 0.2) !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+}
+
+.sidebar .sidebar-big-card .card-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    margin-bottom: 10px !important;
+}
+
+.sidebar .sidebar-big-card .card-title {
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    color: rgba(255, 255, 255, 0.5) !important;
+    letter-spacing: 0.5px !important;
+}
+
+.sidebar .sidebar-big-card .card-items {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+}
+
+/* ============================================================
+   🔥 左侧边栏卡片图标 - 钻石色 + 亮蓝渐变
+   ============================================================ */
+.sidebar .sidebar-big-card .card-items .item {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    padding: 8px 12px !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    color: rgba(255, 255, 255, 0.3) !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+    border: 1px solid transparent !important;
+}
+
+.sidebar .sidebar-big-card .card-items .item i {
+    font-size: 16px !important;
+    width: 22px !important;
+    text-align: center !important;
+    transition: all 0.3s ease !important;
+    flex-shrink: 0 !important;
+
+    /* 钻石色 + 亮蓝渐变 */
+    background: linear-gradient(135deg, 
+        #e8e8f0 0%, 
+        #c8d8ff 15%, 
+        #ffffff 30%, 
+        #a0c4ff 45%, 
+        #d0e0ff 60%, 
+        #ffffff 75%, 
+        #b8d0ff 90%, 
+        #d8e8f8 100%
+    ) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    filter: drop-shadow(0 0 8px rgba(100, 180, 255, 0.12)) !important;
+    animation: none !important;
+}
+
+.sidebar .sidebar-big-card .card-items .item:hover {
+    color: rgba(255, 255, 255, 0.6) !important;
+    background: rgba(100, 180, 255, 0.04) !important;
+    border: 1px solid transparent !important;
+    box-shadow: none !important;
+}
+
+.sidebar .sidebar-big-card .card-items .item:hover i {
+    filter: drop-shadow(0 0 25px rgba(80, 160, 255, 0.28)) !important;
+}
+
+.sidebar .sidebar-big-card .card-items .item::after {
+    display: none !important;
+}
+
+@keyframes goldItemScan {
+    0% {
+        transform: translate(-30%, -30%) rotate(0deg);
+        opacity: 0;
+    }
+    15% {
+        opacity: 1;
+    }
+    85% {
+        opacity: 1;
+    }
+    100% {
+        transform: translate(30%, 30%) rotate(180deg);
+        opacity: 0;
     }
 }
