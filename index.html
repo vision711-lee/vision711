@@ -202,129 +202,167 @@
         }
 
         /* ============================================================
-           🔥 轮播图 - 16:9 完美匹配 1600x900 圖片
-           ============================================================ */
-        .carousel-container {
-            position: relative;
-            border-radius: 20px;
-            overflow: hidden;
-            width: 100%;
-            background: #0a0a20;
-        }
+   輪播圖 - 電腦版 40% / 手機版 16:9
+   ============================================================ */
+.carousel-container {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    width: 100%;
+    background: #0a0a20;
+}
 
-        .carousel-track {
-            display: flex;
-            transition: transform 0.5s ease-in-out;
-            will-change: transform;
-        }
+.carousel-track {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    will-change: transform;
+}
 
-        .carousel-slide {
-            width: 100%;
-            flex-shrink: 0;
-            position: relative;
-            overflow: hidden;
-            border-radius: 20px;
-            background: #0a0a20;
-            /* 16:9 = 56.25% - 完美匹配 1600x900 */
-            padding-bottom: 40.00%;
-        }
+.carousel-slide {
+    width: 100%;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px;
+    background: #0a0a20;
+}
 
-        .carousel-slide img {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 20px;
-            display: block;
-        }
+/* 🔥 電腦版：40%（2.5:1） */
+@media (min-width: 768px) {
+    .carousel-slide {
+        padding-bottom: 40% !important;
+    }
+}
 
-        .carousel-progress {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            z-index: 20;
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 0 0 20px 20px;
-            overflow: hidden;
-        }
+/* 🔥 手機版：16:9（保持原樣） */
+@media (max-width: 767px) {
+    .carousel-slide {
+        padding-bottom: 56.25% !important;
+    }
+}
 
-        .carousel-progress-bar {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #00b4ff, #4dc8ff, #00d4ff);
-            border-radius: 0 0 20px 20px;
-            transition: width 0.1s linear;
-            box-shadow: 0 0 20px rgba(0, 180, 255, 0.3);
-        }
+.carousel-slide img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    display: block;
+}
 
-        .carousel-dots {
-            position: absolute;
-            bottom: 16px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 15;
-            display: flex;
-            gap: 8px;
-            padding: 6px 14px;
-            background: rgba(0, 0, 0, 0.35);
-            border-radius: 20px;
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
-        }
+/* 🔥 電腦版：完整顯示圖片（上下黑邊） */
+@media (min-width: 768px) {
+    .carousel-slide img {
+        object-fit: contain;
+    }
+}
 
-        .carousel-dots .dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.25);
-            cursor: pointer;
-            transition: 0.3s;
-        }
+/* 🔥 手機版：填滿框架（16:9 完美匹配） */
+@media (max-width: 767px) {
+    .carousel-slide img {
+        object-fit: cover;
+    }
+}
 
-        .carousel-dots .dot.active {
-            background: #00b4ff;
-            width: 24px;
-            border-radius: 4px;
-            box-shadow: 0 0 16px rgba(0, 180, 255, 0.4);
-        }
+/* 其餘樣式保持不變 */
+.carousel-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    z-index: 20;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 0 0 20px 20px;
+    overflow: hidden;
+}
+.carousel-progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #00b4ff, #4dc8ff, #00d4ff);
+    border-radius: 0 0 20px 20px;
+    transition: width 0.1s linear;
+    box-shadow: 0 0 20px rgba(0, 180, 255, 0.3);
+}
+.carousel-dots {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 15;
+    display: flex;
+    gap: 8px;
+    padding: 6px 14px;
+    background: rgba(0, 0, 0, 0.35);
+    border-radius: 20px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+.carousel-dots .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.25);
+    cursor: pointer;
+    transition: 0.3s;
+}
+.carousel-dots .dot.active {
+    background: #00b4ff;
+    width: 24px;
+    border-radius: 4px;
+    box-shadow: 0 0 16px rgba(0, 180, 255, 0.4);
+}
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 15;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.5);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.3s;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+.carousel-btn:hover {
+    background: rgba(0, 180, 255, 0.2);
+    color: #fff;
+    border-color: rgba(0, 180, 255, 0.2);
+}
+.carousel-btn-left { left: 12px; }
+.carousel-btn-right { right: 12px; }
 
-        .carousel-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 15;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            color: rgba(255, 255, 255, 0.5);
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: 0.3s;
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-        }
-
-        .carousel-btn:hover {
-            background: rgba(0, 180, 255, 0.2);
-            color: #fff;
-            border-color: rgba(0, 180, 255, 0.2);
-        }
-
-        .carousel-btn-left {
-            left: 12px;
-        }
-
-        .carousel-btn-right {
-            right: 12px;
-        }
+/* 手機版按鈕微調 */
+@media (max-width: 767px) {
+    .carousel-dots {
+        bottom: 10px;
+        padding: 4px 10px;
+        gap: 6px;
+    }
+    .carousel-dots .dot {
+        width: 6px;
+        height: 6px;
+    }
+    .carousel-dots .dot.active {
+        width: 18px;
+    }
+    .carousel-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 0.7rem;
+    }
+    .carousel-btn-left { left: 6px; }
+    .carousel-btn-right { right: 6px; }
+    .carousel-progress { height: 2px; }
+}
 
         /* ===== 手機版 ===== */
         @media (max-width: 767px) {
