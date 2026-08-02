@@ -1,6 +1,6 @@
 /* ============================================================
    VISION711 · 金属蓝金主题
-   版本: 3.0 - 电脑版 Sidebar
+   版本: 4.0 - Tab Bar + 固定三栏
    ============================================================ */
 
 /* ============================================================
@@ -1445,7 +1445,7 @@ html, body {
     margin: 0 !important;
     border-radius: 0 !important;
     justify-content: space-around !important;
-    overflow: visible !important;  /* ← 加这一行 */
+    overflow: visible !important;
 }
 
     .bottom-nav .nav-item {
@@ -1497,9 +1497,9 @@ html, body {
     flex: 1 !important;
     max-width: 70px !important;
     pointer-events: none !important;
-    visibility: visible !important;  /* 改为可见 */
+    visibility: visible !important;
     position: relative !important;
-    overflow: visible !important;    /* 允许 GIF 溢出 */
+    overflow: visible !important;
 }
 
 /* GIF 动图 - 可重叠超出 */
@@ -1567,359 +1567,167 @@ html, body {
         background-color: #06060f;
     }
 
+    /* ===== 覆盖 app-container 为列方向 ===== */
     .app-container {
         display: flex !important;
+        flex-direction: column !important;
         padding: 0 !important;
         min-height: 100vh;
-        max-width: 1400px;
-        margin: 0 auto;
+        max-width: 100% !important;
+        margin: 0 !important;
         background: transparent !important;
     }
 
-    /* ===== 左侧边栏 ===== */
-    .sidebar {
-        width: 340px !important;
-        flex-shrink: 0 !important;
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        height: 100vh !important;
+    /* ===== 三栏布局容器 ===== */
+    .app-layout {
         display: flex !important;
-        flex-direction: column !important;
-        background: rgba(10, 10, 32, 0.75) !important;
-        backdrop-filter: blur(16px) !important;
-        -webkit-backdrop-filter: blur(16px) !important;
-        border-right: 1px solid rgba(255, 255, 255, 0.06) !important;
-        padding: 24px 20px 30px !important;
-        overflow-y: auto !important;
-        z-index: 100 !important;
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-        box-shadow: 4px 0 30px rgba(0, 0, 0, 0.3);
-    }
-
-    .sidebar::-webkit-scrollbar {
-        display: none;
-    }
-
-    .sidebar::before {
-        content: '';
-        position: absolute;
-        top: -30%;
-        right: -30%;
-        width: 80%;
-        height: 80%;
-        background: radial-gradient(ellipse, rgba(0, 180, 255, 0.05), transparent 70%);
-        pointer-events: none;
-        z-index: 0;
-    }
-
-    .sidebar > * {
-        position: relative;
-        z-index: 1;
-    }
-
-    .sidebar-logo-wrapper {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        margin-bottom: 30px;
-        padding-bottom: 20px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-        width: 100%;
-    }
-
-    .sidebar .logo-metal {
-        font-size: 1.6rem;
-        letter-spacing: 2px;
-        display: flex !important;
-        justify-content: center !important;
-        width: 100%;
-        margin: 0;
-        padding: 0;
-    }
-
-    .sidebar .logo-metal canvas {
-        height: 85px !important;
-        width: auto !important;
-        display: block !important;
-        border-radius: 8px;
-    }
-
-    .sidebar-slogan {
-        font-family: 'Montserrat', sans-serif;
-        font-weight: 800;
-        font-style: italic;
-        font-size: 1.0rem;
-        letter-spacing: 3px;
-        white-space: nowrap;
-        text-align: center;
-        background: linear-gradient(120deg, #a0e9ff 0%, #4db8ff 20%, #ffffff 45%, #6fcbff 70%, #a0e9ff 100%);
-        background-size: 300% auto;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        animation: shimmerGlacier 5s linear infinite;
-        text-shadow: none !important;
-        display: block;
-        width: 100%;
-    }
-
-    .sidebar .lang-switcher {
-        margin-bottom: 20px;
-        justify-content: center;
-    }
-
-    .sidebar-nav {
-        display: flex !important;
-        flex-direction: column;
-        gap: 4px;
         flex: 1;
-    }
-
-    .sidebar-nav .nav-item {
-        display: flex !important;
-        align-items: center;
-        gap: 14px;
-        color: rgba(255, 255, 255, 0.3);
-        text-decoration: none;
-        padding: 12px 16px;
-        border-radius: 12px;
-        font-size: 0.85rem;
-        font-weight: 500;
-        transition: all 0.3s ease;
+        min-height: 0;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        gap: 0 !important;
         position: relative;
-        flex-direction: row !important;
     }
 
-    .sidebar-nav .nav-item i {
-        font-size: 1.2rem;
-        color: rgba(255, 255, 255, 0.25);
-        width: 24px;
-        text-align: center;
-        transition: 0.3s;
-    }
+    /* ===== 左侧边栏 - fixed 固定 ===== */
+.sidebar {
+    width: 340px !important;
+    flex-shrink: 0 !important;
+    position: fixed !important;
+    top: 56px !important;
+    left: 0 !important;
+    height: calc(100vh - 56px) !important;
+    overflow-y: auto !important;
+    background: rgba(10, 10, 32, 0.85) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.06) !important;
+    border-radius: 0 !important;
+    padding: 16px 18px 24px !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    scrollbar-width: thin;
+    z-index: 50;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;      /* ← 间距改小 */
+}
 
-    .sidebar-nav .nav-item:hover {
-        background: rgba(255, 255, 255, 0.04);
-        color: rgba(255, 255, 255, 0.6);
-    }
-    .sidebar-nav .nav-item:hover i {
-        color: rgba(0, 180, 255, 0.5);
-    }
+.sidebar::-webkit-scrollbar {
+    width: 3px;
+}
+.sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 4px;
+}
 
-    .sidebar-nav .nav-item.active {
-        background: rgba(0, 180, 255, 0.08);
-        border: 1px solid rgba(0, 180, 255, 0.08);
-        color: #fff;
-    }
+/* 🔥 侧边栏卡片 - 自适应图片高度 */
+.sidebar .sidebar-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 16px;
+    padding: 0 !important;
+    width: calc(100% + 18px) !important;
+    margin-left: -10px !important;
+    flex: 0 0 auto;
+    min-height: 0;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
 
-    .sidebar-nav .nav-item.active i {
-        color: #00b4ff;
-    }
-    .sidebar-nav .nav-item.active span {
-        font-weight: 600;
-    }
+.sidebar .sidebar-card img {
+    width: 100%;
+    height: auto;           /* 高度自适应 */
+    display: block;
+    border-radius: 16px;
+}
 
-    .sidebar-nav .nav-item.active::before {
-        content: '';
-        position: absolute;
-        left: -1px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 3px;
-        height: 24px;
-        background: linear-gradient(180deg, #00b4ff, #ffd700);
-        border-radius: 0 3px 3px 0;
-        box-shadow: 0 0 20px rgba(0, 180, 255, 0.3);
-    }
+.sidebar .sidebar-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(60, 140, 255, 0.06), rgba(60, 140, 255, 0.02), transparent);
+    pointer-events: none;
+}
 
-    .sidebar-footer {
-        display: flex !important;
-        margin-top: auto;
-        padding-top: 16px;
-        border-top: 1px solid rgba(255, 255, 255, 0.04);
-        align-items: center;
-        gap: 12px;
-    }
+.sidebar .sidebar-card:hover {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(60, 140, 255, 0.06);
+}
 
-    .sidebar-footer .user-avatar-metal {
-        width: 36px;
-        height: 36px;
-        font-size: 0.9rem;
-        flex-shrink: 0;
-    }
-
-    .sidebar-footer .user-info {
-        flex: 1;
-    }
-    .sidebar-footer .user-info .name {
-        font-size: 0.8rem;
-        color: rgba(255, 255, 255, 0.7);
-        font-weight: 600;
-    }
-    .sidebar-footer .user-info .role {
-        font-size: 0.6rem;
-        color: rgba(255, 255, 255, 0.25);
-    }
-
-    /* ===== 右侧边栏 ===== */
+    /* ===== 右侧边栏 - fixed 固定 ===== */
     .right-sidebar {
         width: 340px !important;
         flex-shrink: 0 !important;
         position: fixed !important;
-        top: 0 !important;
+        top: 56px !important;
         right: 0 !important;
-        height: 100vh !important;
-        display: flex !important;
-        flex-direction: column !important;
-        background: rgba(10, 10, 32, 0.75) !important;
+        height: calc(100vh - 56px) !important;
+        overflow-y: auto !important;
+        background: rgba(10, 10, 32, 0.85) !important;
         backdrop-filter: blur(16px) !important;
         -webkit-backdrop-filter: blur(16px) !important;
         border-left: 1px solid rgba(255, 255, 255, 0.06) !important;
-        padding: 24px 20px 30px !important;
-        overflow-y: auto !important;
-        z-index: 100 !important;
-        scrollbar-width: none;
-        -ms-overflow-style: none;
+        border-radius: 0 !important;
+        padding: 20px 18px 24px !important;
+        margin: 0 !important;
         box-shadow: -4px 0 30px rgba(0, 0, 0, 0.3);
+        scrollbar-width: thin;
+        z-index: 50;
     }
 
     .right-sidebar::-webkit-scrollbar {
-        display: none;
+        width: 3px;
     }
-
-    .right-sidebar::before {
-        content: '';
-        position: absolute;
-        top: -30%;
-        left: -30%;
-        width: 80%;
-        height: 80%;
-        background: radial-gradient(ellipse, rgba(0, 180, 255, 0.05), transparent 70%);
-        pointer-events: none;
-        z-index: 0;
-    }
-
-    .right-sidebar > * {
-        position: relative;
-        z-index: 1;
-    }
-
-    .right-sidebar .sidebar-title {
-        font-size: 0.65rem;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        color: rgba(255, 255, 255, 0.15);
-        text-align: center;
-        padding: 12px 0;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-        margin-bottom: 16px;
+    .right-sidebar::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 4px;
     }
 
     /* ===== 主内容 ===== */
 .main-content {
-    display: block !important;
-    padding: 24px 40px 30px 40px !important;
-    min-height: 100vh;
-    max-width: 1300px !important;
-    width: 100% !important;
-    flex: none !important;
-    margin-left: 320px !important;     /* 改这个值控制右移距离，数值越大越靠右 */
-    margin-right: auto !important;
-    overflow-x: hidden;
+    flex: 1 !important;
+    padding: 32px 40px 30px 40px !important;  /* 20px → 32px，增加12px缝隙 */
+    min-height: calc(100vh - 56px) !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    margin-left: 340px !important;
+    margin-right: 340px !important;
+    background: transparent !important;
+    overflow-y: auto !important;
+    box-sizing: border-box !important;
 }
 
-.main-content > *,
-.main-content .card-metal,
-.main-content .card-welcome,
-.main-content .live-transaction,
-.main-content .lucky-draw,
-.main-content .admin-entry,
-.main-content .input-group-metal,
-.main-content .carousel-container,
-.main-content .announcement-wrapper {
-    max-width: 1300px;  /* 1120 → 1300 */
-    margin-left: auto;
-    margin-right: auto;
-}
+    .main-content > *,
+    .main-content .card-metal,
+    .main-content .card-welcome,
+    .main-content .live-transaction,
+    .main-content .lucky-draw,
+    .main-content .admin-entry,
+    .main-content .input-group-metal,
+    .main-content .carousel-container,
+    .main-content .announcement-wrapper {
+        max-width: 1100px;
+        margin-left: auto;
+        margin-right: auto;
+    }
 
     .main-content .stats-grid {
         max-width: 800px;
         margin-left: auto;
         margin-right: auto;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 16px;
-    }
-
-    .main-content .stat-card-metal {
-        padding: 20px 16px;
-    }
-    .main-content .stat-card-metal .num {
-        font-size: 1.8rem;
     }
 
     .main-content .action-buttons {
         max-width: 500px;
         margin-left: auto;
         margin-right: auto;
-    }
-
-    .main-content .balance-metal {
-        font-size: 2.8rem;
-    }
-
-    .main-content .logo-metal {
-        font-size: 2.4rem;
-        letter-spacing: 4px;
-    }
-
-    .mobile-only {
-        display: none !important;
-    }
-
-    .desktop-card-wrapper {
-        display: none !important;
-    }
-
-    .banner-fixed-desktop {
-        max-width: 800px;
-        margin: 0 auto 16px;
-        display: block !important;
-        border-radius: 16px;
-        overflow: hidden;
-        position: relative;
-    }
-
-    .banner-fixed-desktop img {
-        width: 100%;
-        height: auto;
-        display: block;
-        border-radius: 16px;
-    }
-
-    .banner-fixed-desktop canvas {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        border-radius: 16px;
-    }
-
-    .mobile-banner-fixed {
-        display: none !important;
-    }
-    .top-banner-wrapper {
-        display: none !important;
-    }
-
-    @keyframes shimmerGlacier {
-        0% { background-position: 0% center; }
-        100% { background-position: 300% center; }
     }
 }
 
@@ -1935,7 +1743,7 @@ html, body {
     }
 
     .sidebar {
-        width: 340px !important;
+        width: 320px !important;
         padding: 28px 24px 30px !important;
     }
 
@@ -1944,29 +1752,29 @@ html, body {
     }
 
     .right-sidebar {
-        width: 340px !important;
+        width: 320px !important;
         padding: 28px 24px 30px !important;
     }
 
-            .main-content {
-    margin-left: auto !important;     /* 同步调整 */
-    margin-right: auto !important;
-    max-width: 1285px !important;
-    padding: 28px 50px 35px 50px !important;
-}
+    .main-content {
+        margin-left: 320px !important;
+        margin-right: 320px !important;
+        max-width: 100% !important;
+        padding: 28px 50px 35px 50px !important;
+    }
 
-.main-content > *,
-.main-content .card-metal,
-.main-content .card-welcome,
-.main-content .live-transaction,
-.main-content .lucky-draw,
-.main-content .admin-entry,
-.main-content .input-group-metal,
-.main-content .carousel-container,
-.main-content .announcement-wrapper,
-.banner-fixed-desktop {
-    max-width: 1300px;  /* 1120 → 1300 */
-}
+    .main-content > *,
+    .main-content .card-metal,
+    .main-content .card-welcome,
+    .main-content .live-transaction,
+    .main-content .lucky-draw,
+    .main-content .admin-entry,
+    .main-content .input-group-metal,
+    .main-content .carousel-container,
+    .main-content .announcement-wrapper,
+    .banner-fixed-desktop {
+        max-width: 1300px;
+    }
 
     .main-content .stat-card-metal {
         padding: 24px 20px;
@@ -2253,136 +2061,6 @@ html, body {
 }
 
 /* ============================================================
-   极光呼吸 · 通告条
-   ============================================================ */
-.announcement-style-1 {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 14px 20px;
-    border-radius: 16px;
-    background: rgba(10, 14, 26, 0.6);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(0, 180, 255, 0.25);
-    box-shadow: 0 0 30px rgba(0, 180, 255, 0.08), inset 0 0 30px rgba(0, 180, 255, 0.02);
-    margin-bottom: 16px;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.4s ease;
-}
-
-.announcement-style-1::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, rgba(0, 180, 255, 0.6), rgba(0, 200, 255, 0.8), rgba(0, 180, 255, 0.6), transparent);
-    border-radius: 16px 16px 0 0;
-    animation: breatheLine 2.8s ease-in-out infinite;
-}
-
-@keyframes breatheLine {
-    0% { opacity: 0.3; }
-    50% { opacity: 1; }
-    100% { opacity: 0.3; }
-}
-
-.announcement-style-1 .horn-icon {
-    flex-shrink: 0;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: rgba(0, 180, 255, 0.08);
-    border: 1px solid rgba(0, 180, 255, 0.15);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.3rem;
-    color: #4dc8ff;
-    filter: drop-shadow(0 0 20px rgba(0, 180, 255, 0.15));
-}
-
-.announcement-style-1 .scroll-container {
-    flex: 1;
-    min-width: 0;
-    overflow: hidden;
-    position: relative;
-}
-
-.announcement-style-1 .scroll-track {
-    display: flex;
-    white-space: nowrap;
-    animation: scrollLeft 14s linear infinite;
-}
-
-.announcement-style-1 .scroll-track .text-item {
-    font-size: 0.92rem;
-    color: rgba(255, 255, 255, 0.85);
-    padding-right: 60px;
-    flex-shrink: 0;
-}
-
-.announcement-style-1 .scroll-track .text-item .time-tag {
-    font-size: 0.6rem;
-    color: rgba(255, 255, 255, 0.2);
-    margin-left: 10px;
-}
-
-.announcement-style-1:hover .scroll-track {
-    animation-play-state: paused;
-}
-
-.announcement-style-1 .badge-new {
-    flex-shrink: 0;
-    background: linear-gradient(135deg, #4dc8ff, #0088cc);
-    color: #fff;
-    font-size: 0.55rem;
-    font-weight: 700;
-    padding: 4px 14px;
-    border-radius: 30px;
-    letter-spacing: 0.5px;
-    box-shadow: 0 0 25px rgba(0, 180, 255, 0.2);
-    animation: pulseBadge 1.8s ease-in-out infinite;
-}
-
-@keyframes pulseBadge {
-    0% { opacity: 0.7; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.05); }
-    100% { opacity: 0.7; transform: scale(1); }
-}
-
-@keyframes scrollLeft {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-}
-
-.announcement-style-1.hidden {
-    display: none !important;
-}
-
-@media (max-width: 600px) {
-    .announcement-style-1 {
-        padding: 12px 14px;
-        gap: 10px;
-    }
-    .announcement-style-1 .horn-icon {
-        width: 36px;
-        height: 36px;
-        font-size: 1rem;
-    }
-    .announcement-style-1 .scroll-track .text-item {
-        font-size: 0.78rem;
-        padding-right: 40px;
-    }
-    .announcement-style-1 .badge-new {
-        font-size: 0.45rem;
-        padding: 2px 10px;
-    }
-}
-
-/* ============================================================
    GAMES 金属流光 · Rajdhani (底部导航)
    ============================================================ */
 
@@ -2430,7 +2108,7 @@ html, body {
     position: relative !important;
     z-index: 1 !important;
     margin-top: 28px !important;
-    margin-left: 6px !important;  /* ← 新增：向右移动 6px */
+    margin-left: 6px !important;
     padding-bottom: 0 !important;
 }
 
@@ -2449,7 +2127,7 @@ html, body {
         font-size: 0.8rem !important;
         letter-spacing: 3px !important;
         margin-top: 22px !important;
-        margin-left: 4px !important;  /* ← 手机版也右移一点 */
+        margin-left: 4px !important;
     }
     .bottom-nav .nav-games-center::before {
         width: 100px !important;
@@ -2610,8 +2288,8 @@ html, body {
 /* ===== 右侧边栏 - 与左侧边栏完全一致 ===== */
 .right-sidebar .section-title {
     font-size: 0.85rem;
-    text-transform: none;           /* 去掉全部大写 */
-    letter-spacing: 1px;            /* 稍微收窄间距 */
+    text-transform: none;
+    letter-spacing: 1px;
     color: rgba(255, 255, 255, 0.35);
     margin: 16px 0 6px 0;
     padding: 8px 4px 6px 4px;
@@ -2643,7 +2321,6 @@ html, body {
     transition: all 0.3s ease;
     flex-shrink: 0;
     
-    /* 🟡 金屬發亮金色 */
     background: linear-gradient(
         135deg, 
         #ffd700 0%, 
@@ -2660,21 +2337,18 @@ html, body {
     -webkit-text-fill-color: transparent;
     background-clip: text;
     
-    /* ✨ 發光光暈 */
     filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.4)) 
             drop-shadow(0 0 20px rgba(255, 215, 0, 0.1));
     
     animation: goldShineIcon 3s ease-in-out infinite;
 }
 
-/* 🟡 懸停時更亮 */
 .right-sidebar .sidebar-nav-item:hover i {
     filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.7)) 
             drop-shadow(0 0 50px rgba(255, 215, 0, 0.25));
     animation-duration: 1.2s;
 }
 
-/* 🟡 金色流光動畫 - 加到 style.css 最底下或 @keyframes 區塊 */
 @keyframes goldShineIcon {
     0% { 
         background-position: 0% center;
@@ -2725,322 +2399,146 @@ html, body {
     box-shadow: 0 0 20px rgba(0, 180, 255, 0.3);
 }
 
+
 /* ============================================================
-   🔥 統一頁面佈局 - 與 index 一致
+   🔥 Tab Bar 样式 - 样式5: 金属质感 + 蓝色细线网格
    ============================================================ */
 
-/* 移除所有頁面的背景圖 */
-body {
-    background: #0a0a1a !important;
-    background-image: none !important;
-    min-height: 100vh;
-    overflow-x: hidden;
-}
-
-/* 統一 app-container */
-.app-container {
-    max-width: 1600px;
-    margin: 0 auto;
-    padding: 0 !important;
-    background: transparent !important;
-    display: flex !important;
-    min-height: 100vh;
-}
-
-/* 統一 main-content 寬度 */
-.main-content {
-    flex: 1 !important;
-    padding: 24px 40px 30px 40px !important;
-    max-width: 1300px !important;
-    width: 100% !important;
-    min-height: 100vh;
-    margin-left: 320px !important;
-    margin-right: auto !important;
-    margin-top: 0 !important;
-    background: transparent !important;
-}
-
-/* 統一左側邊欄 */
-.sidebar {
-    width: 320px !important;
-    flex-shrink: 0 !important;
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    height: 100vh !important;
-    background: rgba(10, 10, 32, 0.85) !important;
-    backdrop-filter: blur(16px) !important;
-    -webkit-backdrop-filter: blur(16px) !important;
-    border-right: 1px solid rgba(255, 255, 255, 0.06) !important;
-    padding: 24px 20px 30px !important;
-    overflow-y: auto !important;
-    z-index: 100 !important;
-}
-
-/* 統一右側邊欄 */
-.right-sidebar {
-    width: 320px !important;
-    flex-shrink: 0 !important;
-    position: fixed !important;
-    top: 0 !important;
-    right: 0 !important;
-    height: 100vh !important;
-    background: rgba(10, 10, 32, 0.85) !important;
-    backdrop-filter: blur(16px) !important;
-    -webkit-backdrop-filter: blur(16px) !important;
-    border-left: 1px solid rgba(255, 255, 255, 0.06) !important;
-    padding: 24px 20px 30px !important;
-    overflow-y: auto !important;
-    z-index: 100 !important;
-}
-
-/* 手機版隱藏右側邊欄 */
-@media (max-width: 767px) {
-    .right-sidebar {
-        display: none !important;
-    }
-    .main-content {
-        margin-left: 0 !important;
-        padding: 12px 12px 80px !important;
-        max-width: 100% !important;
-    }
-    .sidebar {
-        display: none !important;
-    }
-    body {
-        background: #0a0a1a !important;
-    }
-}
-
-/* 電腦版顯示 */
 @media (min-width: 768px) {
-    .mobile-header {
-        display: none !important;
-    }
-    .bottom-nav {
-        display: none !important;
-    }
-}
-
-/* ============================================================
-   🔥 右側邊欄 - 統一內容
-   ============================================================ */
-
-.right-sidebar .section-title {
-    font-size: 0.85rem;
-    text-transform: none;
-    letter-spacing: 1px;
-    color: rgba(255, 255, 255, 0.35);
-    margin: 16px 0 6px 0;
-    padding: 8px 4px 6px 4px;
-    font-weight: 700;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-}
-
-.right-sidebar .section-title:first-of-type {
-    margin-top: 0;
-}
-
-.right-sidebar .sidebar-nav-item {
-    display: flex !important;
-    align-items: center;
-    gap: 14px;
-    color: rgba(255, 255, 255, 0.3);
-    text-decoration: none;
-    padding: 12px 16px;
-    border-radius: 12px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    position: relative;
-    cursor: pointer;
-}
-
-.right-sidebar .sidebar-nav-item:hover {
-    background: rgba(255, 255, 255, 0.04);
-    color: rgba(255, 255, 255, 0.6);
-}
-
-/* 🟡 金屬發亮金色圖標 */
-.right-sidebar .sidebar-nav-item i {
-    font-size: 1.2rem;
-    width: 24px;
-    text-align: center;
-    transition: all 0.3s ease;
-    flex-shrink: 0;
-    background: linear-gradient(135deg, #ffd700 0%, #fff4a0 15%, #ffb800 30%, #ffd700 45%, #ffe44d 60%, #ffb800 75%, #ffd700 90%, #fff4a0 100%);
-    background-size: 300% auto;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.4)) drop-shadow(0 0 20px rgba(255, 215, 0, 0.1));
-    animation: goldShineIcon 3s ease-in-out infinite;
-}
-
-.right-sidebar .sidebar-nav-item:hover i {
-    filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.7)) drop-shadow(0 0 50px rgba(255, 215, 0, 0.25));
-    animation-duration: 1.2s;
-}
-
-@keyframes goldShineIcon {
-    0% { background-position: 0% center; filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.3)) drop-shadow(0 0 20px rgba(255, 215, 0, 0.08)); }
-    50% { background-position: 100% center; filter: drop-shadow(0 0 16px rgba(255, 215, 0, 0.6)) drop-shadow(0 0 50px rgba(255, 215, 0, 0.2)); }
-    100% { background-position: 0% center; filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.3)) drop-shadow(0 0 20px rgba(255, 215, 0, 0.08)); }
-}
-
-/* ============================================================
-   🔥 統一頁面佈局 - 修正 main-content 靠右問題
-   ============================================================ */
-
-/* 移除所有頁面的背景圖 */
-body {
-    background: #0a0a1a !important;
-    background-image: none !important;
-    min-height: 100vh;
-    overflow-x: hidden;
-}
-
-/* 統一 app-container */
-.app-container {
-    max-width: 100% !important;
-    margin: 0 auto;
-    padding: 0 !important;
-    background: transparent !important;
-    display: flex !important;
-    min-height: 100vh;
-    position: relative;
-}
-
-/* 🔥 統一 main-content - 修正靠右問題 */
-.main-content {
-    flex: 1 !important;
-    padding: 24px 40px 30px 40px !important;
-    max-width: calc(100% - 640px) !important;  /* 減去左右側邊欄總寬度 */
-    width: 100% !important;
-    min-height: 100vh;
-    margin-left: 320px !important;  /* 等於左側邊欄寬度 */
-    margin-right: 0 !important;
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-    background: transparent !important;
-    box-sizing: border-box !important;
-}
-
-/* 內層內容置中 */
-.main-content > * {
-    max-width: 1300px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-/* 統一左側邊欄 */
-.sidebar {
-    width: 320px !important;
-    flex-shrink: 0 !important;
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    height: 100vh !important;
-    background: rgba(10, 10, 32, 0.85) !important;
-    backdrop-filter: blur(16px) !important;
-    -webkit-backdrop-filter: blur(16px) !important;
-    border-right: 1px solid rgba(255, 255, 255, 0.06) !important;
-    padding: 24px 20px 30px !important;
-    overflow-y: auto !important;
-    z-index: 100 !important;
-}
-
-/* 統一右側邊欄 */
-.right-sidebar {
-    width: 320px !important;
-    flex-shrink: 0 !important;
-    position: fixed !important;
-    top: 0 !important;
-    right: 0 !important;
-    height: 100vh !important;
-    background: rgba(10, 10, 32, 0.85) !important;
-    backdrop-filter: blur(16px) !important;
-    -webkit-backdrop-filter: blur(16px) !important;
-    border-left: 1px solid rgba(255, 255, 255, 0.06) !important;
-    padding: 24px 20px 30px !important;
-    overflow-y: auto !important;
-    z-index: 100 !important;
-}
-
-/* 手機版 */
-@media (max-width: 767px) {
-    .right-sidebar {
-        display: none !important;
-    }
-    .main-content {
-        max-width: 100% !important;
-        margin-left: 0 !important;
-        padding: 12px 12px 80px !important;
-    }
-    .sidebar {
-        display: none !important;
-    }
-    body {
-        background: #0a0a1a !important;
-    }
-    .app-container {
-        display: block !important;
-        padding: 12px 12px 80px !important;
-    }
-}
-
-/* 電腦版 */
-@media (min-width: 768px) {
-    .mobile-header {
-        display: none !important;
-    }
-    .bottom-nav {
-        display: none !important;
-    }
-}
-
-/* ============================================================
-   🔥 全局 Tab Bar（电脑版）- 修复版
-   ============================================================ */
-
-/* 电脑版显示 */
-@media (min-width: 768px) {
-    /* 覆盖 app-container 为列方向 */
-    .app-container {
-        display: flex !important;
-        flex-direction: column !important;
-        padding: 0 !important;
-        min-height: 100vh;
-        max-width: 1600px;
-        margin: 0 auto;
-        background: transparent !important;
-    }
-
-    /* Tab Bar 样式 */
+    /* ===== Tab Bar - fixed 固定 ===== */
     .top-tabbar {
         display: flex;
         align-items: center;
         justify-content: space-between;
         flex-shrink: 0;
-        padding: 0 24px;
-        height: 56px;
-        background: rgba(10, 12, 24, 0.92);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-        position: sticky;
-        top: 0;
+        padding: 0 28px;
+        height: 60px;
+        background:
+            repeating-linear-gradient(75deg,
+                transparent 0px,
+                transparent 3px,
+                rgba(255, 255, 255, 0.008) 3px,
+                rgba(255, 255, 255, 0.008) 4px),
+            repeating-linear-gradient(15deg,
+                transparent 0px,
+                transparent 5px,
+                rgba(255, 255, 255, 0.004) 5px,
+                rgba(255, 255, 255, 0.004) 6px),
+            linear-gradient(180deg, #060614 0%, #141434 50%, #060614 100%);
+        border-bottom: 1px solid rgba(60, 140, 255, 0.04);
+        box-shadow: 0 4px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.01);
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
         z-index: 1000;
-        box-shadow: 0 2px 30px rgba(0, 0, 0, 0.2);
         width: 100%;
         box-sizing: border-box;
+        margin: 0;
+        border-radius: 0;
+        overflow: hidden;
+    }
+
+    /* ===== 顶部蓝色细线 ===== */
+    .top-tabbar .top-line {
+        position: absolute;
+        top: 3px;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg,
+                transparent 0%,
+                rgba(60, 140, 255, 0.01) 10%,
+                rgba(60, 140, 255, 0.03) 30%,
+                rgba(60, 140, 255, 0.05) 50%,
+                rgba(60, 140, 255, 0.03) 70%,
+                rgba(60, 140, 255, 0.01) 90%,
+                transparent 100%);
+        pointer-events: none;
+        z-index: 2;
+    }
+
+    /* ===== 中间蓝色细线 ===== */
+    .top-tabbar .mid-line {
+        position: absolute;
+        top: 50%;
+        left: 15%;
+        right: 15%;
+        height: 1px;
+        background: linear-gradient(90deg,
+                transparent 0%,
+                rgba(60, 140, 255, 0.005) 30%,
+                rgba(60, 140, 255, 0.015) 50%,
+                rgba(60, 140, 255, 0.005) 70%,
+                transparent 100%);
+        pointer-events: none;
+        z-index: 2;
+    }
+
+    /* ===== 底部蓝色细线 ===== */
+    .top-tabbar .bottom-line {
+        position: absolute;
+        bottom: 3px;
+        left: 5%;
+        right: 5%;
+        height: 1px;
+        background: linear-gradient(90deg,
+                transparent 0%,
+                rgba(60, 140, 255, 0.01) 20%,
+                rgba(60, 140, 255, 0.03) 50%,
+                rgba(60, 140, 255, 0.01) 80%,
+                transparent 100%);
+        pointer-events: none;
+        z-index: 2;
+    }
+
+    /* ===== 垂直细线 ===== */
+    .top-tabbar .v-line {
+        position: absolute;
+        top: 6px;
+        bottom: 6px;
+        width: 1px;
+        background: rgba(60, 140, 255, 0.015);
+        pointer-events: none;
+        z-index: 2;
+    }
+
+    /* ===== 蓝色光点 ===== */
+    .top-tabbar .dot {
+        position: absolute;
+        width: 3px;
+        height: 3px;
+        border-radius: 50%;
+        background: rgba(60, 140, 255, 0.04);
+        pointer-events: none;
+        z-index: 2;
+    }
+
+    /* ===== 静态拉丝反光条纹 ===== */
+    .top-tabbar::before {
+        content: '';
+        position: absolute;
+        top: -30%;
+        left: -5%;
+        width: 35%;
+        height: 160%;
+        background: linear-gradient(75deg,
+                transparent 40%,
+                rgba(255, 255, 255, 0.005) 44%,
+                rgba(255, 255, 255, 0.015) 47%,
+                rgba(255, 255, 255, 0.005) 50%,
+                transparent 54%);
+        transform: rotate(12deg);
+        pointer-events: none;
+        z-index: 1;
     }
 
     .top-tabbar .tab-logo {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
         flex-shrink: 0;
+        z-index: 3;
     }
 
     .top-tabbar .tab-logo canvas {
@@ -3051,14 +2549,24 @@ body {
     }
 
     .top-tabbar .tab-logo .brand {
-        font-size: 15px;
+        font-size: 16px;
         font-weight: 800;
         letter-spacing: 1px;
-        background: linear-gradient(135deg, #00b4ff, #ffd700);
+        color: rgba(255, 255, 255, 0.75) !important;
+        z-index: 3;
+    }
+
+    .top-tabbar .tab-logo .brand span {
+        background: linear-gradient(135deg, #d0ddf0, #ffffff, #d0ddf0);
+        background-size: 200% auto;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        background-clip: text;
-        white-space: nowrap;
+        animation: shimmerText 3s ease-in-out infinite;
+    }
+
+    @keyframes shimmerText {
+        0% { background-position: 0% center; }
+        100% { background-position: 200% center; }
     }
 
     .top-tabbar .tab-items {
@@ -3071,6 +2579,7 @@ body {
         height: 100%;
         scrollbar-width: none;
         padding: 0 12px;
+        z-index: 3;
     }
 
     .top-tabbar .tab-items::-webkit-scrollbar {
@@ -3080,15 +2589,15 @@ body {
     .top-tabbar .tab-item {
         display: flex;
         align-items: center;
-        gap: 6px;
-        padding: 0 14px;
+        gap: 8px;
+        padding: 6px 18px;
         height: 36px;
-        border-radius: 6px;
+        border-radius: 8px;
         font-size: 13px;
         font-weight: 500;
-        color: rgba(255, 255, 255, 0.35);
+        color: rgba(255, 255, 255, 0.50) !important;
         cursor: pointer;
-        transition: all 0.25s ease;
+        transition: all 0.3s ease;
         white-space: nowrap;
         flex-shrink: 0;
         border: 1px solid transparent;
@@ -3099,28 +2608,24 @@ body {
 
     .top-tabbar .tab-item i {
         font-size: 14px;
-        color: rgba(255, 255, 255, 0.15);
-        transition: 0.25s;
+        color: rgba(255, 255, 255, 0.25) !important;
+        transition: 0.3s;
     }
 
     .top-tabbar .tab-item:hover {
-        color: rgba(255, 255, 255, 0.6);
-        background: rgba(255, 255, 255, 0.03);
-    }
-
-    .top-tabbar .tab-item:hover i {
-        color: rgba(255, 255, 255, 0.3);
+        color: rgba(255, 255, 255, 0.80) !important;
+        border-color: rgba(60, 140, 255, 0.015);
     }
 
     .top-tabbar .tab-item.active {
-        color: #4a7cff;
-        background: rgba(74, 124, 255, 0.06);
-        border: 1px solid rgba(74, 124, 255, 0.2);
-        box-shadow: 0 0 20px rgba(74, 124, 255, 0.06);
+        color: #ffffff !important;
+        background: rgba(60, 140, 255, 0.015);
+        border-color: rgba(60, 140, 255, 0.025);
+        box-shadow: inset 0 1px 0 rgba(60, 140, 255, 0.015);
     }
 
     .top-tabbar .tab-item.active i {
-        color: #4a7cff;
+        color: rgba(160, 200, 255, 0.6) !important;
     }
 
     .top-tabbar .tab-right {
@@ -3131,9 +2636,9 @@ body {
         padding-left: 12px;
         border-left: 1px solid rgba(255, 255, 255, 0.06);
         height: 100%;
+        z-index: 3;
     }
 
-    /* 语言下拉 */
     .tab-lang-dropdown {
         position: relative;
         display: inline-block;
@@ -3143,10 +2648,10 @@ body {
         display: flex;
         align-items: center;
         gap: 6px;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        color: rgba(255, 255, 255, 0.5);
-        padding: 4px 12px;
+        background: transparent;
+        border: 1px solid rgba(60, 140, 255, 0.02);
+        color: rgba(255, 255, 255, 0.35) !important;
+        padding: 4px 14px;
         border-radius: 30px;
         font-size: 11px;
         font-weight: 600;
@@ -3156,8 +2661,8 @@ body {
     }
 
     .tab-lang-dropdown .lang-toggle:hover {
-        border-color: rgba(74, 124, 255, 0.2);
-        color: #fff;
+        border-color: rgba(60, 140, 255, 0.04);
+        color: rgba(255, 255, 255, 0.60) !important;
     }
 
     .tab-lang-dropdown .lang-toggle i {
@@ -3209,7 +2714,6 @@ body {
         color: #4a7cff;
     }
 
-    /* Auth 按钮 */
     .tab-auth-buttons {
         display: flex;
         align-items: center;
@@ -3220,43 +2724,64 @@ body {
         font-family: 'Inter', sans-serif;
         font-weight: 600;
         font-size: 12px;
-        padding: 4px 16px;
+        padding: 6px 20px;
         border-radius: 30px;
         text-decoration: none;
         transition: all 0.3s ease;
         white-space: nowrap;
+        border: 1px solid rgba(60, 140, 255, 0.03);
         background: transparent;
-        border: 1px solid rgba(74, 124, 255, 0.3);
-        color: #4a7cff;
+        color: rgba(180, 215, 255, 0.55) !important;
     }
 
     .tab-auth-buttons .login-btn:hover {
-        background: rgba(74, 124, 255, 0.08);
-        border-color: rgba(74, 124, 255, 0.6);
-        transform: translateY(-1px);
+        background: rgba(60, 140, 255, 0.02);
+        color: rgba(200, 225, 255, 0.80) !important;
     }
 
     .tab-auth-buttons .register-btn {
         font-family: 'Inter', sans-serif;
         font-weight: 600;
         font-size: 12px;
-        padding: 4px 16px;
+        padding: 6px 20px;
         border-radius: 30px;
         text-decoration: none;
         transition: all 0.3s ease;
         white-space: nowrap;
-        background: linear-gradient(135deg, #4a7cff, #2f3e7a);
-        border: none;
-        color: #fff;
-        box-shadow: 0 2px 12px rgba(74, 124, 255, 0.2);
+        background:
+            repeating-linear-gradient(75deg,
+                transparent 0px,
+                transparent 3px,
+                rgba(255, 255, 255, 0.015) 3px,
+                rgba(255, 255, 255, 0.015) 4px),
+            repeating-linear-gradient(15deg,
+                transparent 0px,
+                transparent 5px,
+                rgba(255, 255, 255, 0.01) 5px,
+                rgba(255, 255, 255, 0.01) 6px),
+            linear-gradient(145deg, #121230, #0a0a1a);
+        border: 1px solid rgba(60, 140, 255, 0.03);
+        color: rgba(180, 215, 255, 0.55) !important;
+        box-shadow: inset 0 1px 0 rgba(60, 140, 255, 0.02);
     }
 
     .tab-auth-buttons .register-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 25px rgba(74, 124, 255, 0.3);
+        background:
+            repeating-linear-gradient(75deg,
+                transparent 0px,
+                transparent 3px,
+                rgba(255, 255, 255, 0.025) 3px,
+                rgba(255, 255, 255, 0.025) 4px),
+            repeating-linear-gradient(15deg,
+                transparent 0px,
+                transparent 5px,
+                rgba(255, 255, 255, 0.015) 5px,
+                rgba(255, 255, 255, 0.015) 6px),
+            linear-gradient(145deg, #1a1a40, #0d0d28);
+        border-color: rgba(60, 140, 255, 0.05);
+        color: rgba(200, 225, 255, 0.80) !important;
     }
 
-    /* 用户头像（登录后） */
     .tab-user-avatar {
         display: none;
         align-items: center;
@@ -3291,56 +2816,15 @@ body {
         border-color: rgba(74, 124, 255, 0.2);
     }
 
-    /* 手机版隐藏 .mobile-header */
+    /* 手机版隐藏 */
     .mobile-header {
         display: none !important;
     }
-
-    /* 移除侧边栏和右侧边栏的圆角，无缝连接 */
-    .sidebar {
-        border-radius: 0 !important;
-        position: relative !important;  /* 覆盖 fixed */
-        top: auto !important;
-        left: auto !important;
-        height: auto !important;
-        min-height: 400px;
-        width: 220px !important;
-        flex-shrink: 0 !important;
-        margin: 0 !important;
-        box-shadow: 0 4px 30px rgba(0,0,0,0.2);
-        padding: 20px 16px 24px !important;
-    }
-
-    .right-sidebar {
-        border-radius: 0 !important;
-        position: sticky !important;
-        top: 76px !important;
-        height: auto !important;
-        max-height: calc(100vh - 100px);
-        width: 200px !important;
-        padding: 16px 12px !important;
-    }
-
-    /* 调整 main-content */
-    .main-content {
-        padding: 0 !important;
-        flex: 1 !important;
-        margin: 0 !important;
-        max-width: 100% !important;
-        min-height: auto !important;
-    }
-
-    /* 新增：三栏布局容器 */
-    .app-layout {
-        display: flex !important;
-        flex: 1;
-        padding: 16px 24px 30px;
-        gap: 20px;
-        min-height: 0;
+    .bottom-nav {
+        display: none !important;
     }
 }
 
-/* 手机版：Tab Bar 隐藏 */
 @media (max-width: 767px) {
     .top-tabbar {
         display: none !important;
