@@ -406,146 +406,220 @@
         }
 
         /* ============================================================
-           霓虹蓝光 · 滚动公告栏
-           ============================================================ */
-        .announcement-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding: 12px 18px;
-            border-radius: 16px;
-            background: rgba(10, 14, 26, 0.6);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(0, 180, 255, 0.2);
-            box-shadow: 0 0 30px rgba(0, 180, 255, 0.04);
-            overflow: hidden;
-            position: relative;
-            margin-bottom: 16px;
-        }
+   🔥 极光呼吸 · 通告条（置頂，無縫連接左右 sidebar）
+   ============================================================ */
 
-        .announcement-wrapper .horn-icon {
-            flex-shrink: 0;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: rgba(0, 180, 255, 0.08);
-            border: 1px solid rgba(0, 180, 255, 0.15);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            color: #4dc8ff;
-            z-index: 2;
-        }
-        .announcement-wrapper .horn-icon i {
-            filter: drop-shadow(0 0 20px rgba(0, 180, 255, 0.2));
-        }
+/* 電腦版 */
+@media (min-width: 768px) {
+    .announcement-style-1 {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 12px 24px;
+        border-radius: 0;
+        background: rgba(10, 14, 26, 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: none;
+        border-bottom: 1px solid rgba(0, 180, 255, 0.08);
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+        margin: 0 !important;
+        margin-bottom: 0 !important;
+        width: 100%;
+        position: sticky;
+        top: 0;
+        z-index: 49;
+        transition: all 0.3s ease;
+    }
 
-        .announcement-wrapper .scroll-container {
-            flex: 1;
-            min-width: 0;
-            overflow: hidden;
-            position: relative;
-            z-index: 2;
-        }
+    .announcement-style-1::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, rgba(0, 180, 255, 0.6), rgba(0, 200, 255, 0.8), rgba(0, 180, 255, 0.6), transparent);
+        border-radius: 0;
+        animation: breatheLine 2.8s ease-in-out infinite;
+    }
 
-        .announcement-wrapper .scroll-track {
-            display: flex;
-            white-space: nowrap;
-            animation: scrollLeft 7s linear infinite;
-        }
+    .announcement-style-1 .horn-icon {
+        flex-shrink: 0;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(0, 180, 255, 0.08);
+        border: 1px solid rgba(0, 180, 255, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        color: #4dc8ff;
+        filter: drop-shadow(0 0 20px rgba(0, 180, 255, 0.15));
+    }
 
-        .announcement-wrapper .scroll-track .text-item {
-            font-size: 0.92rem;
-            color: rgba(255, 255, 255, 0.85);
-            padding-right: 60px;
-            flex-shrink: 0;
-        }
+    .announcement-style-1 .scroll-container {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        position: relative;
+    }
 
-        .announcement-wrapper .scroll-track .text-item .time-tag {
-            font-size: 0.6rem;
-            color: rgba(255, 255, 255, 0.2);
-            margin-left: 10px;
-        }
+    .announcement-style-1 .scroll-track {
+        display: flex;
+        white-space: nowrap;
+        animation: scrollLeft 14s linear infinite;
+    }
 
-        .announcement-wrapper:hover .scroll-track {
-            animation-play-state: paused;
-        }
+    .announcement-style-1 .scroll-track .text-item {
+        font-size: 0.92rem;
+        color: rgba(255, 255, 255, 0.85);
+        padding-right: 60px;
+        flex-shrink: 0;
+    }
 
-        .announcement-wrapper .badge-new {
-            flex-shrink: 0;
-            background: linear-gradient(135deg, #ff6b6b, #e33545);
-            color: #fff;
-            font-size: 0.55rem;
-            font-weight: 700;
-            padding: 2px 12px;
-            border-radius: 30px;
-            letter-spacing: 0.5px;
-            animation: pulseBadge 1.5s ease-in-out infinite;
-            z-index: 2;
-        }
-        @keyframes pulseBadge {
-            0% { opacity: 0.7; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.05); }
-            100% { opacity: 0.7; transform: scale(1); }
-        }
+    .announcement-style-1 .scroll-track .text-item .time-tag {
+        font-size: 0.6rem;
+        color: rgba(255, 255, 255, 0.2);
+        margin-left: 10px;
+    }
 
-        .announcement-wrapper .arrow-link {
-            flex-shrink: 0;
-            color: rgba(255, 255, 255, 0.15);
-            font-size: 0.8rem;
-            transition: 0.3s;
-            cursor: pointer;
-            z-index: 2;
-            text-decoration: none;
-        }
-        .announcement-wrapper .arrow-link:hover {
-            color: #4dc8ff;
-        }
+    .announcement-style-1:hover .scroll-track {
+        animation-play-state: paused;
+    }
 
-        @keyframes scrollLeft {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
+    .announcement-style-1 .badge-new {
+        flex-shrink: 0;
+        background: linear-gradient(135deg, #4dc8ff, #0088cc);
+        color: #fff;
+        font-size: 0.55rem;
+        font-weight: 700;
+        padding: 4px 14px;
+        border-radius: 30px;
+        letter-spacing: 0.5px;
+        box-shadow: 0 0 25px rgba(0, 180, 255, 0.2);
+        animation: pulseBadge 1.8s ease-in-out infinite;
+    }
 
-        .announcement-wrapper::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, rgba(0, 180, 255, 0.3), rgba(0, 200, 255, 0.5), rgba(0, 180, 255, 0.3), transparent);
-            border-radius: 16px 16px 0 0;
-            animation: shimmerLine 3s ease-in-out infinite;
-            z-index: 1;
-        }
-        @keyframes shimmerLine {
-            0% { opacity: 0.3; }
-            50% { opacity: 1; }
-            100% { opacity: 0.3; }
-        }
+    .announcement-style-1.hidden {
+        display: none !important;
+    }
+}
 
-        @media (max-width: 600px) {
-            .announcement-wrapper {
-                padding: 10px 12px;
-                gap: 10px;
-                margin-bottom: 12px;
-            }
-            .announcement-wrapper .horn-icon {
-                width: 32px;
-                height: 32px;
-                font-size: 0.9rem;
-            }
-            .announcement-wrapper .scroll-track .text-item {
-                font-size: 0.78rem;
-                padding-right: 40px;
-            }
-            .announcement-wrapper .badge-new {
-                font-size: 0.45rem;
-                padding: 1px 10px;
-            }
-        }
+/* 手機版 */
+@media (max-width: 767px) {
+    .announcement-style-1 {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 0;
+        background: rgba(10, 14, 26, 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: none;
+        border-bottom: 1px solid rgba(0, 180, 255, 0.06);
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+        margin: 0 !important;
+        margin-bottom: 0 !important;
+        width: 100%;
+        position: sticky;
+        top: 0;
+        z-index: 49;
+        transition: all 0.3s ease;
+    }
+
+    .announcement-style-1::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, rgba(0, 180, 255, 0.6), rgba(0, 200, 255, 0.8), rgba(0, 180, 255, 0.6), transparent);
+        border-radius: 0;
+        animation: breatheLine 2.8s ease-in-out infinite;
+    }
+
+    .announcement-style-1 .horn-icon {
+        flex-shrink: 0;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: rgba(0, 180, 255, 0.08);
+        border: 1px solid rgba(0, 180, 255, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        color: #4dc8ff;
+    }
+
+    .announcement-style-1 .scroll-container {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .announcement-style-1 .scroll-track {
+        display: flex;
+        white-space: nowrap;
+        animation: scrollLeft 14s linear infinite;
+    }
+
+    .announcement-style-1 .scroll-track .text-item {
+        font-size: 0.78rem;
+        color: rgba(255, 255, 255, 0.85);
+        padding-right: 40px;
+        flex-shrink: 0;
+    }
+
+    .announcement-style-1 .scroll-track .text-item .time-tag {
+        font-size: 0.6rem;
+        color: rgba(255, 255, 255, 0.2);
+        margin-left: 10px;
+    }
+
+    .announcement-style-1:hover .scroll-track {
+        animation-play-state: paused;
+    }
+
+    .announcement-style-1 .badge-new {
+        flex-shrink: 0;
+        background: linear-gradient(135deg, #4dc8ff, #0088cc);
+        color: #fff;
+        font-size: 0.45rem;
+        font-weight: 700;
+        padding: 2px 10px;
+        border-radius: 30px;
+        letter-spacing: 0.5px;
+        box-shadow: 0 0 25px rgba(0, 180, 255, 0.2);
+        animation: pulseBadge 1.8s ease-in-out infinite;
+    }
+
+    .announcement-style-1.hidden {
+        display: none !important;
+    }
+}
+
+@keyframes breatheLine {
+    0% { opacity: 0.3; }
+    50% { opacity: 1; }
+    100% { opacity: 0.3; }
+}
+
+@keyframes pulseBadge {
+    0% { opacity: 0.7; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.05); }
+    100% { opacity: 0.7; transform: scale(1); }
+}
+
+@keyframes scrollLeft {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
 
         /* ============================================================
            Live 徽章 - 脉冲光晕 (样式2)
@@ -941,6 +1015,17 @@
 
         <div class="mobile-header"></div>
 
+<!-- ===== 极光呼吸 · 通告条 ===== -->
+<div id="announcementContainer" class="announcement-style-1 hidden">
+    <div class="horn-icon"><i class="fas fa-bullhorn"></i></div>
+    <div class="scroll-container">
+        <div class="scroll-track" id="announcementTrack">
+            <!-- 由 JavaScript 动态渲染 -->
+        </div>
+    </div>
+    <span class="badge-new" id="announcementBadge">HOT</span>
+</div>
+
         <!-- ===== 轮播图 ===== -->
         <div class="carousel-container" id="carouselContainer">
             <div class="carousel-track" id="carouselTrack">
@@ -955,17 +1040,6 @@
                 <div class="carousel-progress-bar" id="carouselProgressBar"></div>
             </div>
         </div>
-
-        <!-- ===== 极光呼吸 · 通告条 ===== -->
-<div id="announcementContainer" class="announcement-style-1 hidden">
-    <div class="horn-icon"><i class="fas fa-bullhorn"></i></div>
-    <div class="scroll-container">
-        <div class="scroll-track" id="announcementTrack">
-            <!-- 由 JavaScript 动态渲染 -->
-        </div>
-    </div>
-    <span class="badge-new" id="announcementBadge">HOT</span>
-</div>
 
         <!-- ===== 欢迎卡片 ===== -->
         <div class="card-welcome">
