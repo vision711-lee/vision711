@@ -5,677 +5,992 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>VISION711 · Home</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
     <style>
         /* ============================================================
-           🔥 新增：电脑版顶部 Tab Bar（Logo 左 · 选项中 · 右功能区）
+           手机版：顶部循环横幅
            ============================================================ */
+        .top-banner-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 9999;
+            height: 0;
+            overflow: visible;
+            pointer-events: none;
+        }
+
+        .top-banner {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%) translateY(-120%);
+            width: calc(100% - 24px);
+            max-width: 480px;
+            transition: transform 0.5s cubic-bezier(0.34, 1.2, 0.64, 1);
+            pointer-events: auto;
+            position: relative;
+        }
+
+        .top-banner::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(0, 180, 255, 0.3), rgba(0, 200, 255, 0.5), rgba(0, 180, 255, 0.3), transparent);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .top-banner .banner-icon {
+            flex-shrink: 0;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(0, 180, 255, 0.08);
+            border: 1px solid rgba(0, 180, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #4dc8ff;
+        }
+
+        .top-banner .banner-text {
+            flex: 1;
+            min-width: 0;
+        }
+        .top-banner .banner-text .title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #4dc8ff;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        .top-banner .banner-text .desc {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.35);
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .top-banner .banner-close {
+            flex-shrink: 0;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.15);
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .top-banner .banner-close:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .top-banner.show {
+            transform: translateX(-50%) translateY(16px);
+        }
+
+        @media (max-width: 480px) {
+            .top-banner {
+                padding: 14px 16px;
+                width: calc(100% - 16px);
+                border-radius: 16px;
+            }
+            .top-banner .banner-text .title { font-size: 0.75rem; }
+            .top-banner .banner-text .desc { font-size: 0.6rem; }
+            .top-banner .banner-icon { width: 36px; height: 36px; font-size: 1rem; }
+            .top-banner .banner-close { width: 26px; height: 26px; font-size: 0.6rem; }
+        }
+
+        /* 手机版显示横幅，电脑版隐藏 */
         @media (min-width: 768px) {
-
-            /* 覆盖原有 .app-container 的 padding-top */
-            .app-container {
-                padding-top: 0 !important;
-            }
-
-            /* Tab Bar 容器 - 固定顶部 */
-            .top-tabbar {
-                position: sticky;
-                top: 0;
-                z-index: 100;
-                background: rgba(10, 12, 24, 0.92);
-                backdrop-filter: blur(16px);
-                -webkit-backdrop-filter: blur(16px);
-                border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-                padding: 0 24px;
-                height: 60px;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                box-shadow: 0 2px 30px rgba(0, 0, 0, 0.3);
-                flex-shrink: 0;
-            }
-
-            /* 左侧 Logo */
-            .top-tabbar .logo-mini {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                flex-shrink: 0;
-            }
-            .top-tabbar .logo-mini canvas {
-                height: 38px;
-                width: auto;
-                display: block;
-                border-radius: 4px;
-            }
-            .top-tabbar .logo-mini .brand {
-                font-size: 16px;
-                font-weight: 800;
-                letter-spacing: 1px;
-                background: linear-gradient(135deg, #00b4ff, #ffd700);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
-                white-space: nowrap;
-            }
-
-            /* 中间 Tab 选项 - 居中 */
-            #tabItemsWrapper {
-                display: flex !important;
-                align-items: center !important;
-                gap: 4px !important;
-                height: 100% !important;
-                flex: 1 !important;
-                justify-content: center !important;
-                overflow-x: auto !important;
-                scrollbar-width: none !important;
-                -ms-overflow-style: none !important;
-                padding: 0 12px;
-            }
-            #tabItemsWrapper::-webkit-scrollbar {
-                display: none !important;
-            }
-
-            .top-tabbar .tab-item {
-                display: flex;
-                align-items: center;
-                gap: 6px;
-                padding: 0 16px;
-                height: 38px;
-                border-radius: 8px;
-                font-size: 13px;
-                font-weight: 500;
-                color: rgba(255, 255, 255, 0.35);
-                cursor: pointer;
-                transition: all 0.25s ease;
-                white-space: nowrap;
-                flex-shrink: 0;
-                border: 1px solid transparent;
-                background: transparent;
-                font-family: 'Inter', sans-serif;
-                text-decoration: none;
-            }
-            .top-tabbar .tab-item i {
-                font-size: 14px;
-                color: rgba(255, 255, 255, 0.15);
-                transition: 0.25s;
-            }
-            .top-tabbar .tab-item:hover {
-                color: rgba(255, 255, 255, 0.6);
-                background: rgba(255, 255, 255, 0.03);
-            }
-            .top-tabbar .tab-item:hover i {
-                color: rgba(255, 255, 255, 0.3);
-            }
-            .top-tabbar .tab-item.active {
-                color: #4a7cff;
-                background: rgba(74, 124, 255, 0.06);
-                border: 1px solid rgba(74, 124, 255, 0.2);
-                box-shadow: 0 0 20px rgba(74, 124, 255, 0.06);
-            }
-            .top-tabbar .tab-item.active i {
-                color: #4a7cff;
-            }
-
-            /* 右侧功能区 */
-            .top-tabbar .right-section {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                flex-shrink: 0;
-                padding-left: 12px;
-                border-left: 1px solid rgba(255, 255, 255, 0.06);
-                height: 100%;
-            }
-
-            /* 语言下拉 */
-            .lang-dropdown {
-                position: relative;
-                display: inline-block;
-            }
-            .lang-dropdown .lang-toggle {
-                display: flex;
-                align-items: center;
-                gap: 6px;
-                background: rgba(255, 255, 255, 0.03);
-                border: 1px solid rgba(255, 255, 255, 0.06);
-                color: rgba(255, 255, 255, 0.5);
-                padding: 6px 14px 6px 12px;
-                border-radius: 30px;
-                font-size: 12px;
-                font-weight: 600;
-                cursor: pointer;
-                transition: 0.3s;
-                font-family: 'Inter', sans-serif;
-            }
-            .lang-dropdown .lang-toggle:hover {
-                border-color: rgba(74, 124, 255, 0.2);
-                color: #fff;
-            }
-            .lang-dropdown .lang-toggle i {
-                font-size: 11px;
-            }
-            .lang-dropdown .lang-menu {
-                display: none;
-                position: absolute;
-                top: calc(100% + 6px);
-                right: 0;
-                background: rgba(16, 20, 34, 0.98);
-                backdrop-filter: blur(16px);
-                border: 1px solid rgba(255, 255, 255, 0.06);
-                border-radius: 12px;
-                min-width: 120px;
-                padding: 4px 0;
-                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
-                z-index: 200;
-            }
-            .lang-dropdown .lang-menu.open {
-                display: block;
-            }
-            .lang-dropdown .lang-menu button {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                width: 100%;
-                padding: 8px 16px;
-                background: transparent;
-                border: none;
-                color: rgba(255, 255, 255, 0.5);
-                font-size: 13px;
-                font-weight: 500;
-                cursor: pointer;
-                transition: 0.2s;
-                font-family: 'Inter', sans-serif;
-                text-align: left;
-            }
-            .lang-dropdown .lang-menu button:hover {
-                background: rgba(255, 255, 255, 0.04);
-                color: #fff;
-            }
-            .lang-dropdown .lang-menu button.active {
-                color: #4a7cff;
-            }
-
-            /* Auth 按钮 */
-            .auth-buttons {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-            }
-            .auth-buttons .login-btn {
-                font-family: 'Inter', sans-serif;
-                font-weight: 600;
-                font-size: 13px;
-                padding: 6px 20px;
-                border-radius: 30px;
-                text-decoration: none;
-                transition: all 0.3s ease;
-                white-space: nowrap;
-                background: transparent;
-                border: 1px solid rgba(74, 124, 255, 0.3);
-                color: #4a7cff;
-            }
-            .auth-buttons .login-btn:hover {
-                background: rgba(74, 124, 255, 0.08);
-                border-color: rgba(74, 124, 255, 0.6);
-                transform: translateY(-1px);
-            }
-            .auth-buttons .register-btn {
-                font-family: 'Inter', sans-serif;
-                font-weight: 600;
-                font-size: 13px;
-                padding: 6px 20px;
-                border-radius: 30px;
-                text-decoration: none;
-                transition: all 0.3s ease;
-                white-space: nowrap;
-                background: linear-gradient(135deg, #4a7cff, #2f3e7a);
-                border: none;
-                color: #fff;
-                box-shadow: 0 2px 16px rgba(74, 124, 255, 0.25);
-            }
-            .auth-buttons .register-btn:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 6px 30px rgba(74, 124, 255, 0.35);
-            }
-
-            /* 用户头像（登录后） */
-            .user-avatar-mini {
-                display: none;
-                align-items: center;
-                gap: 8px;
-                background: rgba(255, 255, 255, 0.03);
-                border: 1px solid rgba(255, 255, 255, 0.06);
-                padding: 4px 12px 4px 6px;
-                border-radius: 30px;
-                cursor: pointer;
-                transition: 0.3s;
-            }
-            .user-avatar-mini .avatar {
-                width: 30px;
-                height: 30px;
-                border-radius: 50%;
-                background: linear-gradient(135deg, #2f3e7a, #4a7cff);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: #fff;
-                font-size: 13px;
-            }
-            .user-avatar-mini .uname {
-                font-size: 13px;
-                font-weight: 500;
-                color: rgba(255, 255, 255, 0.7);
-            }
-            .user-avatar-mini:hover {
-                border-color: rgba(74, 124, 255, 0.2);
-            }
-
-            /* 右侧边栏保持原样，但调整间距 */
-            .right-sidebar {
-                margin-top: 0;
-            }
-
-            /* 移除原有 .mobile-header 在电脑版的显示 */
-            .mobile-header {
-                display: none !important;
-            }
-
-            /* 确保 main-content 布局正常 */
-            .app-container {
-                display: flex !important;
-                padding: 0 !important;
-                min-height: 100vh;
-                max-width: 1600px;
-                margin: 0 auto;
-                background: transparent !important;
-                flex-direction: column;
-            }
-
-            /* 调整主内容区：侧边栏 + 主内容 + 右侧边栏 */
-            .app-layout {
-                display: flex;
-                flex: 1;
-                padding: 16px 24px 30px;
-                gap: 20px;
-                min-height: calc(100vh - 60px);
-            }
-
-            .main-content {
-                flex: 1;
-                min-width: 0;
-                padding: 0 !important;
-                margin: 0 !important;
-                max-width: 100% !important;
-                display: block !important;
-            }
-
-            /* 左侧边栏 - 保留原有样式，确保显示 */
-            .sidebar {
-                display: flex !important;
-                width: 220px;
-                flex-shrink: 0;
-                position: relative !important;
-                top: auto !important;
-                left: auto !important;
-                height: auto !important;
-                min-height: 400px;
-                background: rgba(10, 10, 32, 0.75) !important;
-                backdrop-filter: blur(16px) !important;
-                -webkit-backdrop-filter: blur(16px) !important;
-                border-right: 1px solid rgba(255, 255, 255, 0.06) !important;
-                border-radius: 16px;
-                padding: 20px 16px 24px !important;
-                overflow-y: auto !important;
-                z-index: 1 !important;
-                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
-                scrollbar-width: thin;
-            }
-            .sidebar::-webkit-scrollbar {
-                width: 3px;
-            }
-            .sidebar::-webkit-scrollbar-thumb {
-                background: rgba(255, 255, 255, 0.06);
-                border-radius: 4px;
-            }
-            .sidebar .sidebar-logo-wrapper {
-                margin-bottom: 16px;
-                padding-bottom: 12px;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-            }
-            .sidebar .sidebar-logo-wrapper .logo-metal canvas {
-                height: 60px !important;
-                width: auto !important;
-                display: block !important;
-                margin: 0 auto;
-                border-radius: 6px;
-            }
-            .sidebar .sidebar-slogan {
-                font-family: 'Montserrat', sans-serif;
-                font-weight: 800;
-                font-style: italic;
-                font-size: 0.75rem;
-                letter-spacing: 2px;
-                text-align: center;
-                background: linear-gradient(120deg, #a0e9ff 0%, #4db8ff 20%, #ffffff 45%, #6fcbff 70%, #a0e9ff 100%);
-                background-size: 300% auto;
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
-                animation: shimmerGlacier 5s linear infinite;
-                display: block;
-                margin-top: 4px;
-            }
-            @keyframes shimmerGlacier {
-                0% {
-                    background-position: 0% center;
-                }
-                100% {
-                    background-position: 300% center;
-                }
-            }
-            .sidebar .lang-switcher {
-                display: flex;
-                justify-content: center;
-                gap: 4px;
-                margin-bottom: 12px;
-            }
-            .sidebar .lang-switcher .lang-btn {
-                background: transparent;
-                border: 1px solid rgba(255, 255, 255, 0.05);
-                color: rgba(255, 255, 255, 0.15);
-                padding: 2px 14px;
-                border-radius: 20px;
-                font-size: 0.55rem;
-                cursor: pointer;
-                transition: 0.3s;
-                font-weight: 600;
-            }
-            .sidebar .lang-switcher .lang-btn.active {
-                border-color: rgba(0, 180, 255, 0.2);
-                color: rgba(255, 255, 255, 0.4);
-            }
-            .sidebar .lang-switcher .lang-btn:hover {
-                border-color: rgba(0, 180, 255, 0.3);
-                color: rgba(255, 255, 255, 0.4);
-            }
-            .sidebar .sidebar-nav {
-                display: flex !important;
-                flex-direction: column;
-                gap: 2px;
-                flex: 1;
-            }
-            .sidebar .sidebar-nav .nav-item {
-                display: flex !important;
-                align-items: center;
-                gap: 12px;
-                color: rgba(255, 255, 255, 0.3);
-                text-decoration: none;
-                padding: 10px 14px;
-                border-radius: 10px;
-                font-size: 0.85rem;
-                font-weight: 500;
-                transition: all 0.3s ease;
-                position: relative;
-                flex-direction: row !important;
-            }
-            .sidebar .sidebar-nav .nav-item i {
-                font-size: 1.1rem;
-                color: rgba(255, 255, 255, 0.2);
-                width: 20px;
-                text-align: center;
-                transition: 0.3s;
-            }
-            .sidebar .sidebar-nav .nav-item:hover {
-                background: rgba(255, 255, 255, 0.04);
-                color: rgba(255, 255, 255, 0.6);
-            }
-            .sidebar .sidebar-nav .nav-item:hover i {
-                color: rgba(0, 180, 255, 0.5);
-            }
-            .sidebar .sidebar-nav .nav-item.active {
-                background: rgba(0, 180, 255, 0.08);
-                border: 1px solid rgba(0, 180, 255, 0.08);
-                color: #fff;
-            }
-            .sidebar .sidebar-nav .nav-item.active i {
-                color: #00b4ff;
-            }
-            .sidebar .sidebar-nav .nav-item.active::before {
-                content: '';
-                position: absolute;
-                left: -1px;
-                top: 50%;
-                transform: translateY(-50%);
-                width: 3px;
-                height: 20px;
-                background: linear-gradient(180deg, #00b4ff, #ffd700);
-                border-radius: 0 3px 3px 0;
-                box-shadow: 0 0 20px rgba(0, 180, 255, 0.3);
-            }
-            .sidebar .sidebar-footer {
-                display: flex !important;
-                margin-top: auto;
-                padding-top: 12px;
-                border-top: 1px solid rgba(255, 255, 255, 0.04);
-                align-items: center;
-                gap: 10px;
-            }
-            .sidebar .sidebar-footer .user-avatar-metal {
-                width: 32px;
-                height: 32px;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 0.9rem;
-                background: repeating-linear-gradient(90deg, transparent 0px, transparent 2px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.03) 3px), linear-gradient(145deg, #0d0d30, #1a1a4a);
-                border: 1px solid rgba(0, 180, 255, 0.2);
-                color: #00b4ff;
-                flex-shrink: 0;
-            }
-            .sidebar .sidebar-footer .user-info .name {
-                font-size: 0.8rem;
-                color: rgba(255, 255, 255, 0.7);
-                font-weight: 600;
-            }
-            .sidebar .sidebar-footer .user-info .role {
-                font-size: 0.6rem;
-                color: rgba(255, 255, 255, 0.25);
-            }
-
-            /* 右侧边栏 */
-            .right-sidebar {
-                width: 220px;
-                flex-shrink: 0;
-                display: flex;
-                flex-direction: column;
-                gap: 2px;
-                background: rgba(10, 14, 26, 0.6);
-                backdrop-filter: blur(12px);
-                border-radius: 16px;
-                border: 1px solid rgba(255, 255, 255, 0.04);
-                padding: 16px 12px;
-                max-height: calc(100vh - 100px);
-                overflow-y: auto;
-                position: sticky;
-                top: 76px;
-                scrollbar-width: thin;
-            }
-            .right-sidebar::-webkit-scrollbar {
-                width: 3px;
-            }
-            .right-sidebar::-webkit-scrollbar-thumb {
-                background: rgba(255, 255, 255, 0.06);
-                border-radius: 4px;
-            }
-            .right-sidebar .section-title {
-                font-size: 10px;
-                text-transform: uppercase;
-                letter-spacing: 1.5px;
-                color: rgba(255, 255, 255, 0.12);
-                padding: 8px 4px 4px;
-                font-weight: 700;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-                margin-bottom: 2px;
-            }
-            .right-sidebar .section-title:first-of-type {
-                padding-top: 0;
-            }
-            .right-sidebar .sidebar-nav-item {
-                display: flex !important;
-                align-items: center;
-                gap: 10px;
-                color: rgba(255, 255, 255, 0.2);
-                text-decoration: none;
-                padding: 7px 10px;
-                border-radius: 8px;
-                font-size: 12px;
-                font-weight: 500;
-                transition: all 0.3s ease;
-                cursor: pointer;
-                font-family: 'Inter', sans-serif;
-            }
-            .right-sidebar .sidebar-nav-item i {
-                font-size: 13px;
-                width: 18px;
-                text-align: center;
-                flex-shrink: 0;
-                color: rgba(255, 215, 0, 0.2);
-            }
-            .right-sidebar .sidebar-nav-item:hover {
-                background: rgba(255, 255, 255, 0.04);
-                color: rgba(255, 255, 255, 0.4);
-            }
-            .right-sidebar .sidebar-nav-item:hover i {
-                color: rgba(255, 215, 0, 0.5);
-            }
-
-            /* 电脑版隐藏手机底部导航 */
-            .bottom-nav {
-                display: none !important;
-            }
-
-            /* 电脑版隐藏 GAMES 覆盖层 */
-            .games-overlay,
-            .games-menu {
+            .top-banner-wrapper {
                 display: none !important;
             }
         }
 
         /* ============================================================
-           手机版适配 - 保持原有样式
+           手机版布局
            ============================================================ */
         @media (max-width: 767px) {
-            /* 电脑版 Tab Bar 在手机隐藏 */
-            .top-tabbar {
-                display: none !important;
-            }
-            .app-layout {
-                display: block !important;
-                padding: 0 !important;
-            }
-            /* 手机版保持原有 .app-container 样式 */
-            .app-container {
-                padding-top: 0 !important;
-            }
-            /* 手机版显示 .mobile-header */
-            .mobile-header {
-                display: flex !important;
-            }
-            /* 手机版隐藏左侧边栏 */
             .sidebar {
                 display: none !important;
             }
-            /* 手机版显示底部导航 */
-            .bottom-nav {
-                display: flex !important;
+            .app-container {
+                display: block !important;
+                padding: 12px 12px 80px !important;
+                min-height: 100vh;
+                width: 100%;
+                background: transparent !important;
             }
-            .games-overlay,
-            .games-menu {
-                display: flex !important;
+            .main-content {
+                display: block !important;
+                padding: 0 !important;
+                max-width: 100% !important;
+                min-height: auto !important;
+                flex: none !important;
             }
+            body {
+                background: #0a0a1a;
+                min-height: 100vh;
+                overflow-x: hidden;
+            }
+            .banner-fixed-desktop {
+                display: none !important;
+            }
+        }
+
+        @media (min-width: 768px) {
+            body {
+                background: #0a0a1a;
+                min-height: 100vh;
+                overflow-x: hidden;
+            }
+        }
+
+        .app-container {
+            padding-top: 0 !important;
+        }
+
+        /* 手机版固定横幅 */
+        .mobile-banner-fixed {
+            width: calc(100% - 4px);
+            max-width: 100%;
+            margin: -8px auto 8px !important;
+            padding: 0 4px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 16px;
+        }
+
+        .mobile-banner-fixed img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 16px;
+        }
+
+        .mobile-banner-fixed canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            border-radius: 16px;
+        }
+
+        @media (min-width: 768px) {
+            .mobile-banner-fixed {
+                display: none !important;
+            }
+        }
+
+        /* ============================================================
+   輪播圖 - 電腦版 40% / 手機版 16:9
+   ============================================================ */
+.carousel-container {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    width: 100%;
+    background: #0a0a20;
+}
+
+.carousel-track {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    will-change: transform;
+}
+
+.carousel-slide {
+    width: 100%;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px;
+    background: #0a0a20;
+}
+
+/* 🔥 電腦版：40%（2.5:1） */
+@media (min-width: 768px) {
+    .carousel-slide {
+        padding-bottom: 40% !important;
+    }
+}
+
+/* 🔥 手機版：16:9（保持原樣） */
+@media (max-width: 767px) {
+    .carousel-slide {
+        padding-bottom: 56.25% !important;
+    }
+}
+
+.carousel-slide img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    display: block;
+}
+
+/* 🔥 電腦版：完整顯示圖片（上下黑邊） */
+@media (min-width: 768px) {
+    .carousel-slide img {
+        object-fit: contain;
+    }
+}
+
+/* 🔥 手機版：填滿框架（16:9 完美匹配） */
+@media (max-width: 767px) {
+    .carousel-slide img {
+        object-fit: cover;
+    }
+}
+
+/* 其餘樣式保持不變 */
+.carousel-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    z-index: 20;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 0 0 20px 20px;
+    overflow: hidden;
+}
+.carousel-progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #00b4ff, #4dc8ff, #00d4ff);
+    border-radius: 0 0 20px 20px;
+    transition: width 0.1s linear;
+    box-shadow: 0 0 20px rgba(0, 180, 255, 0.3);
+}
+.carousel-dots {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 15;
+    display: flex;
+    gap: 6px;
+    padding: 5px 10px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 20px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+.carousel-dots .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.25);
+    cursor: pointer;
+    transition: 0.3s;
+}
+.carousel-dots .dot.active {
+    background: #00b4ff;
+    width: 24px;
+    border-radius: 4px;
+    box-shadow: 0 0 16px rgba(0, 180, 255, 0.4);
+}
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 15;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.5);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.3s;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+.carousel-btn:hover {
+    background: rgba(0, 180, 255, 0.2);
+    color: #fff;
+    border-color: rgba(0, 180, 255, 0.2);
+}
+.carousel-btn-left { left: 12px; }
+.carousel-btn-right { right: 12px; }
+
+/* 手機版按鈕微調 */
+@media (max-width: 767px) {
+    .carousel-dots {
+        top: 8px;
+        right: 8px;
+        padding: 4px 8px;
+        gap: 4px;
+    }
+    .carousel-dots .dot {
+        width: 6px;
+        height: 6px;
+    }
+    .carousel-dots .dot.active {
+        width: 14px;
+    }
+    .carousel-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 0.7rem;
+    }
+    .carousel-btn-left { left: 6px; }
+    .carousel-btn-right { right: 6px; }
+    .carousel-progress { height: 2px; }
+}
+
+        /* ===== 手機版 ===== */
+        @media (max-width: 767px) {
+            .carousel-container {
+                border-radius: 12px;
+            }
+            .carousel-slide {
+                border-radius: 12px;
+                /* 手機版一樣 16:9 */
+                padding-bottom: 56.25%;
+            }
+            .carousel-slide img {
+                border-radius: 12px;
+            }
+            .carousel-dots {
+                bottom: 10px;
+                padding: 4px 10px;
+                gap: 6px;
+            }
+            .carousel-dots .dot {
+                width: 6px;
+                height: 6px;
+            }
+            .carousel-dots .dot.active {
+                width: 18px;
+            }
+            .carousel-btn {
+                width: 28px;
+                height: 28px;
+                font-size: 0.7rem;
+            }
+            .carousel-btn-left {
+                left: 6px;
+            }
+            .carousel-btn-right {
+                right: 6px;
+            }
+            .carousel-progress {
+                height: 2px;
+            }
+        }
+
+        /* ============================================================
+   🔥 极光呼吸 · 通告条（置頂，無縫連接左右）
+   ============================================================ */
+
+/* 電腦版 - 無縫連接左右側邊欄 */
+@media (min-width: 768px) {
+    .announcement-style-1 {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 12px 24px;
+        border-radius: 0;
+        background: rgba(10, 14, 26, 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: none;
+        border-bottom: 1px solid rgba(0, 180, 255, 0.08);
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+        margin: 0 !important;
+        margin-bottom: 12px !important;  /* 🔥 與 carousel 之間有 12px 縫隙 */
+        width: 100%;
+        position: sticky;
+        top: 0;
+        z-index: 49;
+        transition: all 0.3s ease;
+        box-sizing: border-box;
+    }
+
+    .announcement-style-1::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, rgba(0, 180, 255, 0.6), rgba(0, 200, 255, 0.8), rgba(0, 180, 255, 0.6), transparent);
+        border-radius: 0;
+        animation: breatheLine 2.8s ease-in-out infinite;
+    }
+
+    .announcement-style-1 .horn-icon {
+        flex-shrink: 0;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(0, 180, 255, 0.08);
+        border: 1px solid rgba(0, 180, 255, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        color: #4dc8ff;
+        filter: drop-shadow(0 0 20px rgba(0, 180, 255, 0.15));
+    }
+
+    .announcement-style-1 .scroll-container {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .announcement-style-1 .scroll-track {
+        display: flex;
+        white-space: nowrap;
+        animation: scrollLeft 14s linear infinite;
+    }
+
+    .announcement-style-1 .scroll-track .text-item {
+        font-size: 0.92rem;
+        color: rgba(255, 255, 255, 0.85);
+        padding-right: 60px;
+        flex-shrink: 0;
+    }
+
+    .announcement-style-1 .scroll-track .text-item .time-tag {
+        font-size: 0.6rem;
+        color: rgba(255, 255, 255, 0.2);
+        margin-left: 10px;
+    }
+
+    .announcement-style-1:hover .scroll-track {
+        animation-play-state: paused;
+    }
+
+    .announcement-style-1 .badge-new {
+        flex-shrink: 0;
+        background: linear-gradient(135deg, #4dc8ff, #0088cc);
+        color: #fff;
+        font-size: 0.55rem;
+        font-weight: 700;
+        padding: 4px 14px;
+        border-radius: 30px;
+        letter-spacing: 0.5px;
+        box-shadow: 0 0 25px rgba(0, 180, 255, 0.2);
+        animation: pulseBadge 1.8s ease-in-out infinite;
+    }
+
+    .announcement-style-1.hidden {
+        display: none !important;
+    }
+}
+
+/* 手機版 - 填補左右縫隙（無縫） */
+@media (max-width: 767px) {
+    .announcement-style-1 {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        border-radius: 0;
+        background: rgba(10, 14, 26, 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: none;
+        border-bottom: 1px solid rgba(0, 180, 255, 0.06);
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+        margin: 0 !important;
+        margin-bottom: 12px !important;
+        /* 🔥 新增這三行 */
+        margin-left: -12px !important;
+        margin-right: -12px !important;
+        width: calc(100% + 24px) !important;
+        position: sticky;
+        top: 0;
+        z-index: 49;
+        transition: all 0.3s ease;
+        box-sizing: border-box;
+        /* 🔥 手機版填補左右縫隙：負的 margin-left/right 抵消父容器 padding */
+        margin-left: -12px !important;
+        margin-right: -12px !important;
+        width: calc(100% + 24px) !important;
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    .announcement-style-1::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, rgba(0, 180, 255, 0.6), rgba(0, 200, 255, 0.8), rgba(0, 180, 255, 0.6), transparent);
+        border-radius: 0;
+        animation: breatheLine 2.8s ease-in-out infinite;
+    }
+
+    .announcement-style-1 .horn-icon {
+        flex-shrink: 0;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: rgba(0, 180, 255, 0.08);
+        border: 1px solid rgba(0, 180, 255, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        color: #4dc8ff;
+    }
+
+    .announcement-style-1 .scroll-container {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .announcement-style-1 .scroll-track {
+        display: flex;
+        white-space: nowrap;
+        animation: scrollLeft 14s linear infinite;
+    }
+
+    .announcement-style-1 .scroll-track .text-item {
+        font-size: 0.78rem;
+        color: rgba(255, 255, 255, 0.85);
+        padding-right: 40px;
+        flex-shrink: 0;
+    }
+
+    .announcement-style-1 .scroll-track .text-item .time-tag {
+        font-size: 0.6rem;
+        color: rgba(255, 255, 255, 0.2);
+        margin-left: 10px;
+    }
+
+    .announcement-style-1:hover .scroll-track {
+        animation-play-state: paused;
+    }
+
+    .announcement-style-1 .badge-new {
+        flex-shrink: 0;
+        background: linear-gradient(135deg, #4dc8ff, #0088cc);
+        color: #fff;
+        font-size: 0.45rem;
+        font-weight: 700;
+        padding: 2px 10px;
+        border-radius: 30px;
+        letter-spacing: 0.5px;
+        box-shadow: 0 0 25px rgba(0, 180, 255, 0.2);
+        animation: pulseBadge 1.8s ease-in-out infinite;
+    }
+
+    .announcement-style-1.hidden {
+        display: none !important;
+    }
+}
+
+@keyframes breatheLine {
+    0% { opacity: 0.3; }
+    50% { opacity: 1; }
+    100% { opacity: 0.3; }
+}
+
+@keyframes pulseBadge {
+    0% { opacity: 0.7; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.05); }
+    100% { opacity: 0.7; transform: scale(1); }
+}
+
+@keyframes scrollLeft {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+        /* ============================================================
+           Live 徽章 - 脉冲光晕 (样式2)
+           ============================================================ */
+        .live-badge-pulse {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 3px 14px 3px 10px;
+            border-radius: 30px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+            color: #fff;
+            background: #ff5a5a;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 12px rgba(255, 90, 90, 0.2);
+            animation: pulse-glow 1.5s ease-in-out infinite;
+        }
+        .live-badge-pulse .dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #fff;
+            flex-shrink: 0;
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 2px 12px rgba(255, 90, 90, 0.2); }
+            50% { box-shadow: 0 2px 24px rgba(255, 90, 90, 0.5); }
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* 保留旧样式以防回退 */
+        .live-badge {
+            background: linear-gradient(135deg, #00a0e8, #0066b0);
+            color: #fff;
+            padding: 3px 14px;
+            border-radius: 30px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            box-shadow: 0 0 25px rgba(0, 180, 255, 0.2);
+        }
+
+        /* 手机版隐藏右侧边栏 - 覆盖内联样式 */
+        @media (max-width: 767px) {
             .right-sidebar {
                 display: none !important;
             }
         }
+
+        /* 扩大 GAMES 点击区域 - 向上延伸 */
+        .nav-games-center {
+            position: relative !important;
+            cursor: pointer !important;
+        }
+
+        .nav-games-center::after {
+            content: '' !important;
+            position: absolute !important;
+            bottom: 0 !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            width: 140px !important;
+            height: 80px !important;
+            z-index: 999 !important;
+            pointer-events: auto !important;
+            cursor: pointer !important;
+            background: transparent !important;
+        }
+
+        /* 让 GAMES 文字本身不阻挡点击 */
+        .nav-games-center .games-metal-rajdhani {
+            pointer-events: none !important;
+            position: relative !important;
+            z-index: 1 !important;
+        }
+
+/* ============================================================
+   🔥 GAMES 2×3 大卡片 - 垂直長方形（可滑動）
+   ============================================================ */
+
+.games-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: rgba(0, 0, 0, 0) !important;
+    backdrop-filter: blur(0px) !important;
+    -webkit-backdrop-filter: blur(0px) !important;
+    pointer-events: none !important;
+    transition: all 0.5s ease !important;
+    z-index: 100 !important;
+}
+
+.games-overlay.active {
+    background: rgba(0, 0, 0, 0.80) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    pointer-events: auto !important;
+}
+
+.games-menu {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 200 !important;
+    pointer-events: none !important;
+    background: rgba(10, 10, 32, 0.95) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    opacity: 0 !important;
+    transition: opacity 0.4s ease !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+    padding: 20px 16px !important;
+}
+
+.games-menu.active {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
+/* 滾動條美化 */
+.games-menu::-webkit-scrollbar {
+    width: 3px;
+}
+.games-menu::-webkit-scrollbar-track {
+    background: transparent;
+}
+.games-menu::-webkit-scrollbar-thumb {
+    background: rgba(255, 215, 0, 0.15);
+    border-radius: 10px;
+}
+
+.games-menu .games-grid {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    min-height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 10px 0;
+}
+
+/* 🔥🔥🔥 垂直長方形卡片 - 高度是寬度的 1.6 倍 */
+.games-menu .game-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    text-decoration: none;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    opacity: 0;
+    transform: scale(0.5) translateY(30px);
+    pointer-events: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    flex: 0 0 calc(50% - 7px);
+    /* 🔥 垂直長方形：高度 = 寬度 × 1.6 */
+    aspect-ratio: 1 / 1.6;
+    padding: 16px 8px;
+    position: relative;
+    min-height: 140px;
+}
+
+.games-menu .game-card.show {
+    opacity: 1 !important;
+    transform: scale(1) translateY(0) !important;
+    pointer-events: auto !important;
+}
+
+.games-menu .game-card:active {
+    transform: scale(0.95) !important;
+}
+
+.games-menu .game-card i {
+    font-size: 2.4rem;
+    margin-bottom: 6px;
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.06));
+}
+
+.games-menu .game-card .card-name {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 0.5px;
+    text-align: center;
+}
+
+.games-menu .game-card .card-sub {
+    font-size: 0.5rem;
+    color: rgba(255, 255, 255, 0.12);
+    margin-top: 2px;
+}
+
+.games-menu .game-card .card-tag {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 0.45rem;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 10px;
+}
+
+.games-menu .game-card .card-tag.hot {
+    background: rgba(255, 107, 107, 0.15);
+    color: #ff6b6b;
+    border: 1px solid rgba(255, 107, 107, 0.08);
+}
+
+.games-menu .game-card .card-tag.live {
+    background: rgba(255, 215, 0, 0.15);
+    color: #ffd700;
+    border: 1px solid rgba(255, 215, 0, 0.08);
+}
+
+@media (hover: hover) {
+    .games-menu .game-card:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 215, 0, 0.15);
+        transform: scale(1.04) !important;
+    }
+}
+
+/* ===== 電腦版隱藏 ===== */
+@media (min-width: 768px) {
+    .games-overlay,
+    .games-menu {
+        display: none !important;
+    }
+}
+
+/* ===== 小屏手機 (320px-374px) ===== */
+@media (max-width: 374px) {
+    .games-menu { padding: 12px 10px !important; }
+    .games-menu .game-card { 
+        flex: 0 0 calc(50% - 5px); 
+        aspect-ratio: 1 / 1.5;
+        min-height: 100px;
+        padding: 10px 4px; 
+        border-radius: 14px; 
+    }
+    .games-menu .game-card i { font-size: 1.6rem; margin-bottom: 4px; }
+    .games-menu .game-card .card-name { font-size: 0.55rem; }
+    .games-menu .game-card .card-sub { font-size: 0.4rem; }
+    .games-menu .game-card .card-tag { font-size: 0.35rem; padding: 1px 6px; top: 4px; right: 4px; }
+    .games-menu .games-grid { gap: 8px; }
+}
+
+/* ===== 中屏手機 (375px-414px) ===== */
+@media (min-width: 375px) and (max-width: 414px) {
+    .games-menu .game-card { 
+        aspect-ratio: 1 / 1.6;
+        min-height: 140px;
+        padding: 16px 8px; 
+    }
+    .games-menu .game-card i { font-size: 2.2rem; }
+}
+
+/* ===== 大屏手機 (415px+) ===== */
+@media (min-width: 415px) {
+    .games-menu .game-card { 
+        aspect-ratio: 1 / 1.7;
+        min-height: 170px;
+        padding: 20px 12px; 
+    }
+    .games-menu .game-card i { font-size: 2.8rem; }
+    .games-menu .game-card .card-name { font-size: 0.85rem; }
+    .games-menu .game-card .card-sub { font-size: 0.55rem; }
+}
+
+/* ===== 超大屏手機 / 小平板 ===== */
+@media (min-width: 500px) {
+    .games-menu .game-card { 
+        flex: 0 0 calc(33.33% - 12px); 
+        aspect-ratio: 1 / 1.6;
+        min-height: 200px;
+    }
+    .games-menu .games-grid { max-width: 700px; gap: 16px; }
+}
     </style>
 </head>
 <body>
 
-    <div class="app-container">
+<div class="app-container">
 
-        <!-- ============================================================
-        手机版：顶部循环横幅
-        ============================================================ -->
-        <div class="top-banner-wrapper">
-            <div class="top-banner" id="topBanner"
-            style="background:transparent !important;border:none !important;box-shadow:none !important;padding:0 !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important;">
-            <a href="partnership.html" style="display:block;text-decoration:none;cursor:pointer;">
-                <img src="https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/vision-partner/mobile-partner-badge.png"
-                alt="活动横幅"
-                style="width:100%;height:auto;display:block;border-radius:16px;">
+    <!-- ============================================================
+    手机版：顶部循环横幅
+    ============================================================ -->
+    <div class="top-banner-wrapper">
+        <div class="top-banner" id="topBanner" style="
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+        ">
+            <a href="partnership.html" style="display:block; text-decoration:none; cursor:pointer;">
+                <img 
+                    src="https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/vision-partner/mobile-partner-badge.png" 
+                    alt="活动横幅"
+                    style="
+                        width: 100%;
+                        height: auto;
+                        display: block;
+                        border-radius: 16px;
+                    "
+                >
             </a>
-            <button class="banner-close" id="bannerCloseBtn"
-            style="position:absolute;top:8px;right:12px;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,0.3);border:none;color:rgba(255,255,255,0.6);font-size:0.7rem;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:10;">
-            <i class="fas fa-times"></i>
-        </button>
-    </div>
-</div>
-
-<!-- ============================================================
-🔥 电脑版：顶部 Tab Bar（Logo 左 · 选项中 · 右功能区）
-============================================================ -->
-<header class="top-tabbar" id="topTabBar">
-    <!-- 左侧：Logo -->
-    <div class="logo-mini">
-        <canvas id="tabLogoCanvas" width="400" height="200"></canvas>
-        <span class="brand">VISION711</span>
-    </div>
-
-    <!-- 中间：Tab 选项 -->
-    <div id="tabItemsWrapper"></div>
-
-    <!-- 右侧：语言下拉 + Auth 按钮 -->
-    <div class="right-section">
-        <!-- 语言下拉 -->
-        <div class="lang-dropdown" id="langDropdown">
-            <button class="lang-toggle" id="langToggle">
-                <i class="fas fa-globe"></i>
-                <span id="currentLangLabel">EN</span>
-                <i class="fas fa-chevron-down" style="font-size:10px;"></i>
+            <button class="banner-close" id="bannerCloseBtn" style="
+                position: absolute;
+                top: 8px;
+                right: 12px;
+                width: 28px;
+                height: 28px;
+                border-radius: 50%;
+                background: rgba(0,0,0,0.3);
+                border: none;
+                color: rgba(255,255,255,0.6);
+                font-size: 0.7rem;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                backdrop-filter: blur(4px);
+                -webkit-backdrop-filter: blur(4px);
+                z-index: 10;
+            ">
+                <i class="fas fa-times"></i>
             </button>
-            <div class="lang-menu" id="langMenu">
-                <button data-lang="en" class="active"><i class="fas fa-check-circle" style="color:#4a7cff;font-size:11px;"></i> English</button>
-                <button data-lang="zh"><i class="fas fa-check-circle" style="color:#4a7cff;font-size:11px;opacity:0;"></i> 中文</button>
-            </div>
-        </div>
-
-        <!-- Auth 按钮（未登录） -->
-        <div class="auth-buttons" id="authButtons">
-            <a href="login.html" class="login-btn">Login</a>
-            <a href="register.html" class="register-btn">Register</a>
-        </div>
-
-        <!-- 用户头像（登录后） -->
-        <div class="user-avatar-mini" id="userAvatarMini">
-            <div class="avatar"><i class="fas fa-user"></i></div>
-            <span class="uname" id="avatarName">Player</span>
         </div>
     </div>
-</header>
 
-<!-- ============================================================
-主布局：侧边栏 + 主内容 + 右侧边栏
-============================================================ -->
-<div class="app-layout">
-
-    <!-- ===== SIDEBAR（左侧边栏） ===== -->
+    <!-- ===== SIDEBAR ===== -->
     <div class="sidebar">
         <div class="sidebar-logo-wrapper">
             <a href="/" class="logo-metal">
@@ -690,12 +1005,12 @@
         </div>
 
         <nav class="sidebar-nav">
-            <a href="index.html" class="nav-item active"><i class="fas fa-home"></i> <span>Home</span></a>
-            <a href="promo.html" class="nav-item"><i class="fas fa-gem"></i> <span>Promo</span></a>
-            <a href="deposit.html" class="nav-item"><i class="fas fa-wallet"></i> <span>Deposit</span></a>
-            <a href="withdraw.html" class="nav-item"><i class="fas fa-arrow-up"></i> <span>Withdraw</span></a>
-            <a href="profile.html" class="nav-item"><i class="fas fa-user-cog"></i> <span>Profile</span></a>
-        </nav>
+    <a href="index.html" class="nav-item"><i class="fas fa-home"></i> <span>Home</span></a>
+    <a href="promo.html" class="nav-item"><i class="fas fa-gem"></i> <span>Promo</span></a>
+    <a href="deposit.html" class="nav-item"><i class="fas fa-wallet"></i> <span>Deposit</span></a>
+    <a href="withdraw.html" class="nav-item"><i class="fas fa-arrow-up"></i> <span>Withdraw</span></a>
+    <a href="profile.html" class="nav-item"><i class="fas fa-user-cog"></i> <span>Profile</span></a>
+</nav>
 
         <div class="sidebar-footer">
             <div class="user-avatar-metal"><i class="fas fa-user"></i></div>
@@ -709,19 +1024,18 @@
     <!-- ===== MAIN CONTENT ===== -->
     <div class="main-content">
 
-        <!-- 手机顶部导航（仅手机显示） -->
         <div class="mobile-header"></div>
 
-        <!-- ===== 极光呼吸 · 通告条 ===== -->
-        <div id="announcementContainer" class="announcement-style-1 hidden">
-            <div class="horn-icon"><i class="fas fa-bullhorn"></i></div>
-            <div class="scroll-container">
-                <div class="scroll-track" id="announcementTrack">
-                    <!-- 由 JavaScript 动态渲染 -->
-                </div>
-            </div>
-            <span class="badge-new" id="announcementBadge">HOT</span>
+<!-- ===== 极光呼吸 · 通告条 ===== -->
+<div id="announcementContainer" class="announcement-style-1 hidden">
+    <div class="horn-icon"><i class="fas fa-bullhorn"></i></div>
+    <div class="scroll-container">
+        <div class="scroll-track" id="announcementTrack">
+            <!-- 由 JavaScript 动态渲染 -->
         </div>
+    </div>
+    <span class="badge-new" id="announcementBadge">HOT</span>
+</div>
 
         <!-- ===== 轮播图 ===== -->
         <div class="carousel-container" id="carouselContainer">
@@ -741,11 +1055,11 @@
         <!-- ===== 欢迎卡片 ===== -->
         <div class="card-welcome">
             <div class="flex-row">
-                <span class="greeting"><i class="fas fa-hand-peace"></i> <span data-i18n="home.welcome">Welcome back</span>, <span data-i18n="home.player" id="welcomeName">Player</span></span>
-                <span class="badge-metal"><i class="fas fa-star"></i> <span id="vipBadge">VIP 2</span></span>
+                <span class="greeting"><i class="fas fa-hand-peace"></i> <span data-i18n="home.welcome">Welcome back</span>, <span data-i18n="home.player">Player</span></span>
+                <span class="badge-metal"><i class="fas fa-star"></i> VIP 2</span>
             </div>
             <div class="balance-metal">
-                RM <span id="balanceDisplay">0.00</span> <small data-i18n="label.balance">Balance</small>
+                RM 0.00 <small data-i18n="label.balance">Balance</small>
             </div>
             <div class="action-buttons">
                 <a href="deposit.html" class="btn-metal-primary w-full"><i class="fas fa-plus-circle"></i> <span data-i18n="btn.deposit">Deposit</span></a>
@@ -773,23 +1087,203 @@
 
         <!-- ===== 电脑版横幅 ===== -->
         <div class="banner-fixed-desktop">
-            <a href="partnership.html" style="display:block;text-decoration:none;cursor:pointer;">
-                <img src="https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/vision-partner/mobile-partner-badge.png"
-                alt="限时活动"
-                style="width:100%;height:auto;display:block;border-radius:16px;">
+            <a href="partnership.html" style="display:block; text-decoration:none; cursor:pointer;">
+                <img 
+                    src="https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/vision-partner/mobile-partner-badge.png" 
+                    alt="限时活动"
+                    style="
+                        width: 100%;
+                        height: auto;
+                        display: block;
+                        border-radius: 16px;
+                    "
+                >
             </a>
             <canvas id="desktopBannerShimmerCanvas"></canvas>
         </div>
 
+        <script>
+        (function initDesktopBannerShimmer() {
+            const canvas = document.getElementById('desktopBannerShimmerCanvas');
+            if (!canvas) return;
+            
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.src = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/vision-partner/mobile-partner-badge.png';
+            
+            let logoData = null;
+            let w = 0, h = 0;
+            let startTime = performance.now();
+            
+            img.onload = function() {
+                w = img.width;
+                h = img.height;
+                canvas.width = w;
+                canvas.height = h;
+                canvas.style.width = '100%';
+                canvas.style.height = '100%';
+                
+                const ctx = canvas.getContext('2d', { willReadFrequently: true });
+                ctx.drawImage(img, 0, 0);
+                logoData = ctx.getImageData(0, 0, w, h);
+                ctx.clearRect(0, 0, w, h);
+                requestAnimationFrame(drawFrame);
+            };
+            
+            function drawFrame(timestamp) {
+                if (!logoData) return;
+                
+                const ctx = canvas.getContext('2d', { willReadFrequently: true });
+                const elapsed = (timestamp - startTime) / 1000;
+                const waitTime = 0.8;
+                const scanDuration = 1.0;
+                const totalTime = waitTime + scanDuration;
+                
+                let timeInCycle = elapsed % totalTime;
+                let progress;
+                if (timeInCycle < waitTime) {
+                    progress = -1;
+                } else {
+                    progress = 1 - (timeInCycle - waitTime) / scanDuration;
+                }
+                
+                ctx.clearRect(0, 0, w, h);
+                ctx.globalAlpha = 0.9;
+                ctx.drawImage(img, 0, 0);
+                ctx.globalAlpha = 1.0;
+                
+                const imageData = ctx.getImageData(0, 0, w, h);
+                const data = imageData.data;
+                
+                const barWidth = Math.max(30, (w + h) * 0.15);
+                const centerX = progress * (w + barWidth) - barWidth / 2;
+                const centerY = progress * (h + barWidth) - barWidth / 2;
+                
+                for (let y = 0; y < h; y++) {
+                    for (let x = 0; x < w; x++) {
+                        const idx = (y * w + x) * 4;
+                        if (logoData.data[idx + 3] < 128) continue;
+                        
+                        const dx = x - centerX;
+                        const dy = y - centerY;
+                        const dist = Math.abs(dx + dy) / Math.sqrt(2);
+                        
+                        if (dist > barWidth / 2) continue;
+                        
+                        const strength = 1 - (dist / (barWidth / 2));
+                        const alpha = strength * 0.8;
+                        
+                        data[idx] = Math.min(255, data[idx] + 220 * alpha);
+                        data[idx + 1] = Math.min(255, data[idx + 1] + 220 * alpha);
+                        data[idx + 2] = Math.min(255, data[idx + 2] + 180 * alpha);
+                    }
+                }
+                
+                ctx.putImageData(imageData, 0, 0);
+                requestAnimationFrame(drawFrame);
+            }
+        })();
+        </script>
+
         <!-- ===== 手机版固定横幅 ===== -->
         <div class="mobile-banner-fixed">
-            <a href="partnership.html" style="display:block;text-decoration:none;cursor:pointer;">
-                <img src="https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/vision-partner/mobile-partner-badge.png"
-                alt="活动横幅"
-                style="width:100%;height:auto;display:block;border-radius:16px;">
+            <a href="partnership.html" style="display:block; text-decoration:none; cursor:pointer;">
+                <img 
+                    src="https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/vision-partner/mobile-partner-badge.png" 
+                    alt="活动横幅"
+                    style="
+                        width: 100%;
+                        height: auto;
+                        display: block;
+                        border-radius: 16px;
+                    "
+                >
             </a>
             <canvas id="mobileBannerShimmerCanvas"></canvas>
         </div>
+
+        <script>
+        (function initMobileBannerShimmer() {
+            const canvas = document.getElementById('mobileBannerShimmerCanvas');
+            if (!canvas) return;
+            
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.src = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/vision-partner/mobile-partner-badge.png';
+            
+            let logoData = null;
+            let w = 0, h = 0;
+            let startTime = performance.now();
+            
+            img.onload = function() {
+                w = img.width;
+                h = img.height;
+                canvas.width = w;
+                canvas.height = h;
+                canvas.style.width = '100%';
+                canvas.style.height = '100%';
+                
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                logoData = ctx.getImageData(0, 0, w, h);
+                ctx.clearRect(0, 0, w, h);
+                requestAnimationFrame(drawFrame);
+            };
+            
+            function drawFrame(timestamp) {
+                if (!logoData) return;
+                
+                const ctx = canvas.getContext('2d');
+                const elapsed = (timestamp - startTime) / 1000;
+                const waitTime = 0.8;
+                const scanDuration = 1.0;
+                const totalTime = waitTime + scanDuration;
+                
+                let timeInCycle = elapsed % totalTime;
+                let progress;
+                if (timeInCycle < waitTime) {
+                    progress = -1;
+                } else {
+                    progress = 1 - (timeInCycle - waitTime) / scanDuration;
+                }
+                
+                ctx.clearRect(0, 0, w, h);
+                ctx.globalAlpha = 0.9;
+                ctx.drawImage(img, 0, 0);
+                ctx.globalAlpha = 1.0;
+                
+                const imageData = ctx.getImageData(0, 0, w, h);
+                const data = imageData.data;
+                
+                const barWidth = Math.max(30, (w + h) * 0.15);
+                const centerX = progress * (w + barWidth) - barWidth / 2;
+                const centerY = progress * (h + barWidth) - barWidth / 2;
+                
+                for (let y = 0; y < h; y++) {
+                    for (let x = 0; x < w; x++) {
+                        const idx = (y * w + x) * 4;
+                        if (logoData.data[idx + 3] < 128) continue;
+                        
+                        const dx = x - centerX;
+                        const dy = y - centerY;
+                        const dist = Math.abs(dx + dy) / Math.sqrt(2);
+                        
+                        if (dist > barWidth / 2) continue;
+                        
+                        const strength = 1 - (dist / (barWidth / 2));
+                        const alpha = strength * 0.8;
+                        
+                        data[idx] = Math.min(255, data[idx] + 220 * alpha);
+                        data[idx + 1] = Math.min(255, data[idx + 1] + 220 * alpha);
+                        data[idx + 2] = Math.min(255, data[idx + 2] + 180 * alpha);
+                    }
+                }
+                
+                ctx.putImageData(imageData, 0, 0);
+                requestAnimationFrame(drawFrame);
+            }
+        })();
+        </script>
 
         <!-- ===== 幸运抽奖 ===== -->
         <div class="lucky-draw">
@@ -809,47 +1303,45 @@
         </div>
 
         <!-- 手机底部导航 -->
-        <div class="bottom-nav">
-            <a href="index.html" class="nav-item active"><i class="fas fa-home"></i><span>Home</span></a>
-            <a href="promo.html" class="nav-item"><i class="fas fa-gem"></i><span>Promo</span></a>
-            <div class="nav-games-center" id="gifBtn" style="cursor:pointer;height:100%;min-height:76px;display:flex;align-items:center;justify-content:center;padding:0 8px;">
-                <span class="games-metal-rajdhani">GAMES</span>
-            </div>
-            <a href="deposit.html" class="nav-item"><i class="fas fa-wallet"></i><span>Deposit</span></a>
-            <a href="withdraw.html" class="nav-item"><i class="fas fa-arrow-up"></i><span>Withdraw</span></a>
-        </div>
+<div class="bottom-nav">
+    <a href="index.html" class="nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+    <a href="promo.html" class="nav-item"><i class="fas fa-gem"></i><span>Promo</span></a>
+    <div class="nav-games-center" id="gifBtn" style="cursor:pointer; height:100%; min-height:76px; display:flex; align-items:center; justify-content:center; padding:0 8px;">
+        <span class="games-metal-rajdhani">GAMES</span>
+    </div>
+    <a href="deposit.html" class="nav-item"><i class="fas fa-wallet"></i><span>Deposit</span></a>
+    <a href="withdraw.html" class="nav-item"><i class="fas fa-arrow-up"></i><span>Withdraw</span></a>
+</div>
 
-        <!-- ===== GAMES 遮罩 + 2×3 大卡片 (手機版) ===== -->
-        <div class="games-overlay" id="gamesOverlay"></div>
-        <div class="games-menu" id="gamesMenu">
-            <!-- 由 JavaScript 動態生成 2×3 大卡片 -->
-        </div>
+<!-- ===== GAMES 遮罩 + 2×3 大卡片 (手機版) ===== -->
+<div class="games-overlay" id="gamesOverlay"></div>
+<div class="games-menu" id="gamesMenu">
+    <!-- 由 JavaScript 動態生成 2×3 大卡片 -->
+</div>
 
     </div><!-- /main-content -->
 
-    <!-- ===== RIGHT SIDEBAR ===== -->
-    <div class="right-sidebar">
-        <!-- DAILY REWARDS -->
-        <div class="section-title">✦ Daily Rewards</div>
-        <a href="#" class="sidebar-nav-item"><i class="fas fa-calendar-check"></i> Check In Credit</a>
-        <a href="#" class="sidebar-nav-item"><i class="fas fa-gift"></i> Vision711 Giveaway</a>
-        <a href="#" class="sidebar-nav-item"><i class="fas fa-coins"></i> Free Spins</a>
+<!-- ===== RIGHT SIDEBAR ===== -->
+<div class="right-sidebar">
+    <!-- DAILY REWARDS -->
+    <div class="section-title">✦ Daily Rewards</div>
+    <a href="#" class="sidebar-nav-item"><i class="fas fa-calendar-check"></i> Check In Credit</a>
+    <a href="#" class="sidebar-nav-item"><i class="fas fa-gift"></i> Vision711 Giveaway</a>
+    <a href="#" class="sidebar-nav-item"><i class="fas fa-coins"></i> Free Spins</a>
 
-        <!-- CASINO -->
-        <div class="section-title">✦ Casino</div>
-        <a href="#" class="sidebar-nav-item"><i class="fas fa-gamepad"></i> Slot Games</a>
-        <a href="#" class="sidebar-nav-item"><i class="fas fa-rocket"></i> Fast Games</a>
-        <a href="#" class="sidebar-nav-item"><i class="fas fa-tv"></i> Live Games</a>
-        <a href="#" class="sidebar-nav-item"><i class="fas fa-fish"></i> Fish Games</a>
+    <!-- CASINO -->
+    <div class="section-title">✦ Casino</div>
+    <a href="#" class="sidebar-nav-item"><i class="fas fa-gamepad"></i> Slot Games</a>
+    <a href="#" class="sidebar-nav-item"><i class="fas fa-rocket"></i> Fast Games</a>
+    <a href="#" class="sidebar-nav-item"><i class="fas fa-tv"></i> Live Games</a>
+    <a href="#" class="sidebar-nav-item"><i class="fas fa-fish"></i> Fish Games</a>
 
-        <!-- SPORTS -->
-        <div class="section-title">✦ Sports</div>
-        <a href="#" class="sidebar-nav-item"><i class="fas fa-futbol"></i> Football</a>
-        <a href="#" class="sidebar-nav-item"><i class="fas fa-basketball-ball"></i> Basketball</a>
-        <a href="#" class="sidebar-nav-item"><i class="fas fa-gamepad"></i> E-Sports</a>
-    </div>
-
-</div><!-- /app-layout -->
+    <!-- SPORTS -->
+    <div class="section-title">✦ Sports</div>
+    <a href="#" class="sidebar-nav-item"><i class="fas fa-futbol"></i> Football</a>
+    <a href="#" class="sidebar-nav-item"><i class="fas fa-basketball-ball"></i> Basketball</a>
+    <a href="#" class="sidebar-nav-item"><i class="fas fa-gamepad"></i> E-Sports</a>
+</div>
 
 </div><!-- /app-container -->
 
@@ -857,565 +1349,428 @@
 <script src="components/hamburger.js"></script>
 
 <script>
-    // ============================================================
-    // 🔥 Tab Bar 渲染（电脑版）
-    // ============================================================
-    (function renderTabBar() {
-        var wrapper = document.getElementById('tabItemsWrapper');
-        if (!wrapper) return;
+// ============================================================
+// 🔥 轮播图 - 支援 CTA 連結
+// ============================================================
+(function loadCarousel() {
+    var SUPABASE_URL = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co';
+    var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImprYnBiamhyZ2JuemV4dmp2eGd0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4Mzc3MDcyMSwiZXhwIjoyMDk5MzQ2NzIxfQ.cZumC1R8_pGEfQv-BBfqJXAExCYOC7mdDj4OmkfdjRw';
 
-        var navItems = [
-            { href: 'index.html', icon: 'fa-home', label: 'Home' },
-            { href: 'promo.html', icon: 'fa-gem', label: 'Promo' },
-            { href: 'deposit.html', icon: 'fa-wallet', label: 'Deposit' },
-            { href: 'withdraw.html', icon: 'fa-arrow-up', label: 'Withdraw' },
-            { href: 'profile.html', icon: 'fa-user-cog', label: 'Profile' },
-            { href: 'partnership.html', icon: 'fa-handshake', label: 'Partnership' },
-        ];
+    var track = document.getElementById('carouselTrack');
+    var dotsContainer = document.getElementById('carouselDots');
+    var prevBtn = document.getElementById('carouselPrev');
+    var nextBtn = document.getElementById('carouselNext');
+    var progressBar = document.getElementById('carouselProgressBar');
 
-        var currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    if (!track) return;
 
-        var html = '';
-        navItems.forEach(function(item) {
-            var linkPage = item.href.replace('./', '').replace('/', '').split('?')[0] || 'index.html';
-            var linkBase = linkPage.replace('.html', '');
-            var currentBase = currentPage.replace('.html', '');
-            var isActive = (linkBase === currentBase || linkPage === currentPage) ||
-                (currentPage === 'index.html' && linkBase === 'index') ||
-                (currentPage === '' && linkBase === 'index');
+    var slideItems = [];
+    var currentIndex = 0;
+    var total = 0;
+    var isPlaying = false;
+    var playTimer = null;
+    var progressTimer = null;
+    var isPaused = false;
+    var rendered = false;
 
-            html +=
-                '<a href="' + item.href + '" class="tab-item' + (isActive ? ' active' : '') + '">' +
-                '<i class="fas ' + item.icon + '"></i> ' +
-                item.label +
-                '</a>';
-        });
+    function renderCarousel() {
+    if (rendered) return;
 
-        wrapper.innerHTML = html;
-    })();
+    if (slideItems.length === 0) {
+        track.innerHTML = '<div class="carousel-slide" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#0a0a25,#181845);"><i class="fas fa-crown" style="color:rgba(255,255,255,0.05);font-size:3rem;"></i></div>';
+        dotsContainer.innerHTML = '';
+        return;
+    }
 
-    // ============================================================
-    // 🔥 语言下拉菜单
-    // ============================================================
-    (function initLangDropdown() {
-        var toggle = document.getElementById('langToggle');
-        var menu = document.getElementById('langMenu');
-        var label = document.getElementById('currentLangLabel');
-        if (!toggle || !menu) return;
+    total = slideItems.length;
 
-        var savedLang = localStorage.getItem('preferred_language') || 'en';
-        label.textContent = savedLang.toUpperCase();
+    // 🔥 判斷設備類型
+    var isDesktop = window.innerWidth >= 768;
 
-        menu.querySelectorAll('button').forEach(function(btn) {
-            btn.classList.toggle('active', btn.dataset.lang === savedLang);
-            var icon = btn.querySelector('i');
-            if (icon) icon.style.opacity = btn.dataset.lang === savedLang ? '1' : '0';
-        });
-
-        toggle.addEventListener('click', function(e) {
-            e.stopPropagation();
-            menu.classList.toggle('open');
-        });
-
-        document.addEventListener('click', function() {
-            menu.classList.remove('open');
-        });
-
-        menu.querySelectorAll('button').forEach(function(btn) {
-            btn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                var lang = this.dataset.lang;
-                localStorage.setItem('preferred_language', lang);
-                label.textContent = lang.toUpperCase();
-
-                menu.querySelectorAll('button').forEach(function(b) {
-                    b.classList.toggle('active', b.dataset.lang === lang);
-                    var icon = b.querySelector('i');
-                    if (icon) icon.style.opacity = b.dataset.lang === lang ? '1' : '0';
-                });
-
-                menu.classList.remove('open');
-
-                if (typeof setLanguage === 'function') {
-                    setLanguage(lang);
-                } else {
-                    location.reload();
-                }
-            });
-        });
-    })();
-
-    // ============================================================
-    // 🔥 登录状态检测
-    // ============================================================
-    (function checkAuthState() {
-        var isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-        var authButtons = document.getElementById('authButtons');
-        var userAvatar = document.getElementById('userAvatarMini');
-        var avatarName = document.getElementById('avatarName');
-        var welcomeName = document.getElementById('welcomeName');
-        var vipBadge = document.getElementById('vipBadge');
-        var balanceDisplay = document.getElementById('balanceDisplay');
-
-        if (isLoggedIn) {
-            if (authButtons) authButtons.style.display = 'none';
-            if (userAvatar) userAvatar.style.display = 'flex';
-
-            var username = localStorage.getItem('login_username') || 'Player';
-            if (avatarName) avatarName.textContent = username;
-            if (welcomeName) welcomeName.textContent = username;
-
-            var vip = localStorage.getItem('user_vip') || 0;
-            if (vipBadge) vipBadge.textContent = 'VIP ' + vip;
-
-            var balance = localStorage.getItem('user_balance') || 0;
-            if (balanceDisplay) balanceDisplay.textContent = parseFloat(balance).toFixed(2);
-
-            if (userAvatar) {
-                userAvatar.style.cursor = 'pointer';
-                userAvatar.addEventListener('click', function() {
-                    window.location.href = 'profile.html';
-                });
-            }
-        } else {
-            if (authButtons) authButtons.style.display = 'flex';
-            if (userAvatar) userAvatar.style.display = 'none';
-            if (welcomeName) welcomeName.textContent = 'Player';
-        }
-    })();
-
-    // ============================================================
-    // 🔥 跨标签页登录状态同步
-    // ============================================================
-    window.addEventListener('storage', function(e) {
-        if (e.key === 'isLoggedIn' || e.key === 'login_username' || e.key === 'user_balance' || e.key ===
-            'user_vip') {
-            location.reload();
-        }
+    var html = '';
+    var dots = '';
+    slideItems.forEach(function(item, i) {
+        // 🔥 電腦版用 image_url，手機版用 image_url_mobile
+        var imgUrl = isDesktop ? (item.image_url || '') : (item.image_url_mobile || item.image_url || '');
+        var link = item.cta_link || '';
+        var linkAttr = link ? 'href="' + link + '"' : '';
+        var targetAttr = link && (link.startsWith('http') || link.startsWith('https')) ? 'target="_blank"' : '';
+        html += '<div class="carousel-slide"><a ' + linkAttr + ' ' + targetAttr + ' style="display:block;width:100%;height:100%;text-decoration:none;cursor:pointer;"><img src="' + imgUrl + '" alt="Slide ' + (i+1) + '" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:20px;"></a></div>';
+        dots += '<span class="dot' + (i === 0 ? ' active' : '') + '" data-index="' + i + '"></span>';
     });
 
-    // ============================================================
-    // 🔥 Tab Logo 流光效果
-    // ============================================================
-    (function initTabLogo() {
-        var canvas = document.getElementById('tabLogoCanvas');
-        if (!canvas) return;
-        var ctx = canvas.getContext('2d');
-        var img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.src = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/hero-background/logo.png';
+    track.innerHTML = html;
+    track.style.transition = 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+    dotsContainer.innerHTML = dots;
 
-        var logoData = null,
-            w = 0,
-            h = 0,
-            startTime = performance.now();
-
-        img.onload = function() {
-            w = img.width;
-            h = img.height;
-            canvas.width = w;
-            canvas.height = h;
-            ctx.drawImage(img, 0, 0);
-            logoData = ctx.getImageData(0, 0, w, h);
-            ctx.clearRect(0, 0, w, h);
-            requestAnimationFrame(drawFrame);
+    document.querySelectorAll('.dot').forEach(function(el) {
+        el.onclick = function() {
+            var idx = parseInt(this.dataset.index);
+            if (idx !== currentIndex) goTo(idx);
         };
+    });
 
-        function drawFrame(timestamp) {
-            if (!logoData) return;
-            var elapsed = (timestamp - startTime) / 1000;
-            var waitTime = 1.0,
-                scanDuration = 1.2,
-                totalTime = waitTime + scanDuration;
-            var timeInCycle = elapsed % totalTime;
-            var progress = timeInCycle < waitTime ? -1 : 1 - (timeInCycle - waitTime) / scanDuration;
+    currentIndex = 0;
+    track.style.transform = 'translateX(0)';
+    progressBar.style.width = '0%';
 
-            ctx.clearRect(0, 0, w, h);
-            ctx.globalAlpha = 0.9;
-            ctx.drawImage(img, 0, 0);
-            ctx.globalAlpha = 1.0;
+    rendered = true;
+    console.log('✅ 轮播图渲染完成，共 ' + total + ' 張（' + (isDesktop ? '電腦版' : '手機版') + '）');
 
-            var imageData = ctx.getImageData(0, 0, w, h);
-            var data = imageData.data;
-            var barWidth = Math.max(20, w * 0.25);
-            var centerX = progress * (w + barWidth) - barWidth / 2;
+    startPlay();
+}
 
-            for (var y = 0; y < h; y++) {
-                for (var x = 0; x < w; x++) {
-                    var idx = (y * w + x) * 4;
-                    if (logoData.data[idx + 3] < 128) continue;
-                    var dist = Math.abs(x - centerX);
-                    if (dist > barWidth / 2) continue;
-                    var strength = 1 - (dist / (barWidth / 2));
-                    var alpha = strength * 0.55;
-                    data[idx] = Math.min(255, data[idx] + 180 * alpha);
-                    data[idx + 1] = Math.min(255, data[idx + 1] + 180 * alpha);
-                    data[idx + 2] = Math.min(255, data[idx + 2] + 150 * alpha);
+    function goTo(index) {
+        if (total === 0) return;
+        if (index < 0) index = total - 1;
+        if (index >= total) index = 0;
+        if (index === currentIndex) return;
+
+        currentIndex = index;
+        track.style.transform = 'translateX(-' + (currentIndex * 100) + '%)';
+
+        document.querySelectorAll('.dot').forEach(function(el, i) {
+            el.classList.toggle('active', i === currentIndex);
+        });
+
+        progressBar.style.width = '0%';
+        restartPlay();
+    }
+
+    function nextSlide() {
+        if (total === 0) return;
+        goTo((currentIndex + 1) % total);
+    }
+
+    function prevSlide() {
+        if (total === 0) return;
+        goTo((currentIndex - 1 + total) % total);
+    }
+
+    function startPlay() {
+        stopPlay();
+        if (total <= 1 || isPaused) return;
+
+        isPlaying = true;
+        var progress = 0;
+        var step = 100 / (4000 / 30);
+
+        progressTimer = setInterval(function() {
+            if (isPaused) return;
+            progress += step;
+            if (progress >= 100) {
+                progress = 100;
+                progressBar.style.width = '100%';
+                clearInterval(progressTimer);
+                progressTimer = null;
+                setTimeout(function() {
+                    if (!isPaused) nextSlide();
+                }, 200);
+            } else {
+                progressBar.style.width = progress + '%';
+            }
+        }, 30);
+
+        playTimer = setInterval(function() {
+            if (progressTimer) return;
+            if (!progressTimer && !isPaused) startPlay();
+        }, 5000);
+    }
+
+    function stopPlay() {
+        isPlaying = false;
+        if (progressTimer) { clearInterval(progressTimer); progressTimer = null; }
+        if (playTimer) { clearInterval(playTimer); playTimer = null; }
+    }
+
+    function restartPlay() {
+        stopPlay();
+        setTimeout(function() { if (!isPaused) startPlay(); }, 500);
+    }
+
+    if (prevBtn) prevBtn.onclick = function(e) { e.stopPropagation(); prevSlide(); };
+    if (nextBtn) nextBtn.onclick = function(e) { e.stopPropagation(); nextSlide(); };
+
+    var container = document.querySelector('.carousel-container');
+    var touchX = 0;
+    if (container) {
+        container.addEventListener('touchstart', function(e) { touchX = e.changedTouches[0].screenX; }, { passive: true });
+        container.addEventListener('touchend', function(e) {
+            var diff = touchX - e.changedTouches[0].screenX;
+            if (Math.abs(diff) > 30) diff > 0 ? nextSlide() : prevSlide();
+        }, { passive: true });
+        container.addEventListener('mouseenter', function() { isPaused = true; stopPlay(); });
+        container.addEventListener('mouseleave', function() { isPaused = false; startPlay(); });
+    }
+
+    var dataLoaded = false;
+
+    function loadData() {
+        if (dataLoaded) return;
+        dataLoaded = true;
+
+        var saved = localStorage.getItem('carousel_items');
+        if (saved) {
+            try {
+                var parsed = JSON.parse(saved);
+                if (parsed && parsed.length > 0) {
+                    slideItems = parsed.filter(function(s) { return s.active !== false; });
+                    if (slideItems.length > 0) { renderCarousel(); return; }
                 }
-            }
-            ctx.putImageData(imageData, 0, 0);
-            requestAnimationFrame(drawFrame);
-        }
-    })();
-
-    // ============================================================
-    // 🔥 侧边栏 Logo 流光（保留原有）
-    // ============================================================
-    (function initSidebarLogo() {
-        var canvas = document.getElementById('sidebarLogoCanvas');
-        if (!canvas) return;
-        var ctx = canvas.getContext('2d');
-        var img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.src = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co/storage/v1/object/public/hero-background/logo.png';
-
-        var logoData = null,
-            w = 0,
-            h = 0,
-            startTime = performance.now();
-
-        img.onload = function() {
-            w = img.width;
-            h = img.height;
-            canvas.width = w;
-            canvas.height = h;
-            ctx.drawImage(img, 0, 0);
-            logoData = ctx.getImageData(0, 0, w, h);
-            ctx.clearRect(0, 0, w, h);
-            requestAnimationFrame(drawFrame);
-        };
-
-        function drawFrame(timestamp) {
-            if (!logoData) return;
-            var elapsed = (timestamp - startTime) / 1000;
-            var waitTime = 1.0,
-                scanDuration = 1.2,
-                totalTime = waitTime + scanDuration;
-            var timeInCycle = elapsed % totalTime;
-            var progress = timeInCycle < waitTime ? -1 : 1 - (timeInCycle - waitTime) / scanDuration;
-
-            ctx.clearRect(0, 0, w, h);
-            ctx.globalAlpha = 0.9;
-            ctx.drawImage(img, 0, 0);
-            ctx.globalAlpha = 1.0;
-
-            var imageData = ctx.getImageData(0, 0, w, h);
-            var data = imageData.data;
-            var barWidth = Math.max(20, w * 0.25);
-            var centerX = progress * (w + barWidth) - barWidth / 2;
-
-            for (var y = 0; y < h; y++) {
-                for (var x = 0; x < w; x++) {
-                    var idx = (y * w + x) * 4;
-                    if (logoData.data[idx + 3] < 128) continue;
-                    var dist = Math.abs(x - centerX);
-                    if (dist > barWidth / 2) continue;
-                    var strength = 1 - (dist / (barWidth / 2));
-                    var alpha = strength * 0.55;
-                    data[idx] = Math.min(255, data[idx] + 180 * alpha);
-                    data[idx + 1] = Math.min(255, data[idx + 1] + 180 * alpha);
-                    data[idx + 2] = Math.min(255, data[idx + 2] + 150 * alpha);
-                }
-            }
-            ctx.putImageData(imageData, 0, 0);
-            requestAnimationFrame(drawFrame);
-        }
-    })();
-
-    // ============================================================
-    // 🔥 轮播图（原有功能，保留）
-    // ============================================================
-    (function loadCarousel() {
-        var SUPABASE_URL = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co';
-        var SUPABASE_KEY =
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImprYnBiamhyZ2JuemV4dmp2eGd0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4Mzc3MDcyMSwiZXhwIjoyMDk5MzQ2NzIxfQ.cZumC1R8_pGEfQv-BBfqJXAExCYOC7mdDj4OmkfdjRw';
-
-        var track = document.getElementById('carouselTrack');
-        var dotsContainer = document.getElementById('carouselDots');
-        var prevBtn = document.getElementById('carouselPrev');
-        var nextBtn = document.getElementById('carouselNext');
-        var progressBar = document.getElementById('carouselProgressBar');
-        if (!track) return;
-
-        var slideItems = [],
-            currentIndex = 0,
-            total = 0,
-            isPaused = false,
-            rendered = false,
-            progressTimer = null;
-
-        function renderCarousel() {
-            if (rendered) return;
-            if (slideItems.length === 0) {
-                track.innerHTML =
-                    '<div class="carousel-slide" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#0a0a25,#181845);"><i class="fas fa-crown" style="color:rgba(255,255,255,0.05);font-size:3rem;"></i></div>';
-                dotsContainer.innerHTML = '';
-                return;
-            }
-            total = slideItems.length;
-            var isDesktop = window.innerWidth >= 768;
-            var html = '',
-                dots = '';
-            slideItems.forEach(function(item, i) {
-                var imgUrl = isDesktop ? (item.image_url || '') : (item.image_url_mobile || item.image_url ||
-                '');
-                var link = item.cta_link || '';
-                var linkAttr = link ? 'href="' + link + '"' : '';
-                var targetAttr = link && (link.startsWith('http') || link.startsWith('https')) ?
-                    'target="_blank"' : '';
-                html +=
-                    '<div class="carousel-slide"><a ' + linkAttr + ' ' + targetAttr +
-                    ' style="display:block;width:100%;height:100%;text-decoration:none;cursor:pointer;"><img src="' +
-                    imgUrl + '" alt="Slide ' + (i + 1) + '" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:20px;"></a></div>';
-                dots += '<span class="dot' + (i === 0 ? ' active' : '') + '" data-index="' + i + '"></span>';
-            });
-            track.innerHTML = html;
-            track.style.transition = 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
-            dotsContainer.innerHTML = dots;
-            document.querySelectorAll('.dot').forEach(function(el) {
-                el.onclick = function() {
-                    var idx = parseInt(this.dataset.index);
-                    if (idx !== currentIndex) goTo(idx);
-                };
-            });
-            currentIndex = 0;
-            track.style.transform = 'translateX(0)';
-            progressBar.style.width = '0%';
-            rendered = true;
-            startPlay();
+            } catch (e) {}
         }
 
-        function goTo(index) {
-            if (total === 0) return;
-            if (index < 0) index = total - 1;
-            if (index >= total) index = 0;
-            if (index === currentIndex) return;
-            currentIndex = index;
-            track.style.transform = 'translateX(-' + (currentIndex * 100) + '%)';
-            document.querySelectorAll('.dot').forEach(function(el, i) {
-                el.classList.toggle('active', i === currentIndex);
-            });
-            progressBar.style.width = '0%';
-            restartPlay();
-        }
+        if (typeof supabase === 'undefined') { renderCarousel(); return; }
 
-        function nextSlide() { if (total > 0) goTo((currentIndex + 1) % total); }
+        var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        sb.from('carousel_items').select('*').order('order', { ascending: true })
+            .then(function(res) {
+                if (res.error || !res.data || res.data.length === 0) { renderCarousel(); return; }
+                slideItems = res.data.filter(function(s) { return s.active !== false; });
+                renderCarousel();
+            })
+            .catch(function() { renderCarousel(); });
+    }
 
-        function prevSlide() { if (total > 0) goTo((currentIndex - 1 + total) % total); }
+    window.carousel = {
+        goTo: goTo,
+        next: nextSlide,
+        prev: prevSlide,
+        refresh: function() { dataLoaded = false; rendered = false; loadData(); }
+    };
 
-        function startPlay() {
-            stopPlay();
-            if (total <= 1 || isPaused) return;
-            var progress = 0,
-                step = 100 / (4000 / 30);
-            progressTimer = setInterval(function() {
-                if (isPaused) return;
-                progress += step;
-                if (progress >= 100) {
-                    progress = 100;
-                    progressBar.style.width = '100%';
-                    clearInterval(progressTimer);
-                    progressTimer = null;
-                    setTimeout(function() { if (!isPaused) nextSlide(); }, 200);
-                } else {
-                    progressBar.style.width = progress + '%';
-                }
-            }, 30);
-        }
+    loadData();
+    console.log('✅ 轮播图启动（支援 CTA 連結）');
+})();
 
-        function stopPlay() { if (progressTimer) { clearInterval(progressTimer);
-                progressTimer = null; } }
+// ============================================================
+// 极光呼吸 · 通告条 (加载后台公告)
+// ============================================================
+(function initAnnouncement() {
+    var container = document.getElementById('announcementContainer');
+    var track = document.getElementById('announcementTrack');
+    var badge = document.getElementById('announcementBadge');
 
-        function restartPlay() { stopPlay();
-            setTimeout(function() { if (!isPaused) startPlay(); }, 500); }
+    if (!container || !track) return;
 
-        if (prevBtn) prevBtn.onclick = function(e) { e.stopPropagation();
-            prevSlide(); };
-        if (nextBtn) nextBtn.onclick = function(e) { e.stopPropagation();
-            nextSlide(); };
+    var SUPABASE_URL = 'https://jkbpbjhrgbnzexvjvxgt.supabase.co';
+    var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImprYnBiamhyZ2JuemV4dmp2eGd0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4Mzc3MDcyMSwiZXhwIjoyMDk5MzQ2NzIxfQ.cZumC1R8_pGEfQv-BBfqJXAExCYOC7mdDj4OmkfdjRw';
 
-        var container = document.querySelector('.carousel-container');
-        if (container) {
-            container.addEventListener('mouseenter', function() { isPaused = true;
-                stopPlay(); });
-            container.addEventListener('mouseleave', function() { isPaused = false;
-                startPlay(); });
-        }
+    function renderAnnouncements(items) {
+    var activeItems = items.filter(function(item) {
+        return item.status === 'active' || !item.status;
+    });
 
-        var dataLoaded = false;
+    if (!activeItems || activeItems.length === 0) {
+        container.classList.add('hidden');
+        console.log('📢 没有活跃公告，已隐藏通告条');
+        return;
+    }
 
-        function loadData() {
-            if (dataLoaded) return;
-            dataLoaded = true;
-            var saved = localStorage.getItem('carousel_items');
-            if (saved) {
-                try {
-                    var parsed = JSON.parse(saved);
-                    if (parsed && parsed.length > 0) {
-                        slideItems = parsed.filter(function(s) { return s.active !== false; });
-                        if (slideItems.length > 0) { renderCarousel(); return; }
-                    }
-                } catch (e) {}
-            }
-            if (typeof supabase === 'undefined') { renderCarousel(); return; }
-            var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-            sb.from('carousel_items').select('*').order('order', { ascending: true })
-                .then(function(res) {
-                    if (res.error || !res.data || res.data.length === 0) { renderCarousel(); return; }
-                    slideItems = res.data.filter(function(s) { return s.active !== false; });
-                    renderCarousel();
-                })
-                .catch(function() { renderCarousel(); });
-        }
-        loadData();
-    })();
+    container.classList.remove('hidden');
 
-    // ============================================================
-    // 🔥 通告条（原有功能，保留）
-    // ============================================================
-    (function initAnnouncement() {
-        var container = document.getElementById('announcementContainer');
-        var track = document.getElementById('announcementTrack');
-        var badge = document.getElementById('announcementBadge');
-        if (!container || !track) return;
+    var html = '';
+    for (var repeat = 0; repeat < 2; repeat++) {
+        activeItems.forEach(function(item) {
+            html += '<span class="text-item">' + (item.text || '') + ' <span class="time-tag">· ' + (item.time || '今日') + '</span></span>';
+        });
+    }
+    track.innerHTML = html;
 
-        function renderAnnouncements(items) {
-            var activeItems = items.filter(function(item) { return item.status === 'active' || !item.status; });
-            if (!activeItems || activeItems.length === 0) {
-                container.classList.add('hidden');
-                return;
-            }
-            container.classList.remove('hidden');
-            var html = '';
-            for (var repeat = 0; repeat < 2; repeat++) {
-                activeItems.forEach(function(item) {
-                    html += '<span class="text-item">' + (item.text || '') + ' <span class="time-tag">· ' + (
-                        item.time || '今日') + '</span></span>';
-                });
-            }
-            track.innerHTML = html;
-            if (badge && activeItems.length > 0) {
-                badge.textContent = activeItems[0].badge || 'HOT';
-            }
-        }
+    track.style.animationDuration = '4s';
 
+    if (badge && activeItems.length > 0) {
+        badge.textContent = activeItems[0].badge || 'HOT';
+    }
+
+    console.log('✅ 通告条已渲染，共 ' + activeItems.length + ' 条活跃公告');
+}
+
+    function loadAnnouncements() {
         var saved = localStorage.getItem('announcements');
         if (saved) {
             try {
                 var parsed = JSON.parse(saved);
-                if (parsed && parsed.length > 0) { renderAnnouncements(parsed); return; }
+                if (parsed && parsed.length > 0) {
+                    renderAnnouncements(parsed);
+                }
             } catch (e) {}
         }
-        var defaultItems = [
-            { text: '🎉 Welcome to VISION711! Play Safe, Win Safe.', time: 'Today', badge: 'HOT' },
-            { text: '💰 Deposit bonus up to 5% daily!', time: 'Today', badge: 'NEW' },
-            { text: '🏆 Join our partnership program for exclusive rewards.', time: 'Today', badge: 'VIP' }
-        ];
-        renderAnnouncements(defaultItems);
-    })();
 
-    // ============================================================
-    // 🔥 幸运抽奖（原有功能，保留）
-    // ============================================================
-    (function initLuckyDraw() {
-        var btn = document.getElementById('lucky-draw-btn');
-        var box = document.getElementById('lucky-number');
-        if (!btn || !box) return;
-        btn.addEventListener('click', function() {
-            var numbers = Math.floor(1000 + Math.random() * 9000);
-            box.textContent = numbers.toString().split('').join(' ');
-            alert('🎰 Your lucky number: ' + numbers + '\nGood luck!');
-        });
-    })();
+        if (typeof supabase === 'undefined') return;
 
-    // ============================================================
-    // 🔥 GAMES 菜单（手机版，原有功能，保留）
-    // ============================================================
-    (function() {
-        var menu = document.getElementById('gamesMenu');
-        var overlay = document.getElementById('gamesOverlay');
-        var gifBtn = document.getElementById('gifBtn');
-        if (!menu || !overlay || !gifBtn) return;
-
-        var isOpen = false,
-            isAnimating = false,
-            animationTimer = null,
-            isRendered = false;
-        var gameList = [
-            { name: 'Slot Games', icon: 'fa-gamepad', color: '#4dc8ff', tag: 'HOT' },
-            { name: 'Fast Games', icon: 'fa-bolt', color: '#ff6b6b', tag: '' },
-            { name: 'Live Games', icon: 'fa-tv', color: '#4cd9a0', tag: 'LIVE' },
-            { name: 'Fish Games', icon: 'fa-fish', color: '#ffd700', tag: '' },
-            { name: 'Sport Games', icon: 'fa-futbol', color: '#a855f7', tag: '' },
-            { name: 'Other Games', icon: 'fa-cubes', color: '#f472b6', tag: '' }
-        ];
-
-        function renderGames() {
-            if (isRendered) return;
-            menu.innerHTML = '';
-            var grid = document.createElement('div');
-            grid.className = 'games-grid';
-            gameList.forEach(function(game, index) {
-                var card = document.createElement('a');
-                card.className = 'game-card';
-                card.href = '#';
-                card.dataset.index = index;
-                var tagHTML = game.tag ? '<span class="card-tag ' + game.tag.toLowerCase() + '">' + game.tag +
-                    '</span>' : '';
-                card.innerHTML =
-                    '<i class="fas ' + game.icon + '" style="color:' + game.color + ';"></i><span class="card-name">' +
-                    game.name + '</span><span class="card-sub">' + ((index + 1) * 8 + 8) + ' games</span>' +
-                    tagHTML;
-                card.addEventListener('click', function(e) { e.preventDefault();
-                    e.stopPropagation();
-                    alert('🎮 ' + game.name); });
-                grid.appendChild(card);
-            });
-            menu.appendChild(grid);
-            isRendered = true;
+        try {
+            var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            sb.from('announcements')
+    .select('*')
+    .order('created_at', { ascending: false })
+                .then(function(res) {
+                    if (res.error || !res.data || res.data.length === 0) return;
+                    renderAnnouncements(res.data);
+                    try {
+                        localStorage.setItem('announcements', JSON.stringify(res.data));
+                    } catch (e) {}
+                })
+                .catch(function(err) {
+                    console.warn('⚠️ Supabase 通告加载异常:', err);
+                });
+        } catch (e) {
+            console.warn('⚠️ 通告加载错误:', e);
         }
+    }
 
-        function unlock() { isAnimating = false;
-            gifBtn.classList.remove('locked'); if (animationTimer) { clearTimeout(animationTimer);
-                animationTimer = null; } }
-
-        function lock() { isAnimating = true;
-            gifBtn.classList.add('locked'); if (animationTimer) clearTimeout(animationTimer);
-            animationTimer = setTimeout(function() { unlock(); }, 700); }
-
-        function toggleMenu(e) {
-            if (e) e.stopPropagation();
-            if (isAnimating) return;
-            if (!isRendered) renderGames();
-            isOpen = !isOpen;
-            if (isOpen) {
-                menu.classList.add('active');
-                overlay.classList.add('active');
-                document.body.classList.add('games-open');
-                var cards = menu.querySelectorAll('.game-card');
-                cards.forEach(function(card, i) { card.style.transitionDelay = (0.03 + i * 0.05) + 's';
-                    card.classList.add('show'); });
-                setTimeout(function() { menu.scrollTop = 0; }, 50);
-            } else {
-                menu.classList.remove('active');
-                overlay.classList.remove('active');
-                document.body.classList.remove('games-open');
-                var cards = menu.querySelectorAll('.game-card');
-                cards.forEach(function(card, i) { card.style.transitionDelay = ((5 - i) * 0.05) + 's';
-                    card.classList.remove('show'); });
-            }
-            lock();
-        }
-        gifBtn.addEventListener('click', toggleMenu);
-        overlay.addEventListener('click', function(e) { if (isOpen && !isAnimating) { isOpen = true;
-                toggleMenu(e); } });
-        document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && isOpen && !isAnimating) { isOpen =
-                    true;
-                toggleMenu(e); } });
-    })();
-
-    console.log('✅ VISION711 · 新布局加载完成 (Logo 左 · 选项中 · 右功能区)');
+    loadAnnouncements();
+    console.log('✅ 极光呼吸通告条已加载 (无数据则隐藏)');
+})();
 </script>
 
+<script>
+// ============================================================
+// GAMES 菜单 - 2×3 大卡片（手機版，可滑動）
+// ============================================================
+(function() {
+    'use strict';
+
+    var menu = document.getElementById('gamesMenu');
+    var overlay = document.getElementById('gamesOverlay');
+    var gifBtn = document.getElementById('gifBtn');
+
+    if (!menu || !overlay || !gifBtn) {
+        console.warn('⚠️ GAMES 菜单元素未找到');
+        return;
+    }
+
+    var isOpen = false;
+    var isAnimating = false;
+    var animationTimer = null;
+    var ANIMATION_DURATION = 700;
+    var isRendered = false;
+
+    var gameList = [
+        { name: 'Slot Games', icon: 'fa-gamepad', color: '#4dc8ff', tag: 'HOT' },
+        { name: 'Fast Games', icon: 'fa-bolt', color: '#ff6b6b', tag: '' },
+        { name: 'Live Games', icon: 'fa-tv', color: '#4cd9a0', tag: 'LIVE' },
+        { name: 'Fish Games', icon: 'fa-fish', color: '#ffd700', tag: '' },
+        { name: 'Sport Games', icon: 'fa-futbol', color: '#a855f7', tag: '' },
+        { name: 'Other Games', icon: 'fa-cubes', color: '#f472b6', tag: '' }
+    ];
+
+    function renderGames() {
+        if (isRendered) return;
+        menu.innerHTML = '';
+
+        var grid = document.createElement('div');
+        grid.className = 'games-grid';
+
+        gameList.forEach(function(game, index) {
+            var card = document.createElement('a');
+            card.className = 'game-card';
+            card.href = '#';
+            card.dataset.index = index;
+
+            var tagHTML = game.tag ? `<span class="card-tag ${game.tag.toLowerCase()}">${game.tag}</span>` : '';
+
+            card.innerHTML = `
+                <i class="fas ${game.icon}" style="color:${game.color};"></i>
+                <span class="card-name">${game.name}</span>
+                <span class="card-sub">${(index + 1) * 8 + 8} games</span>
+                ${tagHTML}
+            `;
+
+            card.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                alert('🎮 ' + game.name);
+            });
+
+            grid.appendChild(card);
+        });
+
+        menu.appendChild(grid);
+        isRendered = true;
+
+        console.log('✅ 2×3 大卡片渲染完成');
+    }
+
+    function unlock() {
+        isAnimating = false;
+        gifBtn.classList.remove('locked');
+        if (animationTimer) {
+            clearTimeout(animationTimer);
+            animationTimer = null;
+        }
+    }
+
+    function lock() {
+        isAnimating = true;
+        gifBtn.classList.add('locked');
+        if (animationTimer) {
+            clearTimeout(animationTimer);
+        }
+        animationTimer = setTimeout(function() {
+            unlock();
+        }, ANIMATION_DURATION);
+    }
+
+    function toggleMenu(e) {
+        if (e) e.stopPropagation();
+        if (isAnimating) return;
+
+        if (!isRendered) {
+            renderGames();
+        }
+
+        isOpen = !isOpen;
+
+        if (isOpen) {
+            menu.classList.add('active');
+            overlay.classList.add('active');
+            document.body.classList.add('games-open');
+
+            var cards = menu.querySelectorAll('.game-card');
+            cards.forEach(function(card, i) {
+                card.style.transitionDelay = (0.03 + i * 0.05) + 's';
+                card.classList.add('show');
+            });
+
+            // 展開後滾動到頂部
+            setTimeout(function() {
+                menu.scrollTop = 0;
+            }, 50);
+
+        } else {
+            menu.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.classList.remove('games-open');
+
+            var cards = menu.querySelectorAll('.game-card');
+            cards.forEach(function(card, i) {
+                card.style.transitionDelay = ((5 - i) * 0.05) + 's';
+                card.classList.remove('show');
+            });
+        }
+
+        lock();
+    }
+
+    gifBtn.addEventListener('click', toggleMenu);
+
+    overlay.addEventListener('click', function(e) {
+        if (isOpen && !isAnimating) {
+            isOpen = true;
+            toggleMenu(e);
+        }
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && isOpen && !isAnimating) {
+            isOpen = true;
+            toggleMenu(e);
+        }
+    });
+
+    console.log('✅ GAMES 2×3 大卡片菜單已加載（可滑動）');
+})();
+</script>
 </body>
 </html>
