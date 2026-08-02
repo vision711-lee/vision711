@@ -285,34 +285,6 @@
     transition: width 0.1s linear;
     box-shadow: 0 0 20px rgba(0, 180, 255, 0.3);
 }
-.carousel-dots {
-    position: absolute;
-    bottom: 16px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 15;
-    display: flex;
-    gap: 8px;
-    padding: 6px 14px;
-    background: rgba(0, 0, 0, 0.35);
-    border-radius: 20px;
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-}
-.carousel-dots .dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.25);
-    cursor: pointer;
-    transition: 0.3s;
-}
-.carousel-dots .dot.active {
-    background: #00b4ff;
-    width: 24px;
-    border-radius: 4px;
-    box-shadow: 0 0 16px rgba(0, 180, 255, 0.4);
-}
 .carousel-btn {
     position: absolute;
     top: 50%;
@@ -342,18 +314,6 @@
 
 /* 手機版按鈕微調 */
 @media (max-width: 767px) {
-    .carousel-dots {
-        bottom: 10px;
-        padding: 4px 10px;
-        gap: 6px;
-    }
-    .carousel-dots .dot {
-        width: 6px;
-        height: 6px;
-    }
-    .carousel-dots .dot.active {
-        width: 18px;
-    }
     .carousel-btn {
         width: 28px;
         height: 28px;
@@ -1035,19 +995,16 @@
 </div>
 
         <!-- ===== 轮播图 ===== -->
-        <div class="carousel-container" id="carouselContainer">
-            <div class="carousel-track" id="carouselTrack">
-                <!-- 由 JS 动态生成 -->
-            </div>
-            <button class="carousel-btn carousel-btn-left" id="carouselPrev"><i class="fas fa-chevron-left"></i></button>
-            <button class="carousel-btn carousel-btn-right" id="carouselNext"><i class="fas fa-chevron-right"></i></button>
-            <div class="carousel-dots" id="carouselDots">
-                <!-- 由 JS 动态生成 -->
-            </div>
-            <div class="carousel-progress" id="carouselProgress">
-                <div class="carousel-progress-bar" id="carouselProgressBar"></div>
-            </div>
-        </div>
+<div class="carousel-container" id="carouselContainer">
+    <div class="carousel-track" id="carouselTrack">
+        <!-- 由 JS 动态生成 -->
+    </div>
+    <button class="carousel-btn carousel-btn-left" id="carouselPrev"><i class="fas fa-chevron-left"></i></button>
+    <button class="carousel-btn carousel-btn-right" id="carouselNext"><i class="fas fa-chevron-right"></i></button>
+    <div class="carousel-progress" id="carouselProgress">
+        <div class="carousel-progress-bar" id="carouselProgressBar"></div>
+    </div>
+</div>
 
         <!-- ===== 欢迎卡片 ===== -->
         <div class="card-welcome">
