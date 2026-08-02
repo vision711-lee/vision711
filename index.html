@@ -523,8 +523,11 @@
         border-bottom: 1px solid rgba(0, 180, 255, 0.06);
         box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
         margin: 0 !important;
-        margin-bottom: 12px !important;  /* 🔥 與 carousel 之間有 12px 縫隙 */
-        width: 100%;
+        margin-bottom: 12px !important;
+        /* 🔥 新增這三行 */
+        margin-left: -12px !important;
+        margin-right: -12px !important;
+        width: calc(100% + 24px) !important;
         position: sticky;
         top: 0;
         z-index: 49;
@@ -1310,8 +1313,6 @@
     <a href="withdraw.html" class="nav-item"><i class="fas fa-arrow-up"></i><span>Withdraw</span></a>
 </div>
 
-<!-- ===== GAMES 遮罩 + 6張圖片 (手機版) ===== -->
-<div class="games-overlay" id="gamesOverlay"></div>
 <!-- ===== GAMES 遮罩 + 2×3 大卡片 (手機版) ===== -->
 <div class="games-overlay" id="gamesOverlay"></div>
 <div class="games-menu" id="gamesMenu">
